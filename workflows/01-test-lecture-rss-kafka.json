@@ -1,0 +1,220 @@
+{
+  "id": "WY9trvUki1iuPlWw",
+  "name": "01 - Test lecture RSS Kafka",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        -576
+      ],
+      "id": "9e261f99-5653-47d8-bbfc-4605ebe8b7b7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://github.com/apache/kafka/releases.atom",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -880,
+        -576
+      ],
+      "id": "15a6989b-b59c-47ef-8d2c-1cc87f9ddaf8",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "a120ab41-4d43-41b1-82a7-976bd6d632ca",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "^\\d+\\.\\d+\\.\\d+$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [
+        -656,
+        -576
+      ],
+      "id": "522b13f3-962e-4d12-b926-ded0b73347df",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b30b2e82-0071-4bcd-85cf-d282bde576f3",
+              "name": "source",
+              "value": "Apache Kafka",
+              "type": "string"
+            },
+            {
+              "id": "8ec0effb-6f89-4974-ad8a-5efb7d771b9b",
+              "name": "titre",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "e5271c3a-01c8-429c-933c-8ad5ced83fe1",
+              "name": "lien",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "8eb54110-fd27-47e0-be96-011a226827b1",
+              "name": "date",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "6257a2f3-69f2-494e-b52c-b454b838a75e",
+              "name": "cle",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -432,
+        -576
+      ],
+      "id": "8a990ac7-5f30-4566-967b-c95d9562224c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=📰 Veille Data & IA\n\n{{ $json.data.map(a => `🆕 ${a.source} ${a.titre}\\n${a.lien}`).join('\\n\\n') }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        -576
+      ],
+      "id": "efc7096a-bc86-43b9-bff9-2665ec51d95f",
+      "name": "Send a text message",
+      "webhookId": "12e9278f-4bef-49fd-bfec-5d7cf8aef010",
+      "credentials": {
+        "telegramApi": {
+          "id": "8pBYPF2V4CQJIb2f",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -576
+      ],
+      "id": "0f6cc39b-8767-460d-a839-e32db544e7a9",
+      "name": "Aggregate"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

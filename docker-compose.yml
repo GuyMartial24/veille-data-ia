@@ -1,0 +1,77 @@
+# Veille Data & IA : n8n + PostgreSQL
+#
+# Le même fichier sert en local (Docker Desktop) et sur le VPS.
+# Tout ce qui change d'une machine à l'autre est dans le fichier .env.
+#
+# Lancer :   docker compose up -d
+# Arrêter :  docker compose down        (les données sont conservées)
+
+services:
+  # ----- Base de données -----
+  # Elle contient deux bases :
+  #   - n8n    : les workflows et les identifiants, gérés par n8n lui-même
+  #   - veille : nos données (sources, annonces, résumés), créée au premier démarrage
+  postgres:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: n8n
+      TZ: Europe/Paris
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Scripts exécutés une seule fois, quand la base est encore vide
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    # Pas de port publié : seul n8n accède à la base, par le réseau interne de Docker
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d n8n"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
+
+  # ----- n8n -----
+  n8n:
+    image: n8nio/n8n:2.47.3
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Connexion à la base « n8n »
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      # Clé qui chiffre les identifiants enregistrés dans n8n (tokens, mots de passe).
+      # Si elle est perdue, tous les identifiants devront être ressaisis.
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      # Fuseau horaire : sans ça, n8n planifie à l'heure de New York
+      GENERIC_TIMEZONE: Europe/Paris
+      TZ: Europe/Paris
+      # Pas d'envoi de statistiques d'usage à n8n
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      # Adresse d'Ollama, lue dans les workflows avec {{ $env.OLLAMA_URL }}
+      OLLAMA_URL: ${OLLAMA_URL}
+      OLLAMA_MODEL: ${OLLAMA_MODEL}
+      # Destinataire du digest Telegram, lu avec {{ $env.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+    ports:
+      # 127.0.0.1 : n8n n'est joignable que depuis la machine elle-même
+      # (en local : le navigateur du PC ; sur le VPS : par tunnel SSH)
+      - "127.0.0.1:5678:5678"
+    extra_hosts:
+      # Permet au conteneur de joindre Ollama installé sur la machine hôte
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    mem_limit: 1g
+
+volumes:
+  postgres_data:
+  n8n_data:

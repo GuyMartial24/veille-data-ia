@@ -69,6 +69,8 @@ Estimation : 30 à 90 secondes par annonce, soit 15 à 45 minutes pour 30 annonc
 | Accès à l'interface n8n | Par **tunnel SSH** uniquement, sans exposition sur Internet |
 | Secrets | Dans un fichier `.env`, jamais versionné (il est listé dans `.gitignore`) |
 | Code source | https://github.com/GuyMartial24/veille-data-ia, travail sur la branche `develop` |
+| Développement | Étapes 3 à 6 **en local sur le PC** (Docker Desktop + Ollama Windows avec `llama3.1`), puis déploiement sur le VPS à l'étape 7 avec le même `docker-compose.yml` ; seul le fichier `.env` change |
+| Workflows | Exportés dans `workflows/` avec `python scripts/exporter_workflows.py` (sans données personnelles) |
 
 ## 6. Contraintes
 
@@ -103,43 +105,25 @@ Règles qui en découlent :
 4. **Aucun secret dans le dépôt Git.**
 5. **Tous les résumés sont en français**, même si la source est en anglais (c'est le cas de presque toutes). Un résumé en anglais est considéré comme un échec.
 
-### Proposition initiale pour la table `sources` (à valider à l'étape 2)
-
-| Colonne | Exemple | Rôle |
-|---------|---------|------|
-| `id` | `1` | Identifiant |
-| `nom` | `Apache Airflow` | Nom affiché dans le digest |
-| `type` | `github_release` ou `rss` | Indique comment collecter |
-| `url` | `apache/airflow` ou l'URL du flux | Ce que n8n doit interroger |
-| `categorie` | `Orchestration` | Regroupement dans le digest |
-| `actif` | `true` | Met une source en pause sans la supprimer |
-| `date_ajout` | `2026-11-10` | Suivi |
+La structure de la table `sources` est décrite dans [sources.md](sources.md).
 
 ## 8. Sources de départ
 
-À vérifier une par une à l'étape 2. Certaines ne fonctionneront peut-être pas telles quelles.
+Les 13 sources ont été vérifiées le 10 novembre 2026 (étape 2). La liste définitive, avec les URL, les filtres et les résultats des tests, est dans [sources.md](sources.md).
 
-**Releases GitHub** (`GET https://api.github.com/repos/{owner}/{repo}/releases/latest`)
+| Catégorie | Sources |
+|-----------|---------|
+| Orchestration et transformation | Airflow, dbt Core, Dagster |
+| Streaming et stockage | Kafka, Spark, Iceberg, Delta Lake |
+| IA et LLMOps | LangChain, Chroma, Ollama |
+| Blogs et fondations | Apache Software Foundation, Confluent, Databricks |
 
-| Catégorie | Dépôts |
-|-----------|--------|
-| Orchestration et transformation | `apache/airflow`, `dbt-labs/dbt-core`, `dagster-io/dagster` |
-| Streaming et stockage | `apache/kafka`, `apache/spark`, `apache/iceberg`, `delta-io/delta` |
-| IA et LLMOps | `langchain-ai/langchain`, `chroma-core/chroma`, `ollama/ollama` |
+Ce que la vérification a changé par rapport à la liste de départ :
 
-Points à vérifier :
-
-- Certains projets Apache (Kafka et Spark notamment) ne semblent pas publier de *Releases* GitHub, seulement des *tags*.
-- Sans token, l'API GitHub est limitée à 60 requêtes par heure.
-
-**Flux RSS**
-
-| Source | URL |
-|--------|-----|
-| Apache Software Foundation | `https://blogs.apache.org/foundation/feed/entries/atom` (cette adresse est peut-être obsolète) |
-| Confluent | `https://www.confluent.io/rss.xml` |
-| Databricks | `https://www.databricks.com/blog/rss.xml` |
-| Hacker News (filtré) | `https://hnrss.org/newest?q=Kafka+OR+Airflow+OR+Spark+OR+ChromaDB&points=50` |
+- Les dépôts GitHub sont suivis par leur **flux Atom** (`releases.atom`) plutôt que par l'API, sauf Airflow.
+- Chaque source a son propre **filtre regex** sur le titre, pour écarter les versions de test et les sous-paquets.
+- Les adresses des flux Apache et Databricks ont changé.
+- Hacker News est reporté à la v2 (service instable).
 
 ## 9. Hors périmètre v1
 
@@ -149,12 +133,16 @@ Points à vérifier :
 - Pas de lecture des articles complets : l'IA résume à partir du titre et de la description.
 - Pas de classement ni de note d'importance par l'IA.
 - Pas de RAG ni de Chroma.
+- Pas de Hacker News.
+- Pas de filtre pour écarter le contenu marketing (Confluent, Databricks).
 
 ## 10. Idées pour la v2
 
 - Classer les annonces par l'IA (sécurité, changement incompatible, nouvelle fonctionnalité, article de fond).
 - Donner une note d'importance de 1 à 5 pour trier le digest.
 - Ajouter un RAG avec Chroma et `bge-m3` (déjà installé) pour interroger l'historique de la veille.
+- Ajouter Hacker News par son API officielle (`hn.algolia.com/api/v1`), plus fiable que hnrss.org.
+- Écarter le contenu marketing, avec des mots à exclure ou un tri par l'IA.
 - Ajouter des sources : CVE, newsletters, autres dépôts.
 - Gérer les sources depuis une interface (Notion ou une page web).
 - Exposer n8n de façon sécurisée, derrière le reverse proxy existant.
@@ -165,7 +153,6 @@ Points à vérifier :
 |---|----------|---------------------|
 | 1 | Plusieurs modèles chargés en même temps peuvent saturer la mémoire (environ 17 Go observés pendant les tests) | À traiter à l'étape 8 |
 | 2 | Quel programme appelle Ollama en continu ? | `sudo ss -tnp \| grep 11434` pendant une vague de requêtes |
-| 3 | Colonnes définitives de la table `sources` | Étape 2 |
 
 ## 12. Critères de réussite de la v1
 
@@ -179,10 +166,10 @@ Points à vérifier :
 
 | # | Étape | Livrable |
 |---|-------|----------|
-| 1 | Cadrage | Ce document |
-| 2 | Vérification des sources | Le tableau des sources testées et la table `sources` validée |
-| 3 | Environnement | n8n et PostgreSQL lancés avec Docker Compose, accessibles par tunnel SSH |
-| 4 | Premier flux de bout en bout | 1 source → 1 message Telegram, sans IA |
+| 1 | Cadrage ✅ | Ce document |
+| 2 | Vérification des sources ✅ | [sources.md](sources.md) : les sources testées et la structure de la table `sources` |
+| 3 | Environnement ✅ | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
+| 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
 | 5 | Généralisation | Toutes les sources, lues depuis la table, avec dédoublonnage |
 | 6 | Brique IA | Résumés par Ollama, enregistrés en base |
 | 7 | Diffusion et planification | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail |
