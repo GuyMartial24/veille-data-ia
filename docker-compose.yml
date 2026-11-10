@@ -58,6 +58,8 @@ services:
       # Adresse d'Ollama, lue dans les workflows avec {{ $env.OLLAMA_URL }}
       OLLAMA_URL: ${OLLAMA_URL}
       OLLAMA_MODEL: ${OLLAMA_MODEL}
+      # Destinataire du digest Telegram, lu avec {{ $env.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
       N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
     ports:
       # 127.0.0.1 : n8n n'est joignable que depuis la machine elle-même

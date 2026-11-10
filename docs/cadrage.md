@@ -69,6 +69,8 @@ Estimation : 30 à 90 secondes par annonce, soit 15 à 45 minutes pour 30 annonc
 | Accès à l'interface n8n | Par **tunnel SSH** uniquement, sans exposition sur Internet |
 | Secrets | Dans un fichier `.env`, jamais versionné (il est listé dans `.gitignore`) |
 | Code source | https://github.com/GuyMartial24/veille-data-ia, travail sur la branche `develop` |
+| Développement | Étapes 3 à 6 **en local sur le PC** (Docker Desktop + Ollama Windows avec `llama3.1`), puis déploiement sur le VPS à l'étape 7 avec le même `docker-compose.yml` ; seul le fichier `.env` change |
+| Workflows | Exportés dans `workflows/` avec `python scripts/exporter_workflows.py` (sans données personnelles) |
 
 ## 6. Contraintes
 
@@ -166,8 +168,8 @@ Ce que la vérification a changé par rapport à la liste de départ :
 |---|-------|----------|
 | 1 | Cadrage ✅ | Ce document |
 | 2 | Vérification des sources ✅ | [sources.md](sources.md) : les sources testées et la structure de la table `sources` |
-| 3 | Environnement | n8n et PostgreSQL lancés avec Docker Compose, accessibles par tunnel SSH |
-| 4 | Premier flux de bout en bout | 1 source → 1 message Telegram, sans IA |
+| 3 | Environnement ✅ | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
+| 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
 | 5 | Généralisation | Toutes les sources, lues depuis la table, avec dédoublonnage |
 | 6 | Brique IA | Résumés par Ollama, enregistrés en base |
 | 7 | Diffusion et planification | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail |
