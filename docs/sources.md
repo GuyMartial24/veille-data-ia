@@ -57,6 +57,61 @@
 | Confluent | `flux` | `https://www.confluent.io/rss.xml` | *(aucun)* |
 | Databricks | `flux` | `https://www.databricks.com/feed` | *(aucun)* |
 
+## Sources complémentaires (à activer après la v1)
+
+Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` avec `actif = false` : la v1 démarre avec les 13 sources ci-dessus, pour garder un volume maîtrisé pendant les tests. Une fois la v1 validée, il suffira de passer `actif` à `true`, sans modifier le workflow (c'est le test du critère « ajouter une source en moins de 5 minutes »).
+
+### Newsletters et blogs d'ingénierie
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Data Engineering Weekly | `https://www.dataengineeringweekly.com/feed` | *(aucun)* | 1 à 2 par semaine | Newsletter qui sélectionne chaque semaine les meilleurs articles du domaine |
+| Seattle Data Guy | `https://seattledataguy.substack.com/feed` | *(aucun)* | 2 par mois | Analyses du métier de data engineer |
+| Netflix Technology Blog | `https://netflixtechblog.com/feed` | *(aucun)* | 3 à 4 par mois | Retours d'expérience sur des architectures data à très grande échelle |
+| Airbnb Engineering | `https://medium.com/feed/airbnb-engineering` | *(aucun)* | 3 par mois | Idem ; Airbnb est à l'origine d'Airflow |
+| Apache Airflow (blog) | `https://airflow.apache.org/blog/index.xml` | *(aucun)* | Variable | Articles détaillés sur chaque version (plus riches que les notes GitHub). ⚠️ Toutes les entrées portent la même date : le dédoublonnage doit se faire sur le lien, pas sur la date. |
+| DuckDB | `https://duckdb.org/feed.xml` | *(aucun)* | 3 par mois | Base analytique embarquée, très utilisée en data engineering |
+
+### IA et LLMOps
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Ollama (blog) | `https://ollama.com/blog/rss.xml` | *(aucun)* | 2 par mois | L'outil qui fait tourner le LLM de ce projet |
+| Hugging Face | `https://huggingface.co/blog/feed.xml` | *(aucun)* | 5 par semaine | Nouveaux modèles et techniques ouvertes ; volume élevé |
+| Simon Willison | `https://simonwillison.net/atom/entries/` | *(aucun)* | 1 à 2 par semaine | Référence sur l'usage pratique des LLM (flux « entries » : articles de fond seulement, pas les liens du jour) |
+
+### Conteneurs et infrastructure
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Kubernetes (blog officiel) | `https://kubernetes.io/feed.xml` | *(aucun)* | 2 par semaine | Annonces de versions, nouvelles fonctionnalités, bonnes pratiques |
+| Docker Compose | `https://github.com/docker/compose/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 à 3 par mois | L'outil de déploiement de ce projet |
+| Docker Engine | `https://github.com/moby/moby/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 par mois | Le moteur Docker. Le filtre écarte les versions de test (`-rc`) et la branche `v2.0.0-beta` |
+| k3s | `https://github.com/k3s-io/k3s/releases.atom` | `^v\d+\.\d+\.0\+k3s\d+$` | Environ 1 tous les 4 mois | Le Kubernetes léger du VPS (projet murmetric). Le filtre ne garde que les nouvelles versions majeures (`x.y.0`) : k3s publie chaque correctif sur trois branches à la fois, ce qui ferait beaucoup de bruit. Au moment du test, aucune version `x.y.0` ne figurait dans les 10 dernières entrées. |
+
+### Outils du projet
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| n8n | `https://github.com/n8n-io/n8n/releases.atom` | `^n8n@\d+\.\d+\.0$` | 1 par semaine | Les nouvelles fonctionnalités de l'outil du projet. Le filtre ne garde que les versions `x.y.0` : n8n publie plusieurs correctifs par jour. |
+
+### Candidats écartés
+
+| Candidat | Raison |
+|----------|--------|
+| dbt Labs (`getdbt.com/blog/rss.xml`) | Surtout des témoignages clients et du contenu commercial sur l'IA |
+| AWS Big Data Blog | Volume élevé et très orienté produits AWS |
+| Engineering at Meta | Sujets trop éloignés de la data |
+| PostgreSQL News | Surtout des annonces d'outils tiers |
+| Delta Lake (`delta.io/rss.xml`) | Une seule publication en 3 mois ; les versions sont déjà suivies par GitHub |
+| Chip Huyen | Plus de publication depuis janvier 2025 |
+| LangChain (blog) | Pas de flux RSS trouvé ; les versions sont déjà suivies par GitHub |
+| Start Data Engineering | Flux introuvable (404) ; un de ses articles est dans les ressources d'apprentissage |
+| Docker (blog) | Surtout des annonces commerciales (programmes partenaires, produits) |
+| CNCF (blog) | Surtout des annonces de nouveaux membres et d'événements |
+| Kubernetes (versions GitHub) | Plusieurs branches publiées le même jour, et versions alpha et bêta ; le blog officiel annonce déjà chaque version |
+| Helm | Outil non utilisé dans les projets actuels |
+
 ## Résultats de la vérification
 
 | Source | Résultat | Remarque |
