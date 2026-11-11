@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1648,
-        -768
+        -1872,
+        -912
       ],
       "id": "93879940-02fd-4c6a-9277-9e7e0570c7f2",
       "name": "When clicking ‘Execute workflow’"
@@ -21,8 +21,8 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1.2,
       "position": [
-        -1296,
-        -768
+        -1520,
+        -912
       ],
       "id": "ca1d63fe-ba17-4bb5-ad0b-43b165b8a649",
       "name": "RSS Read",
@@ -57,8 +57,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.4,
       "position": [
-        -1136,
-        -768
+        -1360,
+        -912
       ],
       "id": "e7a7c1a2-5285-48a7-8889-f907d0215597",
       "name": "Filter"
@@ -72,8 +72,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -1456,
-        -768
+        -1680,
+        -912
       ],
       "id": "03ec9b9d-823a-4e01-ac82-cc5710ca8804",
       "name": "Postgres",
@@ -131,8 +131,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -960,
-        -768
+        -1184,
+        -912
       ],
       "id": "39e2ed5d-53a2-4543-84d5-212cdc391776",
       "name": "Edit Fields"
@@ -146,8 +146,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -1456,
-        -576
+        -1680,
+        -720
       ],
       "id": "4bcee43f-b122-4b52-9c85-5d9446fa7947",
       "name": "Postgres API",
@@ -166,8 +166,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -1248,
-        -576
+        -1472,
+        -720
       ],
       "id": "92b53bad-d26d-45fa-86b4-cd8a69148624",
       "name": "HTTP Request",
@@ -221,8 +221,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -1040,
-        -576
+        -1264,
+        -720
       ],
       "id": "e7e4075d-5128-4e8f-9452-f19468221f14",
       "name": "Edit Fields API"
@@ -368,8 +368,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -800,
-        -768
+        -1024,
+        -912
       ],
       "id": "5526cca4-407b-4b8f-80e7-afd434a16db4",
       "name": "Enregistrer annonces",
@@ -404,11 +404,30 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.4,
       "position": [
-        -624,
-        -768
+        -848,
+        -912
       ],
       "id": "ad143ce9-897f-4dce-8ac1-e7fad3be3205",
       "name": "Call '03 - Résumés IA'"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1888,
+        -720
+      ],
+      "id": "61d2c825-67bb-482f-8ee3-586bb1dabfc7",
+      "name": "Schedule Trigger"
     }
   ],
   "connections": {
@@ -510,6 +529,22 @@
         [
           {
             "node": "Call '03 - Résumés IA'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres API",
             "type": "main",
             "index": 0
           }

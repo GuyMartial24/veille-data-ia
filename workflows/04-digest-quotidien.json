@@ -115,7 +115,7 @@
       "typeVersion": 2.8,
       "position": [
         -1376,
-        -480
+        -464
       ],
       "id": "e1f6dc19-7426-4d6b-9b4d-b370621adf36",
       "name": "Annonces à envoyer",
@@ -242,7 +242,7 @@
       "typeVersion": 3.2,
       "position": [
         -960,
-        -640
+        -624
       ],
       "id": "d0517160-e6d9-4db5-8e09-e44e8c55df62",
       "name": "Merge"
@@ -255,7 +255,7 @@
       "typeVersion": 2,
       "position": [
         -800,
-        -640
+        -624
       ],
       "id": "3cef2702-08e4-4696-9b83-0eb32b5381a0",
       "name": "Composer l'e-mail"
@@ -271,8 +271,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        -656,
-        -640
+        -640,
+        -624
       ],
       "id": "896f5c3a-403e-4ce2-b841-2a1cc4721744",
       "name": "E-mail du digest",
@@ -283,6 +283,25 @@
           "name": "SMTP account"
         }
       }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1600,
+        -464
+      ],
+      "id": "3a314a11-fd46-4ca3-84e9-aeac9f9b8386",
+      "name": "Schedule Trigger"
     }
   ],
   "connections": {
@@ -394,6 +413,22 @@
         [
           {
             "node": "E-mail du digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Annonces à envoyer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notion du jour",
             "type": "main",
             "index": 0
           }
