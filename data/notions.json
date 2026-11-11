@@ -155,6 +155,26 @@
       "nom": "Qualité des données",
       "rang": 31,
       "emoji": "✅"
+    },
+    {
+      "nom": "Observabilité",
+      "rang": 32,
+      "emoji": "🔭"
+    },
+    {
+      "nom": "Métier de data engineer",
+      "rang": 33,
+      "emoji": "🧭"
+    },
+    {
+      "nom": "Algorithmes et structures de données",
+      "rang": 34,
+      "emoji": "🧩"
+    },
+    {
+      "nom": "IA approfondie",
+      "rang": 35,
+      "emoji": "🧠"
     }
   ],
   "notions": [
@@ -3347,6 +3367,466 @@
       "analogie": "Réparer la fuite plutôt que d'éponger le sol chaque matin.",
       "a_retenir": "Le data engineer ne peut pas réparer seul la qualité : il doit remonter les problèmes vers les équipes qui produisent les données.",
       "lien": "https://datacontract.com/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 1,
+      "titre": "métriques, logs et traces",
+      "definition": "L'observabilité d'un système repose sur trois types de données : les métriques, les logs et les traces.",
+      "fonctionnement": "Les métriques sont des valeurs chiffrées mesurées dans le temps (requêtes par seconde, mémoire utilisée) : légères, idéales pour les tableaux de bord et les alertes. Les logs sont des messages horodatés qui décrivent des événements précis : riches, mais volumineux. Les traces suivent le parcours d'une requête à travers plusieurs services, étape par étape.",
+      "analogie": "Le tableau de bord d'une voiture (métriques), le carnet de bord (logs) et le relevé GPS du trajet (traces).",
+      "a_retenir": "Les métriques disent qu'il y a un problème, les traces disent où, et les logs disent pourquoi.",
+      "lien": "https://opentelemetry.io/docs/what-is-opentelemetry/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 2,
+      "titre": "Prometheus",
+      "definition": "Prometheus est un système open source de collecte et de stockage de métriques, très utilisé avec Kubernetes.",
+      "fonctionnement": "Prometheus va lui-même chercher (« scraper ») les métriques exposées par chaque application sur une adresse HTTP, à intervalles réguliers, et les stocke sous forme de séries temporelles. On les interroge avec le langage PromQL, on les affiche dans Grafana, et l'Alertmanager envoie des alertes quand une règle est franchie.",
+      "analogie": "Un relevé de compteurs : un technicien passe régulièrement noter la valeur de chaque compteur de l'immeuble.",
+      "a_retenir": "Prometheus + Grafana est le duo de supervision le plus répandu dans l'écosystème open source.",
+      "lien": "https://prometheus.io/docs/introduction/overview/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 3,
+      "titre": "les types de métriques",
+      "definition": "On distingue quatre grands types de métriques : le compteur, la jauge, l'histogramme et le résumé.",
+      "fonctionnement": "Un compteur ne fait qu'augmenter (nombre total de messages traités) : on s'intéresse à sa vitesse d'augmentation. Une jauge monte et descend (mémoire utilisée, taille d'une file d'attente). Un histogramme range les mesures dans des intervalles (combien de requêtes ont pris moins de 100 ms, de 500 ms…), ce qui permet de calculer des percentiles. Le résumé calcule directement certains percentiles côté application.",
+      "analogie": "Le compteur kilométrique (compteur), la jauge d'essence (jauge), et un relevé des trajets classés par durée (histogramme).",
+      "a_retenir": "Choisir le bon type de métrique conditionne les calculs possibles : on ne peut pas calculer un p95 à partir d'une simple moyenne.",
+      "lien": "https://prometheus.io/docs/concepts/metric_types/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 4,
+      "titre": "OpenTelemetry",
+      "definition": "OpenTelemetry est un standard open source pour produire et transmettre des métriques, des logs et des traces, indépendamment de l'outil qui les stocke.",
+      "fonctionnement": "On instrumente l'application une seule fois avec les bibliothèques OpenTelemetry, souvent de façon automatique pour les frameworks courants. Les données sont envoyées à un collecteur, qui peut les transmettre à Prometheus, Grafana, Jaeger ou à un service commercial. Changer d'outil de supervision ne demande plus de modifier le code.",
+      "analogie": "Une prise électrique standard : on peut brancher n'importe quel appareil compatible.",
+      "a_retenir": "OpenTelemetry évite d'être enfermé chez un fournisseur de supervision.",
+      "lien": "https://opentelemetry.io/docs/what-is-opentelemetry/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 5,
+      "titre": "les traces distribuées",
+      "definition": "Une trace distribuée suit une requête à travers tous les services qu'elle traverse, et mesure le temps passé dans chacun.",
+      "fonctionnement": "Chaque étape est un « span », avec un début, une fin et des informations. Un identifiant de trace, transmis d'un service à l'autre (souvent dans un en-tête HTTP ou un en-tête de message Kafka), relie tous les spans d'une même requête. On visualise ensuite la requête comme une chronologie, et l'on voit immédiatement quelle étape est lente.",
+      "analogie": "Le suivi d'un colis, avec chaque passage dans un centre de tri et l'heure de chaque étape.",
+      "a_retenir": "Dans un système composé de nombreux services, les traces sont souvent le seul moyen de trouver où se perd le temps.",
+      "lien": "https://opentelemetry.io/docs/what-is-opentelemetry/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 6,
+      "titre": "les logs centralisés",
+      "definition": "Centraliser les logs, c'est rassembler les journaux de toutes les applications et de tous les serveurs dans un même système, où l'on peut les chercher et les croiser.",
+      "fonctionnement": "Des agents collectent les logs et les envoient vers un outil comme Loki (de Grafana) ou Elasticsearch. Pour qu'ils soient exploitables, on les écrit de façon structurée, en JSON, avec des champs constants : niveau, service, identifiant de requête, message. On peut alors filtrer par service, par niveau ou par identifiant, sur l'ensemble du système.",
+      "analogie": "Réunir les carnets de bord de tous les navires d'une flotte dans une même bibliothèque, classés et indexés.",
+      "a_retenir": "Sur ton VPS, journalctl centralise déjà les logs des services systemd ; un outil comme Loki fait la même chose pour tout un parc de machines et de conteneurs.",
+      "lien": "https://grafana.com/docs/loki/latest/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 7,
+      "titre": "SLI, SLO et SLA",
+      "definition": "Un SLI (indicateur de niveau de service) mesure un aspect du service ; un SLO (objectif) fixe la cible à atteindre ; un SLA (accord) est l'engagement contractuel envers les clients, avec des conséquences s'il n'est pas tenu.",
+      "fonctionnement": "Exemple : SLI = proportion de digests envoyés avant 7 h 05 ; SLO = 99 % des jours sur un trimestre ; SLA = remboursement d'un abonnement si l'on descend sous 95 %. Le SLO est toujours plus exigeant que le SLA, pour garder une marge.",
+      "analogie": "Le chronomètre (SLI), le temps visé à l'entraînement (SLO) et le temps de qualification imposé par le règlement (SLA).",
+      "a_retenir": "Viser 100 % est une erreur : c'est impossible et ruineux. Un bon SLO correspond à ce dont les utilisateurs ont réellement besoin.",
+      "lien": "https://sre.google/sre-book/service-level-objectives/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 8,
+      "titre": "le budget d'erreur",
+      "definition": "Le budget d'erreur est la quantité de défaillance tolérée par un SLO : avec un objectif de 99,9 % de disponibilité, il reste 0,1 % de temps d'indisponibilité acceptable.",
+      "fonctionnement": "Tant que le budget n'est pas épuisé, l'équipe peut prendre des risques : livrer souvent, expérimenter. Quand il est consommé, elle ralentit les nouveautés et se concentre sur la fiabilité. Le budget transforme un débat d'opinions (« faut-il livrer ? ») en décision objective.",
+      "analogie": "Un budget de vacances : tant qu'il en reste, on peut s'offrir des sorties ; quand il est épuisé, on économise.",
+      "a_retenir": "Le budget d'erreur concilie la vitesse de développement et la stabilité, au lieu de les opposer.",
+      "lien": "https://sre.google/workbook/error-budget-policy/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 9,
+      "titre": "les quatre signaux essentiels",
+      "definition": "Pour surveiller un service, Google recommande quatre signaux : la latence, le trafic, les erreurs et la saturation.",
+      "fonctionnement": "Latence : le temps de réponse, en distinguant les requêtes réussies et en échec. Trafic : la quantité de demandes. Erreurs : la proportion de requêtes qui échouent. Saturation : à quel point les ressources sont pleines (mémoire, processeur, disque, file d'attente). Pour un pipeline de données, on les traduit en durée d'exécution, volume traité, taux d'échec et consumer lag.",
+      "analogie": "Les constantes vitales d'un patient : quatre mesures suffisent pour savoir s'il va bien.",
+      "a_retenir": "Commencer par ces quatre signaux couvre la grande majorité des problèmes, avant d'ajouter des métriques plus fines.",
+      "lien": "https://sre.google/sre-book/monitoring-distributed-systems/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 10,
+      "titre": "les bonnes alertes",
+      "definition": "Une bonne alerte signale un problème réel, qui demande une action humaine, de façon claire et sans fausses alertes.",
+      "fonctionnement": "On alerte sur les symptômes vus par les utilisateurs (le digest n'est pas arrivé) plutôt que sur chaque cause possible (le processeur est à 90 %). Chaque alerte doit être utile, compréhensible, et indiquer quoi faire, idéalement avec un lien vers une procédure (un « runbook »). Trop d'alertes inutiles créent une fatigue qui fait ignorer les vraies.",
+      "analogie": "Une alarme incendie : si elle sonne chaque fois qu'on fait griller du pain, plus personne ne sort quand il y a vraiment le feu.",
+      "a_retenir": "Pour chaque alerte, se demander : « qu'est-ce que la personne réveillée à 3 h du matin doit faire ? » S'il n'y a rien à faire, ce n'est pas une alerte.",
+      "lien": "https://sre.google/sre-book/monitoring-distributed-systems/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 11,
+      "titre": "le postmortem sans reproche",
+      "definition": "Un postmortem est une analyse écrite après un incident : ce qui s'est passé, pourquoi, et ce qu'on change pour que ça ne se reproduise pas. « Sans reproche » signifie qu'on cherche les causes dans le système, pas un coupable.",
+      "fonctionnement": "Il contient une chronologie, l'impact, les causes profondes, ce qui a bien ou mal fonctionné, et des actions correctives avec un responsable et une échéance. Si une personne a pu provoquer l'incident par une seule commande, la vraie question est : pourquoi le système l'a-t-il permis ?",
+      "analogie": "L'enquête après un accident d'avion : on cherche à améliorer les procédures, pas à punir, sinon plus personne ne déclare ses erreurs.",
+      "a_retenir": "Une culture sans reproche fait remonter les problèmes tôt ; une culture de la faute les fait cacher.",
+      "lien": "https://sre.google/sre-book/postmortem-culture/"
+    },
+    {
+      "module": "Observabilité",
+      "numero": 12,
+      "titre": "le healthcheck",
+      "definition": "Un healthcheck est une vérification automatique et régulière qu'un service fonctionne et peut répondre.",
+      "fonctionnement": "Dans le docker-compose.yml de ce projet, PostgreSQL a un healthcheck (pg_isready) : Docker l'exécute toutes les 10 secondes, et n8n ne démarre qu'une fois PostgreSQL déclaré « healthy ». Kubernetes fait de même avec ses sondes. Un bon healthcheck vérifie que le service répond vraiment, pas seulement que son processus existe.",
+      "analogie": "Prendre le pouls de quelqu'un plutôt que de vérifier seulement qu'il est dans la pièce.",
+      "a_retenir": "Un healthcheck permet le redémarrage automatique et le démarrage dans le bon ordre : c'est la base de l'auto-réparation.",
+      "lien": "https://docs.docker.com/reference/dockerfile/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 1,
+      "titre": "le rôle du data engineer",
+      "definition": "Le data engineer conçoit, construit et exploite les systèmes qui collectent, stockent, transforment et mettent à disposition les données de l'organisation.",
+      "fonctionnement": "Son travail : brancher les sources, construire des pipelines fiables, modéliser et stocker les données, garantir leur qualité, leur sécurité et leur disponibilité, et maîtriser les coûts. Il sert les data analysts, les data scientists, les applications et désormais les systèmes d'IA. C'est un métier d'ingénierie logicielle appliquée aux données.",
+      "analogie": "Le réseau d'eau d'une ville : personne ne le remarque quand il fonctionne, mais rien ne fonctionne sans lui.",
+      "a_retenir": "La valeur d'un data engineer se mesure à la confiance que les autres peuvent avoir dans les données qu'il livre.",
+      "lien": "https://www.startdataengineering.com/post/data-engineering-project-for-beginners-batch-edition/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 2,
+      "titre": "les métiers voisins",
+      "definition": "Le data engineer travaille avec plusieurs métiers voisins : data analyst, analytics engineer, data scientist et ML engineer.",
+      "fonctionnement": "Le data analyst répond aux questions métier avec des analyses et des tableaux de bord. L'analytics engineer, à la frontière, transforme et modélise les données pour l'analyse, souvent avec dbt. Le data scientist construit des modèles statistiques et prédictifs. Le ML engineer met ces modèles en production et les fait vivre. Les frontières varient beaucoup d'une entreprise à l'autre.",
+      "analogie": "Une équipe de cuisine : celui qui livre et range les produits, celui qui prépare les bases, celui qui invente les recettes, celui qui organise le service.",
+      "a_retenir": "Comprendre le travail de chacun permet de livrer des données vraiment utiles, et de savoir à qui s'adresser.",
+      "lien": "https://www.getdbt.com/blog/what-is-analytics-engineering"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 3,
+      "titre": "le cycle de vie de la donnée",
+      "definition": "Le cycle de vie de la donnée décrit les grandes étapes par lesquelles elle passe : génération, ingestion, stockage, transformation et mise à disposition.",
+      "fonctionnement": "La donnée est générée par une source (application, capteur, API) ; elle est ingérée en batch ou en flux ; stockée dans une base, un lac ou un entrepôt ; transformée pour devenir propre et utile ; puis servie à l'analyse, au machine learning ou à d'autres applications. Sécurité, gouvernance, orchestration et qualité traversent toutes les étapes.",
+      "analogie": "Le circuit d'un aliment, du champ à l'assiette : récolte, transport, stockage, cuisine, service.",
+      "a_retenir": "Ce projet de veille parcourt tout le cycle : les flux RSS (génération), n8n (ingestion), PostgreSQL (stockage), Ollama (transformation), Telegram et l'e-mail (mise à disposition).",
+      "lien": "https://www.startdataengineering.com/post/data-engineering-project-for-beginners-batch-edition/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 4,
+      "titre": "comprendre le besoin",
+      "definition": "Avant de construire un pipeline, il faut comprendre la question métier à laquelle il doit répondre, et la décision qu'il doit éclairer.",
+      "fonctionnement": "Quelques questions à poser : qui utilisera les données, et pour quelle décision ? À quelle fréquence, et avec quel délai ? Quel niveau de détail ? Que se passe-t-il si les données sont en retard ou fausses ? Les réponses déterminent l'architecture : un rapport mensuel et une détection de fraude en temps réel n'ont rien à voir.",
+      "analogie": "Un architecte qui interroge la famille sur sa façon de vivre avant de dessiner la maison.",
+      "a_retenir": "Le cadrage de ce projet (objectif, livrables, fréquence, contraintes, critères de réussite) est exactement ce travail de compréhension du besoin.",
+      "lien": "https://www.getdbt.com/blog/what-is-analytics-engineering"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 5,
+      "titre": "la documentation et le README",
+      "definition": "La documentation explique un projet à ceux qui ne l'ont pas construit, y compris à soi-même six mois plus tard. Le README en est la porte d'entrée.",
+      "fonctionnement": "Un bon README dit en quelques lignes ce que fait le projet, comment l'installer, le lancer et le configurer, et où trouver la suite. On documente aussi les décisions importantes, les sources de données, le modèle de données et les procédures en cas de panne. Une documentation rangée avec le code, dans Git, a plus de chances de rester à jour.",
+      "analogie": "Le mode d'emploi d'un appareil : sans lui, même un excellent produit est difficile à utiliser.",
+      "a_retenir": "Pour un portfolio, la documentation compte autant que le code : c'est elle qu'un recruteur lit en premier.",
+      "lien": "https://www.makeareadme.com/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 6,
+      "titre": "les décisions d'architecture",
+      "definition": "Un ADR (Architecture Decision Record) est une courte note qui enregistre une décision d'architecture importante : le contexte, la décision prise, les options écartées et les conséquences.",
+      "fonctionnement": "Chaque ADR est numéroté, daté et rangé dans le dépôt. Quand quelqu'un demande plus tard « pourquoi utilise-t-on llama3.1 et pas qwen2.5:14b ? », la réponse est écrite, avec les arguments de l'époque. Une décision peut être remplacée par une nouvelle, mais l'historique reste.",
+      "analogie": "Le registre des délibérations d'un conseil municipal : on sait ce qui a été décidé, quand, et pourquoi.",
+      "a_retenir": "Le cadrage de ce projet contient déjà plusieurs décisions de ce type, comme le choix du modèle après les tests de vitesse.",
+      "lien": "https://adr.github.io/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 7,
+      "titre": "la dette technique",
+      "definition": "La dette technique désigne les raccourcis pris dans un projet, qui font gagner du temps aujourd'hui mais en coûteront plus tard.",
+      "fonctionnement": "Un script copié-collé au lieu d'être factorisé, un test non écrit, une valeur écrite en dur, une documentation reportée : chacun est un emprunt. Comme une dette financière, elle accumule des « intérêts » : chaque modification devient plus lente et plus risquée. Une dette consciente et remboursée est un outil ; une dette ignorée finit par paralyser le projet.",
+      "analogie": "Repousser l'entretien d'une voiture : on gagne du temps aujourd'hui, mais la réparation sera plus chère.",
+      "a_retenir": "Noter explicitement les raccourcis pris (dans un ticket, un commentaire ou un ADR) permet de les rembourser plus tard au lieu de les oublier.",
+      "lien": "https://martinfowler.com/bliki/TechnicalDebt.html"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 8,
+      "titre": "la revue de code",
+      "definition": "La revue de code consiste à faire relire ses modifications par une autre personne avant de les intégrer.",
+      "fonctionnement": "Le relecteur vérifie que le code fait ce qu'il doit, qu'il est lisible, testé, sûr, et cohérent avec le reste du projet. Il pose des questions et propose des améliorations, sur le code et non sur la personne. La revue diffuse aussi la connaissance : au moins deux personnes connaissent chaque partie du système.",
+      "analogie": "La relecture d'un article par un collègue avant publication : il voit ce que l'auteur ne voit plus.",
+      "a_retenir": "Une revue est plus efficace sur une petite modification : au-delà de quelques centaines de lignes, l'attention du relecteur chute.",
+      "lien": "https://google.github.io/eng-practices/review/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 9,
+      "titre": "livrer par petites étapes",
+      "definition": "Livrer par petites étapes consiste à découper un travail en modifications courtes, chacune utile et vérifiable, plutôt qu'en une seule grosse livraison.",
+      "fonctionnement": "Une petite modification est plus facile à relire, à tester, à comprendre et à annuler en cas de problème. On commence par une version minimale qui fonctionne de bout en bout, puis on l'enrichit. C'est exactement la démarche de ce projet : une source et un message Telegram d'abord, puis toutes les sources, puis l'IA.",
+      "analogie": "Construire une maison pièce par pièce, en vérifiant chaque mur, plutôt que de tout monter d'un coup.",
+      "a_retenir": "Un premier résultat de bout en bout, même très simple, apprend plus que des semaines de conception.",
+      "lien": "https://google.github.io/eng-practices/review/developer/small-cls.html"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 10,
+      "titre": "contribuer à l'open source",
+      "definition": "Contribuer à l'open source, c'est participer à un projet public : corriger un bug, améliorer la documentation, répondre à des questions ou proposer une fonctionnalité.",
+      "fonctionnement": "On commence souvent par la documentation ou par les tickets marqués « good first issue ». On lit le guide de contribution du projet, on discute de sa proposition avant de coder, puis on ouvre une pull request. Les outils de ce projet (n8n, Kafka, Spark, dbt, Ollama) sont tous open source.",
+      "analogie": "Participer à l'entretien d'un jardin partagé : chacun apporte ce qu'il peut, et tout le monde en profite.",
+      "a_retenir": "Les contributions open source sont visibles publiquement : c'est l'un des meilleurs moyens de montrer ses compétences.",
+      "lien": "https://opensource.guide/how-to-contribute/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 11,
+      "titre": "construire son portfolio",
+      "definition": "Un portfolio de data engineer montre des projets concrets, de bout en bout, avec leur code, leur documentation et leurs choix techniques.",
+      "fonctionnement": "Un bon projet de portfolio résout un vrai problème, utilise des outils du métier, est déployé et fonctionne, et explique ses décisions (architecture, compromis, limites). Mieux vaut un projet modeste, fini et bien documenté qu'un projet ambitieux à moitié fait. Ce projet de veille, avec son cadrage, son historique Git et son déploiement, en est un bon exemple.",
+      "analogie": "Le book d'un photographe : quelques photos réussies et bien présentées valent mieux qu'un album entier de brouillons.",
+      "a_retenir": "Raconter les problèmes rencontrés et comment on les a résolus (le token Telegram, les flux en erreur 404, Ollama saturé) intéresse autant les recruteurs que le résultat final.",
+      "lien": "https://www.startdataengineering.com/post/data-engineering-project-for-beginners-batch-edition/"
+    },
+    {
+      "module": "Métier de data engineer",
+      "numero": 12,
+      "titre": "apprendre en continu",
+      "definition": "Les technologies de la data et de l'IA évoluent très vite : se former en continu fait partie du métier.",
+      "fonctionnement": "Quelques pratiques efficaces : suivre une veille ciblée et filtrée plutôt que tout lire ; privilégier la compréhension des principes, qui durent, plutôt que des outils, qui passent ; pratiquer sur des projets personnels ; lire la documentation officielle ; expliquer ce qu'on a appris, à l'écrit ou à l'oral, pour vérifier qu'on l'a compris.",
+      "analogie": "Entretenir sa forme physique : quelques minutes régulières valent mieux qu'un effort intense une fois par an.",
+      "a_retenir": "C'est le but même de ce projet : une notion par jour pendant un an, c'est 365 notions comprises et reliées à une pratique.",
+      "lien": "https://www.dataengineeringweekly.com/"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 1,
+      "titre": "la complexité algorithmique",
+      "definition": "La complexité décrit comment le temps ou la mémoire d'un algorithme augmentent avec la taille des données. On l'exprime avec la notation « grand O ».",
+      "fonctionnement": "O(1) : temps constant, quelle que soit la taille (lire une valeur dans une table de hachage). O(log n) : très lent à croître (chercher dans un index B-tree). O(n) : proportionnel (parcourir une table). O(n log n) : trier. O(n²) : comparer chaque élément à tous les autres, inenvisageable sur des millions de lignes.",
+      "analogie": "Chercher un mot dans un dictionnaire en l'ouvrant au milieu (log n), plutôt que de lire toutes les pages depuis le début (n).",
+      "a_retenir": "Sur de gros volumes, la complexité de l'algorithme compte bien plus que la puissance de la machine : une jointure accidentellement en O(n²) ne se rattrape pas avec plus de serveurs.",
+      "lien": "https://en.wikipedia.org/wiki/Big_O_notation"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 2,
+      "titre": "la table de hachage",
+      "definition": "Une table de hachage associe des clés à des valeurs et retrouve la valeur d'une clé en temps quasi constant.",
+      "fonctionnement": "Une fonction de hachage transforme la clé en un nombre, qui indique l'emplacement où ranger la valeur. Pour retrouver une clé, on recalcule son hachage et l'on va directement au bon emplacement. Les dictionnaires Python, Redis, les jointures par hachage et la répartition des clés Kafka entre partitions reposent tous sur ce principe.",
+      "analogie": "Un vestiaire où le numéro du ticket indique directement le crochet du manteau.",
+      "a_retenir": "Le hachage est partout en data : il répartit les données entre machines, accélère les jointures et sert au dédoublonnage.",
+      "lien": "https://en.wikipedia.org/wiki/Hash_table"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 3,
+      "titre": "l'arbre B",
+      "definition": "Un arbre B (B-tree) est une structure de données triée et équilibrée, conçue pour les disques : c'est la structure des index de la plupart des bases relationnelles.",
+      "fonctionnement": "Chaque nœud contient de nombreuses clés triées et des pointeurs vers les nœuds enfants. Comme chaque nœud est large, l'arbre reste très peu profond : trouver une ligne parmi des milliards ne demande que quelques lectures de disque. Il permet aussi de parcourir efficacement un intervalle de valeurs (toutes les commandes de novembre).",
+      "analogie": "Un annuaire avec des onglets, puis des sous-onglets : en trois gestes, on arrive à la bonne page.",
+      "a_retenir": "C'est ce que crée PostgreSQL par défaut avec CREATE INDEX : un arbre B.",
+      "lien": "https://en.wikipedia.org/wiki/B-tree"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 4,
+      "titre": "l'arbre LSM",
+      "definition": "Un arbre LSM (Log-Structured Merge-tree) est une structure optimisée pour les écritures massives, utilisée par Cassandra, RocksDB ou ScyllaDB.",
+      "fonctionnement": "Les écritures sont d'abord ajoutées en mémoire, puis écrites sur disque en fichiers triés et immuables, sans jamais modifier les fichiers existants. En arrière-plan, une compaction fusionne régulièrement ces fichiers. Les écritures sont très rapides ; les lectures doivent parfois consulter plusieurs fichiers, ce que les filtres de Bloom accélèrent.",
+      "analogie": "Noter chaque information sur un post-it, puis regrouper et recopier régulièrement les post-it dans un classeur trié.",
+      "a_retenir": "B-tree pour des lectures et mises à jour équilibrées, LSM pour des écritures massives : c'est un compromis fondamental entre les bases de données.",
+      "lien": "https://en.wikipedia.org/wiki/Log-structured_merge-tree"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 5,
+      "titre": "le filtre de Bloom",
+      "definition": "Un filtre de Bloom est une structure très compacte qui répond à la question « cet élément est-il peut-être dans l'ensemble, ou sûrement pas ? ».",
+      "fonctionnement": "Il utilise un tableau de bits et plusieurs fonctions de hachage. S'il répond « non », c'est certain ; s'il répond « peut-être », il peut se tromper, avec une probabilité qu'on choisit en fonction de sa taille. Cassandra l'utilise pour éviter de lire des fichiers qui ne contiennent pas une clé ; Parquet peut en stocker pour sauter des blocs.",
+      "analogie": "Un vigile qui connaît tous les visages interdits : s'il vous laisse passer, vous n'êtes sûrement pas sur la liste ; s'il vous arrête, il vérifie votre identité.",
+      "a_retenir": "Un filtre de Bloom économise d'innombrables lectures inutiles pour une fraction de la mémoire d'une vraie liste.",
+      "lien": "https://en.wikipedia.org/wiki/Bloom_filter"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 6,
+      "titre": "le hachage cohérent",
+      "definition": "Le hachage cohérent répartit des données entre des serveurs de façon à ne déplacer qu'une petite partie des données quand on ajoute ou retire un serveur.",
+      "fonctionnement": "Avec un simple « hachage modulo le nombre de serveurs », ajouter un serveur change l'emplacement de presque toutes les clés. Avec le hachage cohérent, serveurs et clés sont placés sur un même anneau ; chaque clé appartient au serveur suivant sur l'anneau. Ajouter un serveur ne déplace que les clés de la portion qu'il reprend. Cassandra et DynamoDB reposent sur ce principe.",
+      "analogie": "Répartir des élèves entre des salles en fonction de leur position autour d'une table ronde : une nouvelle salle ne fait déménager que les voisins.",
+      "a_retenir": "C'est ce qui permet aux bases distribuées d'ajouter des machines sans tout réorganiser.",
+      "lien": "https://en.wikipedia.org/wiki/Consistent_hashing"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 7,
+      "titre": "le tri externe",
+      "definition": "Le tri externe permet de trier des données beaucoup plus volumineuses que la mémoire disponible.",
+      "fonctionnement": "On lit les données par morceaux qui tiennent en mémoire, on trie chaque morceau et on l'écrit sur disque. Puis on fusionne tous les morceaux triés en les lisant en parallèle, comme on fusionne plusieurs piles de cartes déjà triées. Les bases de données et Spark utilisent ce principe quand un tri, un ORDER BY ou une jointure dépassent la mémoire : c'est le « spill » sur disque.",
+      "analogie": "Trier un énorme tas de copies en le divisant en paquets triés séparément, puis en fusionnant les paquets.",
+      "a_retenir": "Un « spill » vers le disque dans Spark n'est pas une erreur : c'est un tri externe, plus lent mais qui fonctionne.",
+      "lien": "https://en.wikipedia.org/wiki/External_sorting"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 8,
+      "titre": "la jointure par hachage",
+      "definition": "La jointure par hachage (hash join) joint deux tables en construisant une table de hachage sur la plus petite, puis en parcourant la plus grande.",
+      "fonctionnement": "Phase de construction : on range chaque ligne de la petite table dans une table de hachage, indexée par la clé de jointure. Phase de sondage : pour chaque ligne de la grande table, on cherche sa clé dans la table de hachage, en temps quasi constant. C'est très rapide tant que la petite table tient en mémoire ; c'est le principe de la jointure par broadcast de Spark.",
+      "analogie": "Préparer un fichier des invités classé par numéro, puis vérifier chaque ticket présenté à l'entrée.",
+      "a_retenir": "Le plan d'exécution de PostgreSQL affiche « Hash Join » quand il choisit cette méthode, souvent la plus efficace pour des jointures d'égalité.",
+      "lien": "https://en.wikipedia.org/wiki/Hash_join"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 9,
+      "titre": "la jointure par tri-fusion",
+      "definition": "La jointure par tri-fusion (sort-merge join) trie les deux tables sur la clé de jointure, puis les parcourt ensemble, comme on fusionne deux listes triées.",
+      "fonctionnement": "Une fois les deux côtés triés, on avance dans les deux tables en parallèle en comparant les clés, sans retour en arrière. Elle fonctionne même quand aucune des tables ne tient en mémoire, grâce au tri externe, et devient très efficace si les données sont déjà triées. C'est la stratégie par défaut de Spark pour joindre deux grandes tables.",
+      "analogie": "Associer deux piles de fiches classées par ordre alphabétique en les feuilletant ensemble, d'un seul passage.",
+      "a_retenir": "Hash join pour une petite table et une grande, sort-merge join pour deux grandes : savoir lequel est utilisé explique bien des performances.",
+      "lien": "https://en.wikipedia.org/wiki/Sort-merge_join"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 10,
+      "titre": "HyperLogLog",
+      "definition": "HyperLogLog est un algorithme qui estime le nombre de valeurs distinctes d'un très grand ensemble, avec très peu de mémoire et une petite marge d'erreur.",
+      "fonctionnement": "Compter exactement les visiteurs uniques d'un site exige de mémoriser tous les identifiants déjà vus. HyperLogLog observe des propriétés statistiques des hachages des valeurs, et estime le nombre de valeurs distinctes de milliards d'éléments avec quelques kilo-octets, à environ 1 à 2 % près. Les estimations de plusieurs jours peuvent se combiner.",
+      "analogie": "Estimer la taille d'une foule à partir de quelques indices, plutôt que de compter chaque personne une par une.",
+      "a_retenir": "Les fonctions approx_count_distinct de Spark ou APPROX_COUNT_DISTINCT de BigQuery reposent sur ce type d'algorithme : beaucoup plus rapides qu'un COUNT(DISTINCT) exact.",
+      "lien": "https://en.wikipedia.org/wiki/HyperLogLog"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 11,
+      "titre": "MapReduce",
+      "definition": "MapReduce est un modèle de calcul distribué publié par Google en 2004, qui découpe un traitement en deux phases : map et reduce.",
+      "fonctionnement": "La phase map transforme chaque élément en paires clé-valeur, en parallèle sur de nombreuses machines. Les paires sont ensuite regroupées par clé (le shuffle). La phase reduce combine les valeurs de chaque clé. Compter les mots d'un milliard de pages s'écrit ainsi en quelques lignes. Hadoop en a été l'implémentation open source, avant que Spark ne le généralise en gardant les données en mémoire.",
+      "analogie": "Dépouiller des bulletins de vote : chaque bureau compte ses bulletins (map), puis on additionne les résultats par candidat (reduce).",
+      "a_retenir": "Les notions de map, de shuffle et de reduce restent au cœur de Spark et de tous les moteurs distribués.",
+      "lien": "https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/"
+    },
+    {
+      "module": "Algorithmes et structures de données",
+      "numero": 12,
+      "titre": "HNSW",
+      "definition": "HNSW (Hierarchical Navigable Small World) est l'algorithme d'index le plus utilisé par les bases vectorielles pour trouver rapidement les vecteurs les plus proches d'un vecteur donné.",
+      "fonctionnement": "Les vecteurs sont reliés à leurs voisins dans un graphe à plusieurs niveaux : les niveaux supérieurs, peu peuplés, permettent de grands sauts, les niveaux inférieurs, plus denses, affinent la recherche. On trouve ainsi des voisins très proches, sans comparer le vecteur à tous les autres, au prix d'une petite part d'approximation.",
+      "analogie": "Voyager en avion vers la bonne région, puis en train vers la bonne ville, puis à pied vers la bonne rue.",
+      "a_retenir": "HNSW est utilisé par pgvector, Qdrant ou Chroma : c'est lui qui rend un RAG rapide sur des millions de documents.",
+      "lien": "https://arxiv.org/abs/1603.09320"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 1,
+      "titre": "le mécanisme d'attention",
+      "definition": "L'attention est le mécanisme central des Transformers : pour traiter chaque token, le modèle détermine quels autres tokens du texte sont importants pour lui.",
+      "fonctionnement": "Pour chaque token, le modèle calcule un score de pertinence avec tous les autres tokens, puis combine leurs informations selon ces scores. Dans « Le chat a renversé le verre car il était plein », l'attention aide à relier « il » à « verre ». Les calculs de plusieurs « têtes » d'attention captent différents types de relations en parallèle.",
+      "analogie": "Lire une phrase difficile en jetant un œil, pour chaque mot, sur les mots de la phrase qui l'éclairent.",
+      "a_retenir": "Le coût de l'attention croît avec le carré de la longueur du texte : c'est l'une des raisons pour lesquelles la fenêtre de contexte est limitée et coûteuse.",
+      "lien": "https://jalammar.github.io/illustrated-transformer/"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 2,
+      "titre": "pré-entraînement et ajustement",
+      "definition": "Un LLM est construit en deux grandes phases : le pré-entraînement, sur d'immenses quantités de texte, puis l'ajustement, qui en fait un assistant utile.",
+      "fonctionnement": "Le pré-entraînement apprend au modèle à prédire le token suivant : il acquiert la langue et de vastes connaissances, mais ne sait pas encore suivre des instructions. L'ajustement sur des exemples d'instructions et de réponses (instruction tuning), puis par des retours humains sur la qualité des réponses (RLHF) ou des méthodes proches, lui apprend à répondre de façon utile et sûre.",
+      "analogie": "Des années de lecture pour acquérir une culture générale, puis une formation professionnelle pour apprendre à servir des clients.",
+      "a_retenir": "C'est pourquoi on distingue les modèles « base », peu utilisables tels quels, et les modèles « instruct » ou « chat », comme ceux d'Ollama.",
+      "lien": "https://huggingface.co/blog/rlhf"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 3,
+      "titre": "l'apprentissage par l'exemple dans le prompt",
+      "definition": "Le few-shot prompting consiste à donner au modèle quelques exemples de la tâche dans le prompt, pour lui montrer le format et le style attendus.",
+      "fonctionnement": "Au lieu de seulement décrire la tâche, on ajoute deux ou trois exemples de paires « entrée → sortie attendue », puis la nouvelle entrée. Le modèle imite le schéma, sans aucun réentraînement : c'est l'apprentissage « en contexte ». Les exemples doivent être variés et représentatifs, sinon le modèle copie leurs particularités.",
+      "analogie": "Montrer à un nouveau collègue deux ou trois dossiers déjà traités plutôt que de lui donner une longue explication.",
+      "a_retenir": "Pour obtenir un format de résumé régulier dans ce projet, quelques exemples bien choisis sont souvent plus efficaces qu'une consigne détaillée.",
+      "lien": "https://arxiv.org/abs/2005.14165"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 4,
+      "titre": "la chaîne de pensée",
+      "definition": "La chaîne de pensée (chain of thought) consiste à faire raisonner le modèle étape par étape avant de donner sa réponse.",
+      "fonctionnement": "Pour un problème de logique ou de calcul, demander au modèle d'expliciter les étapes intermédiaires améliore nettement la justesse de la réponse finale : chaque token produit sert de « brouillon » aux suivants. Les modèles dits « de raisonnement » sont entraînés à produire ce type de raisonnement de façon systématique, au prix de réponses plus longues et plus lentes.",
+      "analogie": "Poser une opération sur papier plutôt que de la faire de tête.",
+      "a_retenir": "Le raisonnement étape par étape aide pour les problèmes complexes, mais ralentit inutilement les tâches simples comme un résumé.",
+      "lien": "https://arxiv.org/abs/2201.11903"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 5,
+      "titre": "l'appel d'outils",
+      "definition": "L'appel d'outils (tool calling) permet à un LLM de demander l'exécution d'une fonction externe : une recherche, un calcul, une requête à une base, l'envoi d'un message.",
+      "fonctionnement": "On décrit au modèle les outils disponibles, avec leur nom, leur rôle et leurs paramètres sous forme de schéma JSON. Quand c'est utile, le modèle répond par une demande d'appel structurée au lieu d'un texte ; le programme exécute l'outil et renvoie le résultat au modèle, qui poursuit. Ollama prend en charge ce mécanisme avec les modèles compatibles.",
+      "analogie": "Un assistant qui, au lieu d'inventer un horaire de train, demande à consulter le site de la SNCF.",
+      "a_retenir": "Le modèle ne fait que demander l'appel : c'est le programme qui l'exécute, et qui doit donc contrôler ce qui est autorisé.",
+      "lien": "https://docs.ollama.com/capabilities/tool-calling"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 6,
+      "titre": "le context engineering",
+      "definition": "Le context engineering consiste à choisir et organiser avec soin tout ce qu'on place dans la fenêtre de contexte d'un modèle : instructions, documents, historique, résultats d'outils.",
+      "fonctionnement": "Le contexte est une ressource limitée : trop d'informations diluent l'attention du modèle et dégradent ses réponses. On sélectionne les documents les plus pertinents, on résume l'historique, on retire ce qui n'est plus utile, et l'on structure clairement le tout. Pour les agents qui travaillent longtemps, gérer ce qu'ils retiennent devient un enjeu central.",
+      "analogie": "Préparer le dossier d'une réunion : y mettre ce qui est utile à la décision, pas toutes les archives.",
+      "a_retenir": "Couper les notes de version trop longues avant de les résumer, comme le prévoit ce projet, est une première forme de context engineering.",
+      "lien": "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 7,
+      "titre": "le protocole MCP",
+      "definition": "Le Model Context Protocol (MCP) est un protocole ouvert qui standardise la façon dont les applications d'IA se connectent à des outils et à des sources de données.",
+      "fonctionnement": "Un « serveur MCP » expose des outils, des ressources (des données) et des modèles de prompts ; une application compatible (un assistant, un IDE, un agent) s'y connecte et les rend disponibles au modèle. Au lieu d'écrire une intégration spécifique pour chaque couple « application, outil », on écrit un serveur MCP une fois, utilisable partout.",
+      "analogie": "Une prise USB pour l'IA : un connecteur standard, compatible avec de nombreux appareils.",
+      "a_retenir": "n8n peut exposer ses workflows comme outils MCP, ou utiliser des serveurs MCP dans ses agents.",
+      "lien": "https://modelcontextprotocol.io/docs/getting-started/intro"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 8,
+      "titre": "choisir un modèle d'embeddings",
+      "definition": "Le choix du modèle d'embeddings détermine la qualité de la recherche sémantique d'un RAG, autant que le choix du LLM.",
+      "fonctionnement": "Les critères : la qualité de recherche dans la langue et le domaine visés (le classement MTEB compare de nombreux modèles), la taille des vecteurs (qui influe sur le stockage et la vitesse), la longueur de texte acceptée, et la possibilité de l'exécuter localement. bge-m3, installé sur ton VPS, est multilingue et gère des textes longs. Changer de modèle oblige à recalculer tous les vecteurs.",
+      "analogie": "Choisir la langue d'un index de bibliothèque : il doit être la même pour ranger les livres et pour les chercher.",
+      "a_retenir": "Documents et questions doivent être transformés par le même modèle d'embeddings, sinon leurs vecteurs ne sont pas comparables.",
+      "lien": "https://huggingface.co/spaces/mteb/leaderboard"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 9,
+      "titre": "les modèles multimodaux",
+      "definition": "Un modèle multimodal traite plusieurs types de données à la fois : texte et images, parfois audio ou vidéo.",
+      "fonctionnement": "Un encodeur transforme l'image en une suite de représentations que le modèle de langage peut traiter comme des tokens. Le modèle peut alors décrire une image, lire un graphique ou un document scanné, ou répondre à une question sur une capture d'écran. Plusieurs modèles multimodaux ouverts sont disponibles dans Ollama.",
+      "analogie": "Un collègue à qui l'on peut montrer un schéma au lieu de devoir tout lui décrire par écrit.",
+      "a_retenir": "Les modèles multimodaux ouvrent de nouvelles sources de données aux pipelines : factures scannées, schémas, photos de documents.",
+      "lien": "https://huggingface.co/docs/transformers/main/en/model_doc/llava"
+    },
+    {
+      "module": "IA approfondie",
+      "numero": 10,
+      "titre": "les modèles à poids ouverts",
+      "definition": "Un modèle à poids ouverts (open weights) publie ses paramètres, qu'on peut télécharger et exécuter soi-même, comme Llama, Qwen ou Mistral ; un modèle fermé n'est accessible que par l'API de son fournisseur.",
+      "fonctionnement": "Les modèles ouverts s'exécutent localement (avec Ollama, comme dans ce projet), ce qui garde les données chez soi et supprime le coût par requête, mais demande du matériel. Les modèles fermés sont souvent plus performants et ne demandent aucune infrastructure. Attention : « poids ouverts » ne veut pas toujours dire « open source » ; chaque modèle a sa licence, qui peut restreindre certains usages.",
+      "analogie": "Acheter un livre qu'on garde chez soi, ou emprunter les services d'un expert qu'on consulte à distance.",
+      "a_retenir": "Pour des données sensibles ou un projet « souverain » comme celui-ci, un modèle ouvert exécuté localement est souvent le bon choix ; il faut toujours vérifier sa licence.",
+      "lien": "https://huggingface.co/learn/llm-course/chapter1/1"
     }
   ]
 }
