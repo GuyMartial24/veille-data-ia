@@ -26,7 +26,7 @@
               "batchSize": 1
             }
           },
-          "timeout": 600000
+          "timeout": 1800000
         }
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -36,7 +36,11 @@
         -528
       ],
       "id": "2d480e84-084b-4c7f-bd61-3869c054f763",
-      "name": "Ollama"
+      "name": "Ollama",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -214,7 +218,8 @@
       ],
       "id": "2c354d06-821d-4b26-af32-e0f5dcdf1ca9",
       "name": "Extraire résumé ",
-      "executeOnce": true
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
