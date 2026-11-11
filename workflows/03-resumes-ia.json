@@ -1,0 +1,295 @@
+{
+  "id": "NlxarEAfLnbbNJou",
+  "name": "03 - Résumés IA",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -272
+      ],
+      "id": "7d6557f8-1eda-42a8-9830-19238b5c9290",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.OLLAMA_URL }}/api/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: $env.OLLAMA_MODEL,\n  stream: false,\n  options: { temperature: 0.2, num_ctx: 4096 },\n  format: {\n    type: \"object\",\n    properties: { resume: { type: \"string\" }, notion_a_retenir: { type: \"string\" } },\n    required: [\"resume\", \"notion_a_retenir\"]\n  },\n  messages: [\n    { role: \"system\", content: `Tu es l'assistant de veille technique d'un data engineer francophone qui veut monter en compétence.\nOn te donne une annonce (nouvelle version d'un logiciel ou article de blog), souvent en anglais.\nRéponds en français, au format JSON demandé :\n- \"resume\" : 2 ou 3 phrases, sans introduction, qui disent ce que l'annonce apporte de nouveau. Utilise uniquement les informations présentes dans le texte, n'invente rien.\n- \"notion_a_retenir\" : 1 ou 2 phrases qui expliquent simplement UNE notion technique citée dans l'annonce (ce que c'est et à quoi ça sert), pour quelqu'un qui apprend. Commence par le nom de la notion.\nSi le texte ne contient pas assez d'information, écris \"Pas de détail dans l'annonce.\" dans \"resume\".` },\n    { role: \"user\", content: \"Source : \" + $json.source + \"\\nTitre : \" + $json.titre + \"\\n\\nTexte :\\n\" + $json.contenu }\n  ]\n}) }}\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          },
+          "timeout": 600000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        -272
+      ],
+      "id": "2d480e84-084b-4c7f-bd61-3869c054f763",
+      "name": "Ollama"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "annonces",
+          "mode": "list",
+          "cachedResultName": "annonces"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cle",
+              "displayName": "cle",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_id",
+              "displayName": "source_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "titre",
+              "displayName": "titre",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lien",
+              "displayName": "lien",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_publication",
+              "displayName": "date_publication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contenu",
+              "displayName": "contenu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "resume",
+              "displayName": "resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notion_a_retenir",
+              "displayName": "notion_a_retenir",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "collectee_le",
+              "displayName": "collectee_le",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "envoyee_le",
+              "displayName": "envoyee_le",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        32,
+        -272
+      ],
+      "id": "89f8754e-80ad-44da-bfcd-9db402f9d6b3",
+      "name": "Enregistrer résumé",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3efe06fa-1a7f-425c-838c-755699b0f1a0",
+              "name": "id",
+              "value": "={{ $('Annonces à résumer').item.json.id }}\n",
+              "type": "number"
+            },
+            {
+              "id": "7a3e8301-e48e-4256-be85-d44d195e5fbf",
+              "name": "resume",
+              "value": "={{ JSON.parse($json.message.content).resume.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "e1cd7efd-fe27-49b5-ab91-ad0da6a52df0",
+              "name": "notion_a_retenir",
+              "value": "={{ JSON.parse($json.message.content).notion_a_retenir.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -144,
+        -272
+      ],
+      "id": "2c354d06-821d-4b26-af32-e0f5dcdf1ca9",
+      "name": "Extraire résumé "
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT a.id, s.nom AS source, a.titre, left(a.contenu, 6000) AS contenu\nFROM annonces a\nJOIN sources s ON s.id = a.source_id\nWHERE a.resume IS NULL\n  AND a.envoyee_le IS NULL\n  AND length(coalesce(a.contenu, '')) >= 200\nORDER BY a.id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -496,
+        -272
+      ],
+      "id": "a83cf421-2d98-4f65-8a56-2800ef0b9dd8",
+      "name": "Annonces à résumer",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Annonces à résumer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama": {
+      "main": [
+        [
+          {
+            "node": "Extraire résumé ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire résumé ": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer résumé",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Annonces à résumer": {
+      "main": [
+        [
+          {
+            "node": "Ollama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
