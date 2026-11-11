@@ -65,6 +65,26 @@
       "nom": "Visualisation",
       "rang": 13,
       "emoji": "📊"
+    },
+    {
+      "nom": "Kubernetes",
+      "rang": 14,
+      "emoji": "☸️"
+    },
+    {
+      "nom": "Scala et Maven",
+      "rang": 15,
+      "emoji": "☕"
+    },
+    {
+      "nom": "Streaming",
+      "rang": 16,
+      "emoji": "🌊"
+    },
+    {
+      "nom": "Gouvernance et sécurité",
+      "rang": 17,
+      "emoji": "🛡️"
     }
   ],
   "notions": [
@@ -1377,6 +1397,466 @@
       "analogie": "Une bonne carte routière : elle montre le chemin, pas tous les détails du paysage.",
       "a_retenir": "Si un lecteur doit chercher le message d'un graphique, c'est le graphique qu'il faut améliorer, pas le lecteur.",
       "lien": "https://github.com/Financial-Times/chart-doctor/tree/main/visual-vocabulary"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 1,
+      "titre": "pourquoi Kubernetes",
+      "definition": "Kubernetes est un orchestrateur de conteneurs : il déploie, surveille et fait tourner des conteneurs sur un ensemble de machines.",
+      "fonctionnement": "On lui décrit l'état souhaité dans des fichiers YAML (« je veux 3 copies de cette application, avec telle image »), et il travaille en permanence pour que l'état réel corresponde : il redémarre un conteneur qui plante, en relance un ailleurs si une machine tombe, répartit la charge. On le pilote avec la commande kubectl.",
+      "analogie": "Un thermostat : on fixe la température voulue, et il agit tout seul pour la maintenir.",
+      "a_retenir": "Docker Compose gère des conteneurs sur une seule machine ; Kubernetes les gère sur plusieurs, avec redémarrage automatique et montée en charge.",
+      "lien": "https://kubernetes.io/docs/concepts/overview/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 2,
+      "titre": "le pod",
+      "definition": "Un pod est la plus petite unité que Kubernetes déploie : un ou plusieurs conteneurs qui tournent ensemble, sur la même machine, avec la même adresse réseau.",
+      "fonctionnement": "Le plus souvent, un pod contient un seul conteneur. Plusieurs conteneurs partagent un pod quand ils sont indissociables (une application et un petit programme qui collecte ses logs, par exemple). Un pod est éphémère : s'il disparaît, Kubernetes en crée un nouveau, avec une nouvelle adresse IP.",
+      "analogie": "Une cabine de bateau : ceux qui y logent partagent la même adresse et les mêmes ressources.",
+      "a_retenir": "Sur ton VPS, les conteneurs dont le nom commence par k8s_POD_ sont les « conteneurs pause » qui portent le réseau de chaque pod du cluster k3s.",
+      "lien": "https://kubernetes.io/docs/concepts/workloads/pods/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 3,
+      "titre": "le Deployment",
+      "definition": "Un Deployment décrit une application sans état à faire tourner : son image, son nombre de copies (les replicas) et sa stratégie de mise à jour.",
+      "fonctionnement": "Kubernetes maintient en permanence le nombre de pods demandé. Pour une nouvelle version, il remplace les pods progressivement (rolling update) : l'application reste disponible pendant la mise à jour, et l'on peut revenir à la version précédente en une commande.",
+      "analogie": "Un responsable d'équipe qui veille à ce qu'il y ait toujours trois guichets ouverts, et qui remplace les agents un par un lors d'un changement d'équipe.",
+      "a_retenir": "On ne crée presque jamais de pods à la main : on décrit un Deployment, et c'est lui qui crée et remplace les pods.",
+      "lien": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 4,
+      "titre": "le StatefulSet",
+      "definition": "Un StatefulSet gère des applications avec état, comme des bases de données ou Kafka, dont chaque copie a une identité et un stockage propres.",
+      "fonctionnement": "Contrairement au Deployment, chaque pod reçoit un nom stable et numéroté (kafka-0, kafka-1…), conserve son propre volume de stockage s'il est recréé, et les pods démarrent et s'arrêtent dans l'ordre.",
+      "analogie": "Des places numérotées dans un parking réservé : chaque voiture retrouve toujours sa place, avec ses affaires dans le coffre.",
+      "a_retenir": "Les pods kafka-0 et influxdb-0 de ton projet murmetric, avec leur suffixe -0, sont gérés par des StatefulSets.",
+      "lien": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 5,
+      "titre": "le Service",
+      "definition": "Un Service donne une adresse stable à un groupe de pods, et répartit le trafic entre eux.",
+      "fonctionnement": "Les pods vont et viennent, et leurs adresses IP changent. Le Service sélectionne les pods par leurs étiquettes (labels) et offre une adresse et un nom DNS fixes, par exemple kafka.murmetric.svc. Les autres applications du cluster utilisent ce nom, sans se soucier des pods qui se trouvent derrière.",
+      "analogie": "Le standard téléphonique d'une entreprise : on appelle un numéro unique, et l'appel est transmis à un employé disponible.",
+      "a_retenir": "C'est l'équivalent, dans Kubernetes, du nom de service de Docker Compose (postgres, dans ce projet).",
+      "lien": "https://kubernetes.io/docs/concepts/services-networking/service/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 6,
+      "titre": "l'Ingress",
+      "definition": "Un Ingress définit comment le trafic web venu de l'extérieur du cluster est dirigé vers les Services, selon le nom de domaine ou le chemin de l'adresse.",
+      "fonctionnement": "Les règles d'un Ingress (« monsite.fr/api va vers le service api ») sont appliquées par un contrôleur d'Ingress, comme Traefik ou NGINX, qui gère aussi souvent les certificats HTTPS. k3s installe Traefik par défaut.",
+      "analogie": "L'accueil d'un immeuble de bureaux : il oriente chaque visiteur vers le bon étage selon l'entreprise qu'il vient voir.",
+      "a_retenir": "Le conteneur traefik de ton VPS est le contrôleur d'Ingress de k3s : c'est lui qui occupe les ports 80 et 443, ce qui explique le choix d'un tunnel SSH pour n8n.",
+      "lien": "https://kubernetes.io/docs/concepts/services-networking/ingress/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 7,
+      "titre": "le namespace",
+      "definition": "Un namespace est un espace de noms qui sépare les ressources d'un cluster en groupes logiques.",
+      "fonctionnement": "On regroupe dans un namespace les ressources d'un projet ou d'une équipe, et l'on peut y appliquer des droits d'accès et des quotas de ressources. Deux ressources peuvent avoir le même nom dans deux namespaces différents.",
+      "analogie": "Les dossiers d'un disque : on peut avoir deux fichiers « config » dans deux dossiers différents.",
+      "a_retenir": "Sur ton VPS, les noms de conteneurs montrent deux namespaces : kube-system (les composants de k3s) et murmetric (ton projet).",
+      "lien": "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 8,
+      "titre": "le ConfigMap et le Secret",
+      "definition": "Un ConfigMap stocke de la configuration (des paramètres, des fichiers de configuration) ; un Secret stocke des données sensibles (mots de passe, tokens).",
+      "fonctionnement": "Les deux sont injectés dans les pods sous forme de variables d'environnement ou de fichiers, ce qui sépare la configuration de l'image. Attention : par défaut, un Secret est seulement encodé en base64, pas chiffré ; il faut activer le chiffrement au repos et restreindre les droits d'accès pour le protéger réellement.",
+      "analogie": "Le ConfigMap est le mode d'emploi affiché au mur ; le Secret est la combinaison du coffre, à garder sous clé.",
+      "a_retenir": "C'est l'équivalent Kubernetes du fichier .env de ce projet : la configuration change selon l'environnement, l'image reste la même.",
+      "lien": "https://kubernetes.io/docs/concepts/configuration/secret/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 9,
+      "titre": "les volumes persistants",
+      "definition": "Un PersistentVolume (PV) est un espace de stockage du cluster ; une PersistentVolumeClaim (PVC) est la demande de stockage d'une application.",
+      "fonctionnement": "L'application demande par exemple « 10 Go, en lecture-écriture » via une PVC, sans savoir où ce stockage se trouve. Une StorageClass le crée automatiquement : disque cloud, stockage réseau, ou simple dossier local. Le stockage survit à la suppression des pods.",
+      "analogie": "Réserver une chambre d'hôtel par téléphone : on indique ses besoins, l'hôtel choisit la chambre.",
+      "a_retenir": "Le local-path-provisioner de ton cluster k3s est la StorageClass par défaut : il crée les volumes dans un dossier du VPS.",
+      "lien": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 10,
+      "titre": "les ressources et les sondes",
+      "definition": "Les requests et limits fixent les ressources (processeur, mémoire) d'un conteneur ; les sondes (probes) permettent à Kubernetes de vérifier qu'il fonctionne.",
+      "fonctionnement": "La request est la quantité réservée, utilisée pour choisir une machine ; la limit est le maximum autorisé : un conteneur qui dépasse sa limite de mémoire est arrêté. La sonde de vivacité (liveness) redémarre un conteneur bloqué ; la sonde de disponibilité (readiness) retire du trafic un conteneur pas encore prêt.",
+      "analogie": "Un médecin qui vérifie régulièrement le pouls (liveness) et qui n'autorise un joueur à entrer sur le terrain qu'une fois échauffé (readiness).",
+      "a_retenir": "Le kafka-0 de ton VPS utilisait 49 % de sa limite de 1 Gio : c'est cette limite, fixée dans le StatefulSet, qui le protège ainsi que ses voisins.",
+      "lien": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 11,
+      "titre": "k3s",
+      "definition": "k3s est une distribution légère et certifiée de Kubernetes, conçue pour les petites machines, l'edge et les environnements de test.",
+      "fonctionnement": "Elle est livrée sous forme d'un seul binaire, consomme peu de mémoire et inclut par défaut ce qu'il faut pour démarrer : Traefik pour l'Ingress, un équilibreur de charge simple (ServiceLB, les conteneurs svclb de ton VPS) et le stockage local-path. Les fichiers YAML sont les mêmes que pour n'importe quel Kubernetes.",
+      "analogie": "Une version compacte d'une voiture : moins encombrante, mais avec le même volant et les mêmes pédales.",
+      "a_retenir": "k3s est un excellent moyen d'apprendre Kubernetes sur un VPS : tout ce qu'on y apprend s'applique à EKS, GKE ou AKS.",
+      "lien": "https://docs.k3s.io/architecture"
+    },
+    {
+      "module": "Kubernetes",
+      "numero": 12,
+      "titre": "Helm",
+      "definition": "Helm est le gestionnaire de paquets de Kubernetes : il installe une application complète, avec tous ses fichiers YAML, en une commande.",
+      "fonctionnement": "Un « chart » Helm regroupe des modèles de fichiers YAML et des valeurs par défaut. On l'installe avec ses propres valeurs (taille, nombre de copies, mots de passe), et Helm génère et applique les fichiers. Il garde l'historique des installations, ce qui permet les mises à jour et les retours en arrière.",
+      "analogie": "Un installeur d'application : au lieu de copier chaque fichier à la main, on lance un assistant qui pose quelques questions.",
+      "a_retenir": "La plupart des logiciels (Airflow, Kafka, PostgreSQL, Grafana…) proposent un chart Helm officiel ou communautaire.",
+      "lien": "https://helm.sh/docs/intro/quickstart/"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 1,
+      "titre": "la JVM",
+      "definition": "La JVM (Java Virtual Machine) est la machine virtuelle qui exécute les programmes Java, Scala ou Kotlin, sur n'importe quel système.",
+      "fonctionnement": "Le code source est compilé en bytecode, un langage intermédiaire que la JVM exécute, en compilant à la volée les parties les plus utilisées pour les accélérer. Un même fichier .jar fonctionne ainsi sous Linux, Windows ou macOS. Spark, Kafka, Flink et Cassandra tournent tous sur la JVM.",
+      "analogie": "Un interprète universel : on écrit le discours une fois, et il le traduit pour chaque pays.",
+      "a_retenir": "Les réglages de mémoire de la JVM (la taille du « heap ») sont au cœur du réglage de Spark et de Kafka : beaucoup d'erreurs OutOfMemory viennent de là.",
+      "lien": "https://dev.java/learn/jvm/"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 2,
+      "titre": "val, var et l'immutabilité",
+      "definition": "En Scala, val déclare une valeur qui ne peut plus changer, et var une variable modifiable.",
+      "fonctionnement": "Scala encourage l'immutabilité : on préfère val, et l'on crée de nouvelles valeurs plutôt que de modifier les anciennes. Les collections par défaut (List, Map…) sont elles aussi immuables : ajouter un élément renvoie une nouvelle collection.",
+      "analogie": "Écrire au stylo plutôt qu'au crayon : on ne corrige pas une ligne, on en écrit une nouvelle.",
+      "a_retenir": "C'est la même philosophie que Spark : un DataFrame ou un RDD ne se modifie jamais, chaque transformation en crée un nouveau. Cela rend le code plus sûr en parallèle.",
+      "lien": "https://docs.scala-lang.org/tour/basics.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 3,
+      "titre": "les case classes",
+      "definition": "Une case class est une classe Scala conçue pour représenter des données, avec une syntaxe très courte.",
+      "fonctionnement": "En une ligne (case class Vente(produit: String, montant: Double)), Scala génère le constructeur, la comparaison par valeur, l'affichage lisible et la copie avec modification (vente.copy(montant = 10)). Les instances sont immuables. Avec Spark, une case class sert à définir le schéma d'un Dataset typé.",
+      "analogie": "Un formulaire pré-imprimé : on ne remplit que les cases, la mise en page est fournie.",
+      "a_retenir": "Les case classes sont la façon idiomatique de modéliser des données en Scala, l'équivalent des dataclasses de Python.",
+      "lien": "https://docs.scala-lang.org/tour/case-classes.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 4,
+      "titre": "le pattern matching",
+      "definition": "Le pattern matching (filtrage par motif) permet de tester une valeur contre plusieurs formes possibles et d'agir selon celle qui correspond.",
+      "fonctionnement": "L'expression match compare une valeur à une suite de cas : une valeur précise, un type, ou la structure d'une case class, dont on extrait directement les champs. Le compilateur peut avertir si un cas n'est pas traité.",
+      "analogie": "Un centre de tri du courrier : chaque lettre est dirigée vers le bon casier selon sa forme et son adresse.",
+      "a_retenir": "Le pattern matching remplace avantageusement de longues suites de if/else, et se combine parfaitement avec les case classes et Option.",
+      "lien": "https://docs.scala-lang.org/tour/pattern-matching.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 5,
+      "titre": "les fonctions d'ordre supérieur",
+      "definition": "Une fonction d'ordre supérieur est une fonction qui prend une autre fonction en paramètre, ou en renvoie une. Les plus courantes sont map, filter et reduce.",
+      "fonctionnement": "map applique une fonction à chaque élément (ventes.map(v => v.montant)), filter garde les éléments qui vérifient une condition, reduce combine tous les éléments en un seul (une somme, par exemple). On les enchaîne pour décrire un traitement de façon déclarative, sans boucle.",
+      "analogie": "Une chaîne de production : chaque poste reçoit une consigne (la fonction) et l'applique à toutes les pièces qui passent.",
+      "a_retenir": "L'API de Spark reprend exactement ces fonctions : apprendre map, filter et reduce sur une liste Scala, c'est apprendre à penser en Spark.",
+      "lien": "https://docs.scala-lang.org/tour/higher-order-functions.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 6,
+      "titre": "Option, à la place de null",
+      "definition": "Option représente une valeur qui peut être absente : Some(valeur) si elle existe, None sinon.",
+      "fonctionnement": "Au lieu de renvoyer null, qui provoque des erreurs quand on l'oublie, une fonction renvoie une Option, et le type oblige à traiter le cas de l'absence : avec getOrElse (une valeur par défaut), map, ou le pattern matching. Les erreurs de type NullPointerException deviennent ainsi bien plus rares.",
+      "analogie": "Une boîte qui annonce sur son couvercle qu'elle peut être vide : on vérifie avant de s'en servir.",
+      "a_retenir": "Scala propose aussi Try et Either pour représenter un résultat qui peut être une erreur, sans exceptions.",
+      "lien": "https://docs.scala-lang.org/scala3/book/fp-functional-error-handling.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 7,
+      "titre": "Maven et le pom.xml",
+      "definition": "Maven est un outil de construction de projets Java et Scala. Il se configure avec un fichier pom.xml (Project Object Model).",
+      "fonctionnement": "Le pom.xml identifie le projet par trois coordonnées (groupId, artifactId, version) et liste ses dépendances avec les mêmes coordonnées. Maven télécharge automatiquement ces dépendances, et celles dont elles dépendent, depuis un dépôt (Maven Central), et les garde dans un cache local (~/.m2).",
+      "analogie": "Une liste de courses précise, avec la marque et la référence exacte de chaque produit : Maven fait les courses tout seul.",
+      "a_retenir": "Deux dépendances qui exigent des versions différentes d'une même bibliothèque créent un conflit ; la commande mvn dependency:tree affiche l'arbre complet pour le comprendre.",
+      "lien": "https://maven.apache.org/guides/introduction/introduction-to-the-pom.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 8,
+      "titre": "le cycle de vie Maven",
+      "definition": "Maven construit un projet en suivant un cycle de vie : une suite de phases dans un ordre fixe.",
+      "fonctionnement": "Les phases principales : validate, compile (compiler le code), test (lancer les tests), package (produire le .jar), verify, install (copier le .jar dans le dépôt local) et deploy (le publier dans un dépôt partagé). Lancer une phase exécute toutes les précédentes : mvn package compile et teste avant d'empaqueter.",
+      "analogie": "Une chaîne de montage : on ne peut pas emballer un produit qui n'a pas été assemblé et contrôlé.",
+      "a_retenir": "La commande la plus utilisée est mvn clean package : repartir de zéro, puis compiler, tester et produire le .jar.",
+      "lien": "https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 9,
+      "titre": "les portées des dépendances",
+      "definition": "Chaque dépendance Maven a une portée (scope) qui indique quand elle est nécessaire : compile, provided, runtime ou test.",
+      "fonctionnement": "compile (par défaut) : nécessaire partout, et incluse dans le paquet final. provided : nécessaire pour compiler, mais fournie par l'environnement d'exécution. test : seulement pour les tests. Pour une application Spark, les bibliothèques de Spark sont en provided, car le cluster les fournit déjà.",
+      "analogie": "Pour un pique-nique dans un parc équipé, on n'apporte pas les tables : elles sont « fournies » sur place.",
+      "a_retenir": "Oublier provided sur Spark gonfle le .jar de centaines de mégaoctets et peut provoquer des conflits de versions avec celles du cluster.",
+      "lien": "https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 10,
+      "titre": "sbt",
+      "definition": "sbt est l'outil de construction le plus utilisé en Scala, alternative à Maven.",
+      "fonctionnement": "Il se configure avec un fichier build.sbt écrit en Scala, utilise les mêmes dépôts et les mêmes coordonnées que Maven, et garde une session ouverte qui recompile très vite les fichiers modifiés. La commande sbt ~compile recompile automatiquement à chaque sauvegarde.",
+      "analogie": "Un atelier spécialisé pour Scala, là où Maven est l'atelier généraliste de la JVM.",
+      "a_retenir": "Dans un projet Spark en Scala, on rencontre l'un ou l'autre : les concepts (dépendances, portées, empaquetage) sont les mêmes.",
+      "lien": "https://www.scala-sbt.org/1.x/docs/Getting-Started.html"
+    },
+    {
+      "module": "Scala et Maven",
+      "numero": 11,
+      "titre": "le fat JAR et spark-submit",
+      "definition": "Un fat JAR (ou uber JAR) est un .jar qui contient l'application et toutes ses dépendances. spark-submit est la commande qui lance une application Spark sur un cluster.",
+      "fonctionnement": "Le cluster ne connaît pas les bibliothèques de ton application : on les embarque dans un fat JAR, avec le plugin Maven Shade ou sbt-assembly, en excluant celles de Spark (portée provided). On lance ensuite spark-submit --class com.exemple.Main --master … application.jar, en précisant les ressources (mémoire, nombre d'executors).",
+      "analogie": "Une valise de voyage complète : tout ce dont on a besoin est dedans, sauf ce que l'hôtel fournit déjà.",
+      "a_retenir": "Le shading peut aussi renommer une bibliothèque embarquée pour éviter un conflit avec la version présente sur le cluster.",
+      "lien": "https://spark.apache.org/docs/latest/submitting-applications.html"
+    },
+    {
+      "module": "Streaming",
+      "numero": 1,
+      "titre": "l'événement et le flux",
+      "definition": "Un événement est un fait qui s'est produit à un instant donné (un clic, un paiement, une mesure de capteur). Un flux est une suite sans fin d'événements.",
+      "fonctionnement": "Dans un traitement par lots, les données sont un ensemble fini : on les lit, on calcule, on termine. Dans un flux, les données n'ont pas de fin : le traitement tourne en continu et produit des résultats au fur et à mesure. Les événements sont transportés par une plateforme comme Kafka.",
+      "analogie": "Un livre (un lot, avec une fin) face à un fil d'actualité (un flux, qui ne s'arrête jamais).",
+      "a_retenir": "Penser en flux oblige à répondre à de nouvelles questions : quand produire un résultat, que faire des données en retard, comment reprendre après une panne.",
+      "lien": "https://flink.apache.org/what-is-flink/flink-architecture/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 2,
+      "titre": "le temps de l'événement et le temps de traitement",
+      "definition": "Le temps de l'événement est le moment où le fait s'est produit ; le temps de traitement est le moment où le système le reçoit et le traite.",
+      "fonctionnement": "Les deux diffèrent souvent : un téléphone hors réseau envoie ses événements en retard, un réseau ralentit, une application redémarre. Calculer « les ventes de 10 h à 11 h » sur le temps de traitement donne des résultats faux dès que des événements arrivent en retard ; les moteurs de streaming modernes savent calculer sur le temps de l'événement.",
+      "analogie": "La date d'une lettre (l'événement) et sa date de réception (le traitement) : une lettre de lundi peut arriver jeudi.",
+      "a_retenir": "Chaque événement doit porter son propre horodatage : c'est la condition pour des résultats justes en streaming.",
+      "lien": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 3,
+      "titre": "les fenêtres",
+      "definition": "Une fenêtre découpe un flux infini en morceaux finis, pour pouvoir calculer des agrégats : un total par minute, une moyenne par heure.",
+      "fonctionnement": "Fenêtre fixe (tumbling) : des intervalles contigus, sans chevauchement (de 10 h à 10 h 05, puis de 10 h 05 à 10 h 10…). Fenêtre glissante (sliding) : des intervalles qui se chevauchent (les 10 dernières minutes, recalculées toutes les minutes). Fenêtre de session : regroupe les événements d'un utilisateur jusqu'à une période d'inactivité.",
+      "analogie": "Découper un fleuve en seaux d'eau pour pouvoir mesurer ce qui passe.",
+      "a_retenir": "Sans fenêtre, une agrégation sur un flux n'aurait jamais de résultat final, puisque le flux ne se termine pas.",
+      "lien": "https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/operators/windows/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 4,
+      "titre": "le watermark",
+      "definition": "Un watermark est un repère de temps qui indique au moteur de streaming qu'il ne devrait plus recevoir d'événements plus anciens.",
+      "fonctionnement": "Le moteur ne peut pas attendre éternellement les retardataires. Le watermark avance avec les événements reçus, en tolérant un retard maximal (par exemple 10 minutes) : quand il dépasse la fin d'une fenêtre, le moteur considère la fenêtre comme complète et produit son résultat. Les événements qui arrivent encore plus tard sont ignorés ou traités à part.",
+      "analogie": "L'heure de fermeture des portes d'un examen : passé ce délai, les retardataires ne sont plus admis.",
+      "a_retenir": "Le watermark règle un compromis entre exactitude (attendre longtemps les retardataires) et rapidité (publier vite les résultats).",
+      "lien": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 5,
+      "titre": "l'état et les checkpoints",
+      "definition": "Un traitement avec état (stateful) garde des informations d'un événement à l'autre : des compteurs, des totaux par fenêtre, la dernière valeur de chaque clé. Les checkpoints sauvegardent régulièrement cet état.",
+      "fonctionnement": "Pour compter les clics par utilisateur, le moteur doit se souvenir des comptes en cours : c'est son état. Un checkpoint en fait une copie cohérente sur un stockage durable, avec la position de lecture dans Kafka. Après une panne, le traitement repart du dernier checkpoint, sans perdre ni compter deux fois les événements.",
+      "analogie": "La sauvegarde d'un jeu vidéo : en cas d'échec, on reprend au dernier point de sauvegarde, avec son inventaire.",
+      "a_retenir": "La gestion de l'état est ce qui distingue un vrai moteur de streaming (Flink, Spark Structured Streaming) d'un simple programme qui lit des messages.",
+      "lien": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 6,
+      "titre": "les garanties de livraison",
+      "definition": "Les garanties de livraison indiquent combien de fois un événement peut être traité en cas de panne : au plus une fois, au moins une fois, ou exactement une fois.",
+      "fonctionnement": "At-most-once : on ne relance jamais, et l'on peut perdre des événements. At-least-once : on relance en cas de doute, sans perte, mais avec de possibles doublons. Exactly-once : chaque événement produit son effet une seule fois, grâce aux checkpoints, aux transactions de Kafka et à des écritures idempotentes ou transactionnelles.",
+      "analogie": "Envoyer une lettre sans accusé de réception (au plus une fois), la renvoyer tant qu'on n'a pas de réponse (au moins une fois), ou par recommandé avec un numéro unique (exactement une fois).",
+      "a_retenir": "Le plus courant en pratique est at-least-once avec des écritures idempotentes : les doublons éventuels sont écrasés au lieu d'être ajoutés.",
+      "lien": "https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 7,
+      "titre": "Spark Structured Streaming",
+      "definition": "Spark Structured Streaming est le moteur de streaming de Spark : il traite un flux comme une table qui ne cesse de grandir.",
+      "fonctionnement": "On écrit la même requête qu'en batch (avec l'API DataFrame ou SQL), et Spark l'exécute en continu sur les nouvelles données, par défaut en petits lots successifs (micro-batches) de quelques secondes. Il gère les fenêtres, les watermarks et les checkpoints, et lit et écrit directement dans Kafka, des fichiers ou des tables Delta et Iceberg.",
+      "analogie": "Un tableur dont des lignes s'ajoutent sans arrêt, et dont les totaux se mettent à jour tout seuls.",
+      "a_retenir": "Le grand avantage : le même code, ou presque, sert en batch et en streaming. L'ancienne API DStreams est dépréciée.",
+      "lien": "https://spark.apache.org/docs/latest/streaming/index.html"
+    },
+    {
+      "module": "Streaming",
+      "numero": 8,
+      "titre": "Apache Flink",
+      "definition": "Apache Flink est un moteur conçu dès l'origine pour le streaming : il traite les événements un par un, avec un état et des garanties exactly-once.",
+      "fonctionnement": "Là où Spark traite par défaut des micro-lots, Flink traite chaque événement dès son arrivée, ce qui permet des latences de quelques millisecondes. Il excelle dans les traitements avec beaucoup d'état et le temps de l'événement. Il propose une API Java, une API Python et du SQL.",
+      "analogie": "Un guichet qui sert chaque client dès qu'il arrive, plutôt que d'attendre qu'un petit groupe se forme.",
+      "a_retenir": "Kafka + Flink est devenu un duo de référence pour le temps réel ; Spark reste souvent préféré quand l'équipe fait déjà beaucoup de batch avec lui.",
+      "lien": "https://flink.apache.org/what-is-flink/flink-architecture/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 9,
+      "titre": "Kafka Connect et Kafka Streams",
+      "definition": "Kafka Connect déplace des données entre Kafka et d'autres systèmes grâce à des connecteurs ; Kafka Streams est une bibliothèque Java pour traiter des flux directement entre topics Kafka.",
+      "fonctionnement": "Avec Kafka Connect, on configure un connecteur source (lire une base, des fichiers) ou destination (écrire vers S3, un entrepôt, Elasticsearch) sans écrire de code. Kafka Streams s'intègre dans une application Java ordinaire : pas de cluster à part, le parallélisme et la reprise reposent sur les partitions et les consumer groups de Kafka.",
+      "analogie": "Kafka Connect, ce sont les quais de chargement de l'entrepôt ; Kafka Streams, ce sont les ateliers qui transforment la marchandise sur place.",
+      "a_retenir": "Avant d'écrire un programme pour copier des données vers ou depuis Kafka, il faut vérifier s'il existe déjà un connecteur.",
+      "lien": "https://docs.confluent.io/platform/current/connect/index.html"
+    },
+    {
+      "module": "Streaming",
+      "numero": 10,
+      "titre": "le registre de schémas",
+      "definition": "Un registre de schémas est un service qui stocke les schémas des messages (Avro, Protobuf, JSON Schema) et vérifie que leurs évolutions restent compatibles.",
+      "fonctionnement": "Le producer enregistre le schéma de ses messages et n'envoie qu'un petit identifiant avec chaque message ; le consumer récupère le schéma correspondant pour le décoder. Avant d'accepter une nouvelle version, le registre vérifie qu'elle ne casse pas les consumers existants, selon la règle de compatibilité choisie.",
+      "analogie": "Une bibliothèque de modèles de formulaires officiels : chaque formulaire rempli indique simplement le numéro du modèle utilisé.",
+      "a_retenir": "Le registre de schémas empêche qu'un producer casse tous les consumers d'un topic en changeant le format de ses messages : c'est un contrat de données appliqué automatiquement.",
+      "lien": "https://docs.confluent.io/platform/current/schema-registry/index.html"
+    },
+    {
+      "module": "Streaming",
+      "numero": 11,
+      "titre": "la contre-pression",
+      "definition": "La contre-pression (backpressure) se produit quand une étape d'un pipeline reçoit des données plus vite qu'elle ne peut les traiter.",
+      "fonctionnement": "L'étape lente ralentit celles qui l'alimentent, et le retard s'accumule. Avec Kafka, ce retard se voit dans le consumer lag : l'écart entre le dernier message écrit et le dernier message lu. On y répond en ajoutant de la capacité (plus de partitions et de consumers), en optimisant l'étape lente, ou en lissant les pics.",
+      "analogie": "Un entonnoir : si l'on verse plus vite que le goulot ne laisse passer, le liquide s'accumule.",
+      "a_retenir": "Le consumer lag est l'indicateur le plus important à surveiller sur un pipeline de streaming.",
+      "lien": "https://nightlies.apache.org/flink/flink-docs-stable/docs/ops/monitoring/back_pressure/"
+    },
+    {
+      "module": "Streaming",
+      "numero": 12,
+      "titre": "la capture des changements (CDC)",
+      "definition": "La CDC (Change Data Capture) consiste à capter chaque modification d'une base de données (insertion, mise à jour, suppression) et à la publier sous forme d'événement.",
+      "fonctionnement": "Plutôt que d'interroger régulièrement la base, un outil comme Debezium lit son journal interne de transactions (le WAL de PostgreSQL, le binlog de MySQL) et envoie chaque changement dans Kafka, avec la valeur avant et après. Les systèmes en aval (lakehouse, cache, moteur de recherche) restent ainsi synchronisés presque en temps réel, sans surcharger la base.",
+      "analogie": "Un secrétaire qui recopie chaque modification du registre au moment où elle est faite, plutôt que de photocopier tout le registre chaque soir.",
+      "a_retenir": "La CDC est la façon la plus fiable d'alimenter un data lake à partir d'une base de production, sans requêtes lourdes ni oubli des suppressions.",
+      "lien": "https://debezium.io/documentation/reference/stable/tutorial.html"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 1,
+      "titre": "la gouvernance des données",
+      "definition": "La gouvernance des données est l'ensemble des rôles, des règles et des processus qui garantissent que les données sont fiables, sécurisées, conformes et bien utilisées.",
+      "fonctionnement": "Elle définit qui est responsable de chaque donnée (le data owner, côté métier), qui veille à sa qualité au quotidien (le data steward), quelles règles s'appliquent (définitions, qualité, accès, conservation) et comment les faire respecter. Elle s'appuie sur des outils : catalogue, lignage, contrôle d'accès, tests de qualité.",
+      "analogie": "Le code de la route des données : des règles, des responsables et des contrôles, pour que tout le monde circule en sécurité.",
+      "a_retenir": "Sans gouvernance, chaque équipe a sa propre version des chiffres, et personne ne sait qui peut accéder à quoi.",
+      "lien": "https://www.castordoc.com/blog/data-lineage-vs-data-catalog"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 2,
+      "titre": "le catalogue de données",
+      "definition": "Un catalogue de données recense les données disponibles dans l'organisation, avec leur description, leur propriétaire, leur qualité et leur origine.",
+      "fonctionnement": "Il collecte automatiquement les métadonnées des bases, des lacs et des outils (tables, colonnes, lignage, fréquence de mise à jour), et les complète par de la documentation métier. Un utilisateur y cherche une donnée comme dans un moteur de recherche. Exemples : DataHub, OpenMetadata, Unity Catalog, Apache Polaris (pour les tables Iceberg).",
+      "analogie": "Le catalogue d'une bibliothèque : on trouve un livre, son résumé et son emplacement sans parcourir les rayons.",
+      "a_retenir": "Une donnée qu'on ne trouve pas, ou dont on ne comprend pas la définition, ne sera pas utilisée, ou sera mal utilisée.",
+      "lien": "https://www.castordoc.com/blog/data-lineage-vs-data-catalog"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 3,
+      "titre": "le RGPD",
+      "definition": "Le RGPD (Règlement général sur la protection des données) encadre, dans l'Union européenne, tout traitement de données personnelles : toute information qui permet d'identifier une personne, directement ou indirectement.",
+      "fonctionnement": "Ses grands principes : une finalité précise et légitime, une base légale (consentement, contrat, obligation légale, intérêt légitime…), la minimisation (ne collecter que le nécessaire), une durée de conservation limitée, l'exactitude et la sécurité des données. L'organisation doit pouvoir prouver qu'elle les respecte, et les sanctions peuvent atteindre 4 % du chiffre d'affaires mondial.",
+      "analogie": "Les règles d'hygiène d'une cuisine : on n'y fait entrer que ce qui sert, on ne garde rien au-delà de la date limite, et on peut le prouver à l'inspecteur.",
+      "a_retenir": "Pour un data engineer, le RGPD se traduit concrètement : ne copier que les colonnes utiles, prévoir des durées de conservation, et savoir où se trouvent les données personnelles. C'est le sujet de ton projet rgpd-crag-agent.",
+      "lien": "https://www.cnil.fr/fr/reglement-europeen-protection-donnees"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 4,
+      "titre": "les droits des personnes",
+      "definition": "Le RGPD donne aux personnes des droits sur leurs données : accès, rectification, effacement, opposition, limitation et portabilité.",
+      "fonctionnement": "Une personne peut demander quelles données on détient sur elle, les faire corriger, ou les faire supprimer (le « droit à l'oubli »), dans un délai d'un mois en principe. Pour un pipeline, cela suppose de savoir dans quelles tables se trouvent ses données, y compris dans les copies et les historiques.",
+      "analogie": "Un client qui demande à consulter, corriger ou détruire son dossier : encore faut-il savoir dans quels classeurs il a été photocopié.",
+      "a_retenir": "Supprimer une ligne dans un fichier Parquet est difficile ; les formats de tables (Delta Lake, Iceberg) le permettent avec un simple DELETE, ce qui facilite le respect du droit à l'effacement.",
+      "lien": "https://www.cnil.fr/fr/mes-demarches/les-droits-pour-maitriser-vos-donnees-personnelles"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 5,
+      "titre": "anonymisation et pseudonymisation",
+      "definition": "L'anonymisation rend impossible, de façon irréversible, l'identification d'une personne. La pseudonymisation remplace les identifiants par un pseudonyme, mais l'identification reste possible avec une information complémentaire.",
+      "fonctionnement": "Pseudonymiser, c'est par exemple remplacer le nom par un identifiant aléatoire et garder la table de correspondance à part : les données restent personnelles au sens du RGPD. Anonymiser exige bien plus : supprimer ou généraliser les informations (âge exact remplacé par une tranche d'âge, adresse par une région) jusqu'à ce que plus personne ne puisse être reconnu, même en croisant les données.",
+      "analogie": "Pseudonymiser, c'est mettre un masque : on peut le retirer. Anonymiser, c'est se fondre dans la foule : plus personne ne peut vous reconnaître.",
+      "a_retenir": "Des données vraiment anonymes sortent du champ du RGPD, mais l'anonymisation est difficile : le croisement de quelques attributs (code postal, date de naissance, sexe) suffit souvent à réidentifier quelqu'un.",
+      "lien": "https://www.cnil.fr/fr/technologies/lanonymisation-de-donnees-personnelles"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 6,
+      "titre": "le chiffrement et le hachage",
+      "definition": "Le chiffrement rend des données illisibles sans une clé, de façon réversible. Le hachage transforme une donnée en une empreinte de taille fixe, de façon irréversible.",
+      "fonctionnement": "On chiffre les données au repos (sur disque) et en transit (sur le réseau, avec TLS, le « S » de HTTPS). Le hachage sert à vérifier l'intégrité d'un fichier ou à stocker des mots de passe (avec des algorithmes lents et salés, comme bcrypt ou Argon2). Hacher un identifiant peut servir à pseudonymiser, mais un simple hachage d'un e-mail se retrouve facilement par essais successifs.",
+      "analogie": "Chiffrer, c'est mettre une lettre dans un coffre dont on garde la clé ; hacher, c'est prendre l'empreinte digitale du document.",
+      "a_retenir": "La clé N8N_ENCRYPTION_KEY de ce projet chiffre les tokens enregistrés dans n8n : sans elle, ils sont illisibles, même avec un accès à la base.",
+      "lien": "https://www.cnil.fr/fr/securite-chiffrement-hachage-signature"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 7,
+      "titre": "la gestion des secrets",
+      "definition": "Un secret est une information qui donne un accès : mot de passe, token d'API, clé de chiffrement. Les gérer, c'est les stocker, les distribuer et les renouveler sans les exposer.",
+      "fonctionnement": "Règles de base : jamais de secret dans le code ni dans Git ; un fichier .env ignoré par Git pour un petit projet ; un gestionnaire de secrets (Vault, AWS Secrets Manager, Azure Key Vault) en entreprise ; des droits limités pour chaque secret, et un renouvellement régulier ou immédiat en cas de fuite.",
+      "analogie": "Les clés d'un immeuble : on ne les laisse pas sous le paillasson, et on change la serrure quand une clé est perdue.",
+      "a_retenir": "C'est exactement ce que tu as fait avec le token Telegram : un /revoke dans BotFather, c'est le renouvellement d'un secret exposé.",
+      "lien": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 8,
+      "titre": "le contrôle d'accès",
+      "definition": "Le contrôle d'accès détermine qui peut lire ou modifier quelles données. Le modèle le plus courant est le RBAC (Role-Based Access Control), le contrôle d'accès fondé sur les rôles.",
+      "fonctionnement": "On n'attribue pas les droits personne par personne, mais à des rôles (analyste ventes, data engineer, administrateur), puis l'on attribue les rôles aux personnes. Les plateformes de données permettent aussi de restreindre l'accès à certaines lignes (sécurité au niveau des lignes) ou de masquer certaines colonnes sensibles.",
+      "analogie": "Les badges par fonction dans un hôpital : le badge « infirmier » ouvre certaines portes, quel que soit l'infirmier qui le porte.",
+      "a_retenir": "Appliquer le moindre privilège aux données limite à la fois les fuites et les erreurs de manipulation.",
+      "lien": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 9,
+      "titre": "les contrats de données",
+      "definition": "Un contrat de données est un accord formel entre le producteur d'une donnée et ses consommateurs : schéma, signification des champs, qualité attendue, fréquence de mise à jour et responsable.",
+      "fonctionnement": "Le contrat est écrit dans un fichier (souvent en YAML), versionné, et vérifié automatiquement : un changement qui le casse est bloqué avant d'atteindre la production. Il déplace la responsabilité de la qualité vers la source, au lieu de laisser chaque consommateur réparer les problèmes.",
+      "analogie": "Un cahier des charges entre un fournisseur et ses clients : on sait ce qui sera livré, quand, et avec quelle qualité.",
+      "a_retenir": "Les contrats de données évitent la situation classique où une équipe renomme une colonne et casse, sans le savoir, dix tableaux de bord.",
+      "lien": "https://datacontract.com/"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 10,
+      "titre": "le data mesh",
+      "definition": "Le data mesh est une organisation dans laquelle chaque domaine métier est responsable de ses données, publiées comme des « produits » à destination des autres.",
+      "fonctionnement": "Il repose sur quatre principes : la propriété des données par les domaines, la donnée comme produit (documentée, fiable, facile à trouver), une plateforme commune en libre-service, et une gouvernance fédérée (des règles communes, appliquées par chaque domaine). Il répond aux limites d'une équipe data centrale devenue un goulot d'étranglement.",
+      "analogie": "Une ville organisée en quartiers autonomes, mais reliés par les mêmes routes et les mêmes règles d'urbanisme.",
+      "a_retenir": "Le data mesh est d'abord une organisation, pas un outil : il convient aux grandes entreprises, beaucoup moins aux petites équipes.",
+      "lien": "https://martinfowler.com/articles/data-mesh-principles.html"
+    },
+    {
+      "module": "Gouvernance et sécurité",
+      "numero": 11,
+      "titre": "l'AI Act",
+      "definition": "L'AI Act est le règlement européen sur l'intelligence artificielle. Il classe les systèmes d'IA selon leur niveau de risque et fixe des obligations proportionnées.",
+      "fonctionnement": "Risque inacceptable : interdit (notation sociale, par exemple). Haut risque (recrutement, crédit, santé…) : obligations fortes de qualité des données, de documentation, de contrôle humain et de suivi. Risque limité : obligations de transparence, comme indiquer qu'on parle à une IA. Risque minimal : pas d'obligation particulière. Les obligations entrent en application par étapes.",
+      "analogie": "Le classement des médicaments : en vente libre, sur ordonnance, ou interdits, selon leur danger.",
+      "a_retenir": "Pour un data engineer, l'AI Act renforce l'exigence de documenter l'origine et la qualité des données d'entraînement : la gouvernance devient une obligation légale pour l'IA à haut risque.",
+      "lien": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
     }
   ]
 }
