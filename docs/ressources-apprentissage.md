@@ -1,9 +1,9 @@
 # Ressources d'apprentissage — « Le fondamental du jour »
 
 > Rubrique prévue en **v1.1** : chaque matin, le digest ajoute **une** ressource non encore envoyée.
-> 40 ressources, soit 8 semaines de parcours.
+> 54 ressources, soit environ 11 semaines de parcours.
 > Ressources 1 à 21 : une publication LinkedIn « Data Engineering : des fondamentaux aux systèmes prêts pour la production » (les liens raccourcis `lnkd.in` ont été remplacés par leur adresse réelle).
-> Ressources 22 à 40 : des références reconnues du domaine, ajoutées pour compléter le parcours.
+> Ressources 22 à 54 : des références reconnues du domaine (dont 14 sur Docker, Kubernetes et k3s), ajoutées pour compléter le parcours.
 > Tous les liens ont été vérifiés le 11 novembre 2026.
 
 ## Structure prévue de la table `ressources`
@@ -64,6 +64,20 @@ Règle d'envoi : chaque jour, la ressource active **non encore envoyée** qui a 
 | 38 | Data Structure in n8n | Outils du projet | n8n (documentation) | https://docs.n8n.io/data/data-structure/ | Comment n8n représente les items ; utile pour ce projet |
 | 39 | LLM Powered Autonomous Agents | IA | Lilian Weng (blog) | https://lilianweng.github.io/posts/2023-06-23-agent/ | Article de référence sur les agents à base de LLM |
 | 40 | Building a Generative AI Platform | IA | Chip Huyen (blog) | https://huyenchip.com/2024/07/25/genai-platform.html | Architecture complète d'une application d'IA générative |
+| 41 | What Is a Container? | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/ | Point de départ de la série « Docker concepts » |
+| 42 | Dockerfile Best Practices | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/build/building/best-practices/ | Écrire des images légères, sûres et rapides à construire |
+| 43 | Multi-Stage Builds | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/build/building/multi-stage/ | Séparer la construction de l'exécution pour réduire la taille des images |
+| 44 | How Compose Works | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/compose/intro/compose-application-model/ | Services, réseaux, volumes : le modèle utilisé par ce projet |
+| 45 | Docker Networking | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/engine/network/ | Comprendre comment n8n joint PostgreSQL et Ollama dans ce projet |
+| 46 | Docker Volumes | Conteneurs et orchestration | Docker (documentation) | https://docs.docker.com/engine/storage/volumes/ | Comment les données survivent à la suppression d'un conteneur |
+| 47 | The Twelve-Factor App | Conteneurs et orchestration | 12factor.net | https://12factor.net/ | Les 12 principes d'une application prête pour le cloud (configuration dans l'environnement, processus sans état…) |
+| 48 | Kubernetes Overview | Conteneurs et orchestration | Kubernetes (documentation) | https://kubernetes.io/docs/concepts/overview/ | Pourquoi Kubernetes, et ses composants principaux |
+| 49 | Learn Kubernetes Basics | Conteneurs et orchestration | Kubernetes (documentation) | https://kubernetes.io/docs/tutorials/kubernetes-basics/ | Tutoriel officiel : déployer, exposer, mettre à l'échelle, mettre à jour |
+| 50 | k3s Architecture | Conteneurs et orchestration | k3s (documentation) | https://docs.k3s.io/architecture | Le Kubernetes léger utilisé sur le VPS |
+| 51 | Helm Quickstart | Conteneurs et orchestration | Helm (documentation) | https://helm.sh/docs/intro/quickstart/ | Le gestionnaire de paquets de Kubernetes |
+| 52 | Running Spark on Kubernetes | Conteneurs et orchestration | Apache Spark (documentation) | https://spark.apache.org/docs/latest/running-on-kubernetes.html | Le lien entre data engineering et Kubernetes |
+| 53 | Airflow KubernetesExecutor | Conteneurs et orchestration | Apache Airflow (documentation) | https://airflow.apache.org/docs/apache-airflow-providers-cncf-kubernetes/stable/kubernetes_executor.html | Exécuter chaque tâche Airflow dans son propre pod |
+| 54 | Kubernetes the Hard Way | Conteneurs et orchestration | GitHub (Kelsey Hightower) | https://github.com/kelseyhightower/kubernetes-the-hard-way | Avancé : installer Kubernetes à la main pour comprendre chaque pièce |
 
 ## Pourquoi ces liens ne sont pas des sources de veille
 

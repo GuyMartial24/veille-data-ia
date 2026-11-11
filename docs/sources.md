@@ -80,6 +80,15 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Hugging Face | `https://huggingface.co/blog/feed.xml` | *(aucun)* | 5 par semaine | Nouveaux modèles et techniques ouvertes ; volume élevé |
 | Simon Willison | `https://simonwillison.net/atom/entries/` | *(aucun)* | 1 à 2 par semaine | Référence sur l'usage pratique des LLM (flux « entries » : articles de fond seulement, pas les liens du jour) |
 
+### Conteneurs et infrastructure
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Kubernetes (blog officiel) | `https://kubernetes.io/feed.xml` | *(aucun)* | 2 par semaine | Annonces de versions, nouvelles fonctionnalités, bonnes pratiques |
+| Docker Compose | `https://github.com/docker/compose/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 à 3 par mois | L'outil de déploiement de ce projet |
+| Docker Engine | `https://github.com/moby/moby/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 par mois | Le moteur Docker. Le filtre écarte les versions de test (`-rc`) et la branche `v2.0.0-beta` |
+| k3s | `https://github.com/k3s-io/k3s/releases.atom` | `^v\d+\.\d+\.0\+k3s\d+$` | Environ 1 tous les 4 mois | Le Kubernetes léger du VPS (projet murmetric). Le filtre ne garde que les nouvelles versions majeures (`x.y.0`) : k3s publie chaque correctif sur trois branches à la fois, ce qui ferait beaucoup de bruit. Au moment du test, aucune version `x.y.0` ne figurait dans les 10 dernières entrées. |
+
 ### Outils du projet
 
 | Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
@@ -98,6 +107,10 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Chip Huyen | Plus de publication depuis janvier 2025 |
 | LangChain (blog) | Pas de flux RSS trouvé ; les versions sont déjà suivies par GitHub |
 | Start Data Engineering | Flux introuvable (404) ; un de ses articles est dans les ressources d'apprentissage |
+| Docker (blog) | Surtout des annonces commerciales (programmes partenaires, produits) |
+| CNCF (blog) | Surtout des annonces de nouveaux membres et d'événements |
+| Kubernetes (versions GitHub) | Plusieurs branches publiées le même jour, et versions alpha et bêta ; le blog officiel annonce déjà chaque version |
+| Helm | Outil non utilisé dans les projets actuels |
 
 ## Résultats de la vérification
 
