@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -672,
-        -272
+        -1072,
+        -528
       ],
       "id": "7d6557f8-1eda-42a8-9830-19238b5c9290",
       "name": "When clicking ‘Execute workflow’"
@@ -32,8 +32,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -320,
-        -272
+        -720,
+        -528
       ],
       "id": "2d480e84-084b-4c7f-bd61-3869c054f763",
       "name": "Ollama"
@@ -168,8 +168,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        32,
-        -272
+        -368,
+        -528
       ],
       "id": "89f8754e-80ad-44da-bfcd-9db402f9d6b3",
       "name": "Enregistrer résumé",
@@ -209,11 +209,12 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -144,
-        -272
+        -544,
+        -528
       ],
       "id": "2c354d06-821d-4b26-af32-e0f5dcdf1ca9",
-      "name": "Extraire résumé "
+      "name": "Extraire résumé ",
+      "executeOnce": true
     },
     {
       "parameters": {
@@ -224,8 +225,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -496,
-        -272
+        -896,
+        -528
       ],
       "id": "a83cf421-2d98-4f65-8a56-2800ef0b9dd8",
       "name": "Annonces à résumer",
@@ -235,6 +236,19 @@
           "name": "Postgres account"
         }
       }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1072,
+        -320
+      ],
+      "id": "305f461c-d0b9-4eb9-a740-1eac9d599e13",
+      "name": "When Executed by Another Workflow"
     }
   ],
   "connections": {
@@ -276,6 +290,22 @@
         [
           {
             "node": "Ollama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enregistrer résumé": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Annonces à résumer",
             "type": "main",
             "index": 0
           }
