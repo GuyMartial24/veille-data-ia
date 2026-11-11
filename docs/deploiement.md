@@ -134,3 +134,23 @@ Dans les réglages (**Settings**) des workflows 02, 03 et 04, le champ **Error W
   ```bash
   docker compose exec postgres psql -U veille -d veille -c "SELECT count(*) FILTER (WHERE envoyee_le::date = current_date) AS envoyees_aujourdhui, count(*) FILTER (WHERE envoyee_le IS NULL) AS en_attente FROM annonces;"
   ```
+
+## Sauvegarde (non activée)
+
+La sauvegarde automatique des bases n'est **pas activée** en production (choix du 11 novembre 2026). Sans elle, une erreur de manipulation ou une panne du VPS ferait perdre l'historique des annonces et la progression dans les leçons. Les workflows, les sources et les leçons, eux, sont dans le dépôt Git et peuvent être réinstallés.
+
+Pour l'activer :
+
+1. Lancer une première sauvegarde : `~/Projets_en_Production/veille-data-ia/scripts/sauvegarder_base.sh` (bases `veille` et `n8n`, rotation sur 14 jours, dans `~/sauvegardes/veille-data-ia`).
+2. Vérifier qu'elle se restaure, dans une base temporaire :
+   ```bash
+   docker compose exec -T postgres createdb -U veille veille_test
+   docker compose exec -T postgres pg_restore -U veille -d veille_test < ~/sauvegardes/veille-data-ia/veille_$(date +%F).dump
+   docker compose exec -T postgres dropdb -U veille veille_test
+   ```
+3. La programmer chaque nuit à 1 h 30 (`crontab -e`) :
+   ```
+   30 1 * * * /home/ubuntu/Projets_en_Production/veille-data-ia/scripts/sauvegarder_base.sh >> /home/ubuntu/sauvegardes/veille-data-ia/sauvegarde.log 2>&1
+   ```
+4. Idéalement, copier régulièrement les sauvegardes hors du VPS (règle 3-2-1).
+
