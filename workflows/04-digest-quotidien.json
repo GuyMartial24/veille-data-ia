@@ -1,0 +1,179 @@
+{
+  "id": "KjePo8B5GxYOh994",
+  "name": "04 - Digest quotidien",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -272
+      ],
+      "id": "d7e4b8f7-5d85-4111-948a-74c6ce691463",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM prochaine_notion;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -512,
+        -272
+      ],
+      "id": "d56b6f47-78c8-4ebb-8936-169222b0366e",
+      "name": "Notion du jour",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "={{ (() => {\n  const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  return [\n    `🎓 <b>La notion du jour</b> (${$json.ordre}/${$json.total})`,\n    `${$json.emoji} <b>${e($json.module)}</b> (${$json.numero}/${$json.total_module}) : <b>${e($json.titre)}</b>`,\n    '',\n    '📖 <b>Définition</b>',\n    e($json.definition),\n    '',\n    '⚙️ <b>Comment ça marche</b>',\n    e($json.fonctionnement),\n    '',\n    '🧠 <b>Analogie</b>',\n    e($json.analogie),\n    '',\n    '💡 <b>À retenir</b>',\n    e($json.a_retenir),\n    '',\n    `🔗 <a href=\"${e($json.lien)}\">Pour aller plus loin</a>`\n  ].join('\\n');\n})() }}\n",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -272
+      ],
+      "id": "1ee1e9b2-13ed-480d-a70b-77723bd458e9",
+      "name": "Send a text message",
+      "webhookId": "b9aea0c6-f937-467c-9b82-858061b6e988",
+      "credentials": {
+        "telegramApi": {
+          "id": "8pBYPF2V4CQJIb2f",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "envois_notions",
+          "mode": "list",
+          "cachedResultName": "envois_notions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "notion_id": "=\t{{ $('Notion du jour').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "notion_id",
+              "displayName": "notion_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "envoyee_le",
+              "displayName": "envoyee_le",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -64,
+        -272
+      ],
+      "id": "34687f81-b29c-430a-9288-c08de79019e1",
+      "name": "Noter l'envoi",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Notion du jour",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion du jour": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Noter l'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
