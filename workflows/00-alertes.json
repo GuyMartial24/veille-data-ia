@@ -46,7 +46,7 @@
             {
               "id": "f2f0688a-38c7-4f94-9a05-f6d5f2e64005",
               "name": "=texte",
-              "value": "={{ (() => {   const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   return [     '🚨 <b>Échec d\\'un workflow</b>',     '',     `<b>Workflow</b> : ${e($json.workflow.name)}`,     `<b>Nœud en erreur</b> : ${e($json.execution.lastNodeExecuted)}`,     `<b>Erreur</b> : ${e($json.execution.error?.message)}`,     `<b>Exécution</b> : n°${$json.execution.id}`,     `<b>Quand</b> : ${$now.setLocale('fr').toFormat('d MMMM yyyy à HH:mm')}`   ].join('\\n'); })() }}",
+              "value": "={{ (() => {   const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   return [     '<b>Échec d\\'un workflow</b>',     '',     `<b>Workflow</b> : ${e($json.workflow.name)}`,     `<b>Nœud en erreur</b> : ${e($json.execution.lastNodeExecuted)}`,     `<b>Erreur</b> : ${e($json.execution.error?.message)}`,     `<b>Exécution</b> : n°${$json.execution.id}`,     `<b>Quand</b> : ${$now.setLocale('fr').toFormat('d MMMM yyyy à HH:mm')}`   ].join('\\n'); })() }}",
               "type": "string"
             }
           ]
@@ -66,7 +66,7 @@
       "parameters": {
         "fromEmail": "=Veille Data & IA <{{ $env.EMAIL_DESTINATAIRE }}>",
         "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
-        "subject": "=🚨 Échec du workflow {{ $('Error Trigger').item.json.workflow.name }}",
+        "subject": "=Échec du workflow {{ $('Error Trigger').item.json.workflow.name }}",
         "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
         "options": {}
       },

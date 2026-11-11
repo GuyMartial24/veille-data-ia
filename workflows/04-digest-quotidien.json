@@ -150,7 +150,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Échappe les caractères spéciaux du HTML de Telegram\nconst e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\nconst annonces = $input.all().map(item => item.json);\n\n// 1. Un bloc de texte par annonce, avec un titre à chaque nouvelle catégorie\nconst blocs = [];\nlet categorieCourante = null;\nfor (const a of annonces) {\n  let bloc = '';\n  if (a.categorie !== categorieCourante) {\n    categorieCourante = a.categorie;\n    bloc += `\\n📂 <b>${e(a.categorie)}</b>\\n`;\n  }\n  bloc += `\\n🆕 <b>${e(a.source)}</b> — <a href=\"${e(a.lien)}\">${e(a.titre)}</a>`;\n  if (a.resume) bloc += `\\n${e(a.resume)}`;\n  if (a.notion_a_retenir) bloc += `\\n💡 <i>${e(a.notion_a_retenir)}</i>`;\n  blocs.push(bloc + '\\n');\n}\n\n// 2. Regrouper les blocs en messages de moins de 3 800 caractères\nconst messages = [];\nlet message = `📰 <b>Les nouveautés du jour</b> (${annonces.length})\\n`;\nfor (const bloc of blocs) {\n  if ((message + bloc).length > 3800) {\n    messages.push(message);\n    message = '';\n  }\n  message += bloc;\n}\nmessages.push(message);\n\n// 3. Un item par message : le nœud Telegram enverra donc un message par item\nreturn messages.map(texte => ({ json: { texte } }));\n"
+        "jsCode": "// Échappe les caractères spéciaux du HTML de Telegram\nconst e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\nconst annonces = $input.all().map(item => item.json);\n\n// 1. Un bloc de texte par annonce, avec un titre à chaque nouvelle catégorie\nconst blocs = [];\nlet categorieCourante = null;\nfor (const a of annonces) {\n  let bloc = '';\n  if (a.categorie !== categorieCourante) {\n    categorieCourante = a.categorie;\n    bloc += `\\n<b>${e(a.categorie)}</b>\\n`;\n  }\n  bloc += `\\n<b>${e(a.source)}</b> — <a href=\"${e(a.lien)}\">${e(a.titre)}</a>`;\n  if (a.resume) bloc += `\\n${e(a.resume)}`;\n  if (a.notion_a_retenir) bloc += `\\nÀ retenir : <i>${e(a.notion_a_retenir)}</i>`;\n  blocs.push(bloc + '\\n');\n}\n\n// 2. Regrouper les blocs en messages de moins de 3 800 caractères\nconst messages = [];\nlet message = `<b>Les nouveautés du jour</b> (${annonces.length})\\n`;\nfor (const bloc of blocs) {\n  if ((message + bloc).length > 3800) {\n    messages.push(message);\n    message = '';\n  }\n  message += bloc;\n}\nmessages.push(message);\n\n// 3. Un item par message : le nœud Telegram enverra donc un message par item\nreturn messages.map(texte => ({ json: { texte } }));\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -220,7 +220,7 @@
             {
               "id": "cb777260-071c-485e-8a6a-c336453bae40",
               "name": "=texte",
-              "value": "={{ (() => {   const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   return [     `🎓 <b>La notion du jour</b> (${$json.ordre}/${$json.total})`,     `${$json.emoji} <b>${e($json.module)}</b> (${$json.numero}/${$json.total_module}) : <b>${e($json.titre)}</b>`,     '',     '📖 <b>Définition</b>',     e($json.definition),     '',     '⚙️ <b>Comment ça marche</b>',     e($json.fonctionnement),     '',     '🧠 <b>Analogie</b>',     e($json.analogie),     '',     '💡 <b>À retenir</b>',     e($json.a_retenir),     '',     `🔗 <a href=\"${e($json.lien)}\">Pour aller plus loin</a>`   ].join('\\n'); })() }}",
+              "value": "={{ (() => {   const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   return [     `<b>La notion du jour</b> (${$json.ordre}/${$json.total})`,     `<b>${e($json.module)}</b> (${$json.numero}/${$json.total_module}) : <b>${e($json.titre)}</b>`,     '',     '<b>Définition</b>',     e($json.definition),     '',     '<b>Comment ça marche</b>',     e($json.fonctionnement),     '',     '<b>Analogie</b>',     e($json.analogie),     '',     '<b>À retenir</b>',     e($json.a_retenir),     '',     `<a href=\"${e($json.lien)}\">Pour aller plus loin</a>`   ].join('\\n'); })() }}",
               "type": "string"
             }
           ]
@@ -264,7 +264,7 @@
       "parameters": {
         "fromEmail": "=<{{ $env.EMAIL_DESTINATAIRE }}>",
         "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
-        "subject": "=📰 Veille Data & IA du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
+        "subject": "=Veille Data & IA du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
         "html": "={{ $json.html }}",
         "options": {}
       },

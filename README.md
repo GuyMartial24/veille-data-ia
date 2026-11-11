@@ -245,6 +245,6 @@ Le projet a été construit **étape par étape**, avec un double objectif : obt
 
 ## Auteur
 
-**Martial GADJEU** | Data & AI Engineer
+**Martial GADJEU** | Data & AI Engineer · [LinkedIn](https://www.linkedin.com/in/martial-gadjeu-4a95804b/)
 
 Conçu et développé par [GuyMartial24](https://github.com/GuyMartial24).
