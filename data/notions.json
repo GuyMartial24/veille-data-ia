@@ -1,10 +1,56 @@
 {
   "description": "Leçons de la rubrique « La notion du jour ». Chaque jour, une notion d'un module différent (rotation dans l'ordre des modules). Ce fichier sert à remplir la table notions de la base veille.",
   "modules": [
-    { "nom": "Kafka", "rang": 1, "emoji": "📨" },
-    { "nom": "Spark", "rang": 2, "emoji": "⚡" },
-    { "nom": "IA", "rang": 3, "emoji": "🤖" },
-    { "nom": "Docker", "rang": 4, "emoji": "🐳" }
+    {
+      "nom": "Kafka",
+      "rang": 1,
+      "emoji": "📨"
+    },
+    {
+      "nom": "Spark",
+      "rang": 2,
+      "emoji": "⚡"
+    },
+    {
+      "nom": "IA",
+      "rang": 3,
+      "emoji": "🤖"
+    },
+    {
+      "nom": "Docker",
+      "rang": 4,
+      "emoji": "🐳"
+    },
+    {
+      "nom": "SQL",
+      "rang": 5,
+      "emoji": "🧮"
+    },
+    {
+      "nom": "Bases de données",
+      "rang": 6,
+      "emoji": "🗄️"
+    },
+    {
+      "nom": "Stockage et architectures",
+      "rang": 7,
+      "emoji": "🏞️"
+    },
+    {
+      "nom": "Modélisation",
+      "rang": 8,
+      "emoji": "📐"
+    },
+    {
+      "nom": "Orchestration et transformation",
+      "rang": 9,
+      "emoji": "🎼"
+    },
+    {
+      "nom": "Pipelines scalables",
+      "rang": 10,
+      "emoji": "🏗️"
+    }
   ],
   "notions": [
     {
@@ -406,6 +452,606 @@
       "analogie": "Une porte entre l'appartement (le conteneur) et la rue (l'extérieur) : on peut la limiter à l'intérieur de l'immeuble (127.0.0.1) au lieu de l'ouvrir sur la rue.",
       "a_retenir": "Ne publier que les ports nécessaires, et sur 127.0.0.1 quand c'est possible, est l'une des mesures de sécurité les plus simples et les plus efficaces.",
       "lien": "https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/"
+    },
+    {
+      "module": "SQL",
+      "numero": 1,
+      "titre": "l'ordre d'exécution d'une requête",
+      "definition": "Une requête SQL ne s'exécute pas dans l'ordre où on l'écrit. On écrit SELECT en premier, mais il est évalué presque en dernier.",
+      "fonctionnement": "L'ordre logique est le suivant : FROM et JOIN (quelles tables), WHERE (quelles lignes), GROUP BY (quels groupes), HAVING (quels groupes garder), SELECT (quelles colonnes), ORDER BY (dans quel ordre), puis LIMIT (combien de lignes).",
+      "analogie": "Cuisiner : on sort les ingrédients (FROM), on écarte ceux qui sont abîmés (WHERE), on les regroupe par plat (GROUP BY), puis on dresse l'assiette (SELECT).",
+      "a_retenir": "Cet ordre explique une erreur classique : un alias défini dans SELECT ne peut pas être utilisé dans WHERE, car WHERE est évalué avant SELECT.",
+      "lien": "https://www.postgresql.org/docs/current/sql-select.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 2,
+      "titre": "les jointures",
+      "definition": "Une jointure combine les lignes de deux tables à partir d'une colonne commune, par exemple l'identifiant d'un client.",
+      "fonctionnement": "INNER JOIN ne garde que les lignes qui ont une correspondance des deux côtés. LEFT JOIN garde toutes les lignes de la table de gauche, et met des valeurs vides (NULL) quand il n'y a pas de correspondance à droite. FULL OUTER JOIN garde tout, des deux côtés. CROSS JOIN associe chaque ligne de la première table à chaque ligne de la seconde.",
+      "analogie": "Croiser une liste d'invités avec une liste de réponses : INNER JOIN ne garde que les invités qui ont répondu, LEFT JOIN garde tous les invités, avec « pas de réponse » pour les autres.",
+      "a_retenir": "Une jointure sur une colonne qui n'est pas unique multiplie les lignes : si un nombre de lignes explose après une jointure, c'est la première chose à vérifier.",
+      "lien": "https://www.postgresql.org/docs/current/tutorial-join.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 3,
+      "titre": "GROUP BY et les agrégats",
+      "definition": "GROUP BY regroupe les lignes qui ont la même valeur dans une ou plusieurs colonnes, pour calculer un résultat par groupe avec des fonctions d'agrégation (COUNT, SUM, AVG, MIN, MAX).",
+      "fonctionnement": "La requête produit une ligne par groupe. WHERE filtre les lignes avant le regroupement, HAVING filtre les groupes après. Par exemple : le chiffre d'affaires par pays (GROUP BY pays), en ne gardant que les pays au-dessus d'un million (HAVING SUM(montant) > 1000000).",
+      "analogie": "Trier des pièces de monnaie par valeur, puis compter chaque pile.",
+      "a_retenir": "Toute colonne du SELECT qui n'est pas dans une fonction d'agrégation doit figurer dans le GROUP BY.",
+      "lien": "https://www.postgresql.org/docs/current/tutorial-agg.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 4,
+      "titre": "les CTE",
+      "definition": "Une CTE (Common Table Expression) est une requête temporaire, nommée avec WITH, que l'on peut utiliser dans la suite de la requête comme une table.",
+      "fonctionnement": "On écrit WITH ventes_2026 AS (SELECT …), puis on interroge ventes_2026 comme une table ordinaire. On peut enchaîner plusieurs CTE, chacune pouvant utiliser les précédentes. Une CTE récursive (WITH RECURSIVE) permet de parcourir une hiérarchie, comme un organigramme.",
+      "analogie": "Les étapes intermédiaires d'un calcul posé au brouillon, chacune avec un nom clair.",
+      "a_retenir": "Les CTE rendent une requête complexe lisible, étape par étape. C'est la façon d'écrire recommandée par dbt.",
+      "lien": "https://www.postgresql.org/docs/current/queries-with.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 5,
+      "titre": "les fonctions de fenêtrage",
+      "definition": "Une fonction de fenêtrage calcule une valeur pour chaque ligne à partir d'un groupe de lignes voisines, sans fusionner les lignes comme le fait GROUP BY.",
+      "fonctionnement": "On l'écrit avec OVER (PARTITION BY … ORDER BY …). Exemples : ROW_NUMBER() numérote les lignes de chaque groupe, RANK() les classe, LAG() lit la valeur de la ligne précédente, et SUM(montant) OVER (ORDER BY date) calcule un cumul.",
+      "analogie": "Dans un classement sportif, chaque coureur garde sa ligne, mais on y ajoute sa position et son écart avec le précédent.",
+      "a_retenir": "ROW_NUMBER() OVER (PARTITION BY client ORDER BY date DESC) = 1 est la technique classique pour garder la ligne la plus récente de chaque client.",
+      "lien": "https://www.postgresql.org/docs/current/tutorial-window.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 6,
+      "titre": "les index",
+      "definition": "Un index est une structure de données qui permet de retrouver rapidement des lignes sans parcourir toute la table.",
+      "fonctionnement": "Sans index, la base lit toute la table pour trouver les lignes demandées. Avec un index, souvent un arbre B (B-tree), elle va directement aux bonnes lignes. Un index accélère les lectures filtrées sur la colonne indexée, mais ralentit un peu chaque écriture, car l'index doit être mis à jour.",
+      "analogie": "L'index à la fin d'un livre : on trouve la bonne page sans lire tout l'ouvrage.",
+      "a_retenir": "On indexe les colonnes souvent utilisées dans WHERE et dans les jointures. Indexer toutes les colonnes est contre-productif.",
+      "lien": "https://www.postgresql.org/docs/current/indexes-intro.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 7,
+      "titre": "le plan d'exécution",
+      "definition": "Le plan d'exécution est la stratégie choisie par la base pour exécuter une requête : dans quel ordre lire les tables, avec ou sans index, avec quelle méthode de jointure.",
+      "fonctionnement": "La commande EXPLAIN affiche le plan prévu, avec une estimation du coût. EXPLAIN ANALYZE exécute réellement la requête et affiche les temps mesurés. On y repère par exemple un « Seq Scan » (lecture complète de la table) là où l'on attendait un « Index Scan ».",
+      "analogie": "L'itinéraire calculé par un GPS : on peut le lire avant de partir pour comprendre pourquoi le trajet sera long.",
+      "a_retenir": "Face à une requête lente, il faut d'abord lire son plan d'exécution, avant de modifier quoi que ce soit.",
+      "lien": "https://www.postgresql.org/docs/current/using-explain.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 8,
+      "titre": "les transactions et ACID",
+      "definition": "Une transaction est un groupe d'opérations qui réussit entièrement ou échoue entièrement. ACID résume les quatre garanties qu'apporte une base transactionnelle.",
+      "fonctionnement": "Atomicité : tout ou rien. Cohérence : les règles de la base restent respectées. Isolation : les transactions simultanées ne se perturbent pas. Durabilité : une fois validée (COMMIT), une modification survit à une panne. On ouvre une transaction avec BEGIN, on la valide avec COMMIT ou on l'annule avec ROLLBACK.",
+      "analogie": "Un virement bancaire : le débit d'un compte et le crédit de l'autre doivent avoir lieu tous les deux, ou aucun des deux.",
+      "a_retenir": "Les formats de tables modernes (Delta Lake, Iceberg) apportent justement ces garanties ACID aux data lakes.",
+      "lien": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 9,
+      "titre": "la normalisation",
+      "definition": "La normalisation est une méthode d'organisation des tables qui évite de stocker plusieurs fois la même information.",
+      "fonctionnement": "Au lieu de répéter le nom et l'adresse d'un client sur chacune de ses commandes, on crée une table clients et une table commandes reliées par l'identifiant du client. Les « formes normales » (1NF, 2NF, 3NF) sont des règles progressives : valeurs atomiques, pas de dépendance partielle, pas de dépendance indirecte.",
+      "analogie": "Un carnet d'adresses unique, plutôt que recopier l'adresse d'un ami sur chaque lettre qu'on lui écrit.",
+      "a_retenir": "Les bases transactionnelles sont normalisées pour éviter les incohérences ; les entrepôts de données sont souvent « dénormalisés » pour accélérer les analyses.",
+      "lien": "https://learn.microsoft.com/en-us/previous-versions/troubleshoot/microsoft-365/microsoft-365-apps/access/database-normalization-description"
+    },
+    {
+      "module": "SQL",
+      "numero": 10,
+      "titre": "les vues et les vues matérialisées",
+      "definition": "Une vue est une requête enregistrée sous un nom, que l'on interroge comme une table. Une vue matérialisée enregistre en plus le résultat de cette requête.",
+      "fonctionnement": "Une vue simple ne stocke rien : sa requête est réexécutée à chaque lecture, ce qui donne des données toujours à jour. Une vue matérialisée stocke le résultat : la lecture est rapide, mais les données ne changent que lorsqu'on la rafraîchit (REFRESH MATERIALIZED VIEW).",
+      "analogie": "Une vue, c'est une recette qu'on refait à chaque fois ; une vue matérialisée, c'est un plat préparé à l'avance, à réchauffer de temps en temps.",
+      "a_retenir": "Dans dbt, choisir entre view, table et incremental pour un modèle, c'est exactement ce compromis entre fraîcheur et rapidité.",
+      "lien": "https://www.postgresql.org/docs/current/rules-materializedviews.html"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 1,
+      "titre": "OLTP et OLAP",
+      "definition": "OLTP (traitement transactionnel) et OLAP (traitement analytique) désignent deux usages très différents d'une base de données.",
+      "fonctionnement": "Une base OLTP sert une application : beaucoup de petites lectures et écritures simultanées (créer une commande, mettre à jour un stock), sur peu de lignes à la fois. Une base OLAP sert l'analyse : peu de requêtes, mais chacune parcourt des millions de lignes pour calculer des totaux et des tendances.",
+      "analogie": "Une caisse de magasin (OLTP), qui enregistre chaque vente, et le service de comptabilité (OLAP), qui analyse toutes les ventes de l'année.",
+      "a_retenir": "On n'analyse pas directement la base de production : on copie ses données vers un système analytique, pour ne pas ralentir l'application.",
+      "lien": "https://aws.amazon.com/compare/the-difference-between-olap-and-oltp/"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 2,
+      "titre": "le stockage en lignes ou en colonnes",
+      "definition": "Une base peut ranger ses données ligne par ligne, ou colonne par colonne.",
+      "fonctionnement": "En stockage par lignes (PostgreSQL, MySQL), toutes les valeurs d'une ligne sont côte à côte : idéal pour lire ou écrire un enregistrement complet. En stockage par colonnes (ClickHouse, BigQuery, DuckDB, fichiers Parquet), toutes les valeurs d'une colonne sont côte à côte : une requête qui n'utilise que 3 colonnes sur 50 ne lit que ces 3 colonnes, et des valeurs semblables se compressent très bien.",
+      "analogie": "Un carnet de fiches clients (une fiche par client) contre un tableau dont on ne lirait que la colonne « montant ».",
+      "a_retenir": "Les lignes conviennent aux applications (OLTP), les colonnes à l'analyse (OLAP).",
+      "lien": "https://clickhouse.com/docs/resources/support-center/knowledge-base/general-faqs/columnar-database"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 3,
+      "titre": "le SGBD relationnel",
+      "definition": "Un SGBD relationnel (système de gestion de base de données) range les données dans des tables reliées entre elles, et se manipule en SQL.",
+      "fonctionnement": "Chaque table a un schéma fixe (des colonnes typées), une clé primaire qui identifie chaque ligne, et des clés étrangères qui la relient à d'autres tables. Le SGBD garantit les contraintes (unicité, liens valides) et les transactions ACID. Exemples : PostgreSQL, MySQL, SQL Server, Oracle.",
+      "analogie": "Un classeur bien organisé, où chaque onglet suit un modèle strict et où les onglets se renvoient les uns aux autres par des numéros.",
+      "a_retenir": "Le relationnel reste le choix par défaut quand les données sont structurées et que leur cohérence est essentielle ; ce projet utilise PostgreSQL.",
+      "lien": "https://www.postgresql.org/docs/current/tutorial-concepts.html"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 4,
+      "titre": "le NoSQL",
+      "definition": "NoSQL (« not only SQL ») désigne les bases de données qui ne suivent pas le modèle relationnel classique.",
+      "fonctionnement": "Elles sacrifient souvent une partie des garanties du relationnel (schéma fixe, jointures, transactions complexes) pour gagner en souplesse ou en capacité de montée en charge. On distingue quatre grandes familles : clé-valeur, document, colonnes larges et graphe, chacune adaptée à un type d'usage.",
+      "analogie": "Plutôt qu'un classeur unique pour tout, des rangements spécialisés : un vestiaire numéroté, des dossiers libres, un grand registre, une carte de relations.",
+      "a_retenir": "Le choix d'une base NoSQL se fait d'après la façon dont l'application lit les données ; il n'y a pas de « meilleure » base dans l'absolu.",
+      "lien": "https://en.wikipedia.org/wiki/CAP_theorem"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 5,
+      "titre": "la base clé-valeur",
+      "definition": "Une base clé-valeur associe une valeur à une clé unique, comme un grand dictionnaire. Exemple : Redis.",
+      "fonctionnement": "On ne fait que des opérations simples : écrire, lire ou supprimer la valeur d'une clé. Redis garde ses données en mémoire, ce qui rend ces opérations extrêmement rapides. On l'utilise pour le cache, les sessions d'utilisateurs, les compteurs ou les files d'attente.",
+      "analogie": "Un vestiaire : on donne un numéro de ticket, on récupère tout de suite le manteau correspondant.",
+      "a_retenir": "Une base clé-valeur est imbattable en vitesse pour retrouver une donnée par sa clé, mais inadaptée aux recherches sur le contenu.",
+      "lien": "https://redis.io/docs/latest/get-started/"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 6,
+      "titre": "la base orientée documents",
+      "definition": "Une base orientée documents stocke des documents au format JSON (ou proche), dont la structure peut varier d'un document à l'autre. Exemple : MongoDB.",
+      "fonctionnement": "Un document regroupe des informations liées qu'on aurait réparties dans plusieurs tables en relationnel : une commande et toutes ses lignes, par exemple. Pas besoin de schéma fixe, et on peut chercher et indexer n'importe quel champ.",
+      "analogie": "Un dossier papier par client, qui contient toutes ses pièces, plutôt que des pièces rangées par type dans des armoires séparées.",
+      "a_retenir": "Idéal quand les données sont lues d'un bloc et que leur structure évolue souvent ; moins adapté quand il faut beaucoup de jointures entre entités.",
+      "lien": "https://www.mongodb.com/docs/manual/"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 7,
+      "titre": "la base à colonnes larges",
+      "definition": "Une base à colonnes larges (wide-column) répartit d'immenses volumes de données sur de nombreux serveurs, en organisant chaque table autour d'une clé de partition. Exemple : Apache Cassandra.",
+      "fonctionnement": "La clé de partition détermine sur quels serveurs une ligne est stockée, et chaque donnée est copiée sur plusieurs serveurs. Cassandra supporte des écritures massives et la panne de serveurs sans interruption. En contrepartie, on conçoit les tables à partir des requêtes prévues, car les jointures n'existent pas.",
+      "analogie": "Un immense registre découpé en volumes rangés dans plusieurs bibliothèques, chaque volume ayant des copies ailleurs.",
+      "a_retenir": "Avec Cassandra, on modélise d'abord les requêtes, puis les tables : c'est l'inverse de la démarche relationnelle.",
+      "lien": "https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 8,
+      "titre": "la base orientée graphes",
+      "definition": "Une base orientée graphes stocke des nœuds (des entités) et des relations entre eux. Exemple : Neo4j.",
+      "fonctionnement": "Les relations sont stockées directement, et non recalculées par des jointures. Parcourir des chaînes de relations (« les amis de mes amis qui ont acheté ce produit ») reste rapide, même sur plusieurs niveaux. Elle s'interroge avec un langage dédié, comme Cypher.",
+      "analogie": "Une carte de métro : on suit les lignes de station en station, au lieu de chercher dans des tableaux d'horaires.",
+      "a_retenir": "Les graphes conviennent aux réseaux sociaux, à la détection de fraude et aux recommandations : partout où les relations comptent autant que les données.",
+      "lien": "https://neo4j.com/docs/getting-started/graph-database/"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 9,
+      "titre": "le théorème CAP",
+      "definition": "Le théorème CAP dit qu'en cas de coupure réseau entre ses serveurs, une base distribuée doit choisir entre la cohérence et la disponibilité.",
+      "fonctionnement": "C (Consistency) : tout le monde lit la même valeur à jour. A (Availability) : chaque requête reçoit une réponse. P (Partition tolerance) : le système fonctionne malgré une coupure réseau. Les coupures étant inévitables, une base distribuée choisit entre rester cohérente (en refusant certaines requêtes) ou rester disponible (en acceptant des réponses parfois en retard).",
+      "analogie": "Deux agences bancaires dont la ligne est coupée : soit on bloque les retraits (cohérence), soit on les autorise au risque d'un solde provisoirement faux (disponibilité).",
+      "a_retenir": "Cassandra privilégie la disponibilité ; une base relationnelle classique privilégie la cohérence. C'est un compromis à choisir selon le métier.",
+      "lien": "https://en.wikipedia.org/wiki/CAP_theorem"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 10,
+      "titre": "la base vectorielle",
+      "definition": "Une base vectorielle stocke des embeddings (des vecteurs qui représentent le sens d'un texte ou d'une image) et retrouve rapidement les plus proches d'un vecteur donné.",
+      "fonctionnement": "Comparer un vecteur à des millions d'autres un par un serait trop lent. Ces bases utilisent des index spécialisés (comme HNSW) qui trouvent les voisins approximativement les plus proches, très rapidement. Exemples : Chroma, Qdrant, ou PostgreSQL avec l'extension pgvector.",
+      "analogie": "Un libraire qui range les livres par thème : pour un livre donné, il trouve tout de suite les voisins sur l'étagère, sans parcourir toute la librairie.",
+      "a_retenir": "C'est le composant de stockage du RAG ; pgvector permet de l'ajouter à une base PostgreSQL existante sans nouvel outil.",
+      "lien": "https://github.com/pgvector/pgvector"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 1,
+      "titre": "le data warehouse",
+      "definition": "Un data warehouse (entrepôt de données) est une base analytique qui centralise des données propres et structurées, issues de plusieurs systèmes, pour les analyser.",
+      "fonctionnement": "Les données y arrivent après avoir été nettoyées et organisées selon un schéma défini à l'avance (on parle de « schema on write »). Il est optimisé pour les requêtes analytiques en SQL, souvent avec un stockage en colonnes. Exemples : Snowflake, BigQuery, Amazon Redshift.",
+      "analogie": "Une bibliothèque : chaque livre est catalogué et rangé à sa place avant d'arriver en rayon.",
+      "a_retenir": "Le data warehouse offre des données fiables et rapides à interroger, mais il convient mal aux données brutes ou non structurées.",
+      "lien": "https://aws.amazon.com/what-is/data-warehouse/"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 2,
+      "titre": "le data lake",
+      "definition": "Un data lake (lac de données) stocke de grands volumes de données brutes, dans leur format d'origine, à faible coût.",
+      "fonctionnement": "On y dépose tout : fichiers CSV, JSON, logs, images, exports de bases. La structure n'est appliquée qu'au moment de la lecture (« schema on read »). Il repose sur un stockage objet bon marché (Amazon S3, Azure Data Lake Storage) et se lit avec des moteurs comme Spark.",
+      "analogie": "Un grand entrepôt où l'on dépose les cartons sans les ouvrir, en les triant seulement le jour où l'on en a besoin.",
+      "a_retenir": "Sans organisation ni catalogue, un data lake devient vite un « data swamp » (un marécage de données) où plus personne ne retrouve rien.",
+      "lien": "https://aws.amazon.com/what-is/data-lake/"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 3,
+      "titre": "le data mart",
+      "definition": "Un data mart est un sous-ensemble du data warehouse consacré à un métier ou à un service : les ventes, la finance, le marketing…",
+      "fonctionnement": "Il ne contient que les données utiles à ce métier, organisées pour ses analyses habituelles, souvent en modèle en étoile. Il peut être une partie du data warehouse ou une base séparée, alimentée à partir de lui.",
+      "analogie": "Le rayon spécialisé d'une grande bibliothèque : on y trouve vite les livres d'un domaine, sans parcourir tout le bâtiment.",
+      "a_retenir": "Le data mart rend l'analyse plus simple et plus rapide pour un métier, à condition qu'il soit alimenté par la même source de vérité que les autres.",
+      "lien": "https://aws.amazon.com/what-is/data-mart/"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 4,
+      "titre": "le lakehouse",
+      "definition": "Le lakehouse combine le stockage bon marché et ouvert du data lake avec la fiabilité et les performances du data warehouse.",
+      "fonctionnement": "Les données restent dans des fichiers ouverts (Parquet) sur un stockage objet, mais un format de table (Delta Lake, Apache Iceberg, Apache Hudi) ajoute par-dessus des transactions ACID, la gestion des schémas et l'historique des versions. Plusieurs moteurs (Spark, Trino, DuckDB…) peuvent lire les mêmes tables.",
+      "analogie": "Un entrepôt de cartons (le lac) dans lequel on aurait installé un système d'inventaire fiable (l'entrepôt de données).",
+      "a_retenir": "Le lakehouse évite d'entretenir deux copies des données, l'une dans un lac et l'autre dans un entrepôt.",
+      "lien": "https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 5,
+      "titre": "le stockage objet",
+      "definition": "Le stockage objet range des fichiers (des « objets ») dans de grands conteneurs appelés buckets, accessibles par une adresse. Exemple : Amazon S3.",
+      "fonctionnement": "Chaque objet est identifié par une clé, qui ressemble à un chemin (ventes/2026/11/fichier.parquet), mais il n'y a pas de vrais dossiers. Le stockage est quasiment illimité, très durable et bon marché, et se lit par le réseau. On ne modifie pas un objet : on le réécrit en entier.",
+      "analogie": "Un garde-meubles géant : chaque carton a une étiquette unique, et l'on peut en stocker autant qu'on veut.",
+      "a_retenir": "C'est le socle physique des data lakes et des lakehouses ; MinIO permet d'avoir le même type de stockage sur son propre serveur.",
+      "lien": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 6,
+      "titre": "le format Parquet",
+      "definition": "Parquet est un format de fichier ouvert qui stocke les données par colonnes, de façon compressée.",
+      "fonctionnement": "Un fichier Parquet range les valeurs de chaque colonne ensemble et garde des statistiques (minimum, maximum) par bloc. Un moteur peut ainsi ne lire que les colonnes utiles et sauter les blocs qui ne contiennent pas les valeurs recherchées. Le schéma (noms et types des colonnes) est enregistré dans le fichier lui-même.",
+      "analogie": "Un classeur où chaque colonne serait reliée séparément, avec sur la couverture la plus petite et la plus grande valeur qu'elle contient.",
+      "a_retenir": "Un fichier Parquet est souvent 5 à 10 fois plus petit qu'un CSV équivalent, et beaucoup plus rapide à analyser.",
+      "lien": "https://parquet.apache.org/docs/file-format/"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 7,
+      "titre": "les formats de tables",
+      "definition": "Un format de table (Delta Lake, Apache Iceberg, Apache Hudi) transforme un ensemble de fichiers Parquet en une vraie table, avec des garanties de base de données.",
+      "fonctionnement": "En plus des fichiers de données, il tient un journal des modifications (des fichiers de métadonnées). Chaque écriture crée une nouvelle version de la table de façon atomique. On obtient ainsi les transactions ACID, la modification et la suppression de lignes, l'évolution du schéma, et le « time travel » : lire la table telle qu'elle était à une date passée.",
+      "analogie": "Le registre d'un notaire : les documents (les fichiers) sont rangés à part, mais le registre dit précisément lesquels composent la version officielle à chaque date.",
+      "a_retenir": "Sans format de table, deux traitements qui écrivent en même temps dans le même dossier de fichiers Parquet peuvent corrompre les données.",
+      "lien": "https://www.databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 8,
+      "titre": "l'architecture médaillon",
+      "definition": "L'architecture médaillon organise les données d'un lakehouse en trois couches de qualité croissante : bronze, silver et gold.",
+      "fonctionnement": "Bronze : les données brutes, copiées telles quelles depuis les sources, pour pouvoir toujours tout recalculer. Silver : les données nettoyées, dédoublonnées, typées et reliées entre elles. Gold : les données prêtes à l'usage, agrégées et organisées pour un besoin précis (tableaux de bord, modèles en étoile, IA).",
+      "analogie": "Le traitement de l'eau : l'eau brute captée (bronze), l'eau filtrée (silver), l'eau mise en bouteille et prête à boire (gold).",
+      "a_retenir": "On peut toujours reconstruire silver et gold à partir de bronze : c'est ce qui rend l'architecture robuste face aux erreurs de traitement.",
+      "lien": "https://www.databricks.com/glossary/medallion-architecture"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 9,
+      "titre": "ETL et ELT",
+      "definition": "ETL (Extract, Transform, Load) et ELT (Extract, Load, Transform) sont deux façons d'enchaîner les étapes d'un pipeline de données.",
+      "fonctionnement": "En ETL, on transforme les données avant de les charger dans l'entrepôt, avec un outil séparé. En ELT, on charge d'abord les données brutes dans l'entrepôt ou le lakehouse, puis on les transforme sur place, en SQL, grâce à la puissance de calcul de la plateforme. dbt est l'outil type de l'approche ELT.",
+      "analogie": "ETL : on épluche les légumes avant de les ranger au réfrigérateur. ELT : on range tout tel quel, et on prépare au moment de cuisiner.",
+      "a_retenir": "L'ELT s'est imposé avec les entrepôts dans le cloud : garder les données brutes permet de refaire une transformation sans réextraire les sources.",
+      "lien": "https://www.getdbt.com/blog/etl-vs-elt"
+    },
+    {
+      "module": "Stockage et architectures",
+      "numero": 10,
+      "titre": "le partitionnement des données sur disque",
+      "definition": "Partitionner une table sur disque, c'est ranger ses fichiers dans des dossiers séparés selon la valeur d'une colonne, souvent la date.",
+      "fonctionnement": "Par exemple : ventes/annee=2026/mois=11/. Quand une requête filtre sur cette colonne (les ventes de novembre 2026), le moteur ne lit que le dossier concerné et ignore tous les autres : on parle d'élagage de partitions (partition pruning).",
+      "analogie": "Des archives rangées dans une boîte par mois : pour retrouver une facture de novembre, on n'ouvre qu'une seule boîte.",
+      "a_retenir": "On partitionne sur une colonne souvent utilisée dans les filtres et qui a un nombre raisonnable de valeurs ; partitionner par identifiant client créerait des millions de petits dossiers.",
+      "lien": "https://spark.apache.org/docs/latest/sql-data-sources-parquet.html"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 1,
+      "titre": "la table de faits",
+      "definition": "Une table de faits enregistre les événements mesurables d'un métier : une vente, un paiement, un clic, un trajet.",
+      "fonctionnement": "Chaque ligne correspond à un événement. Elle contient des mesures numériques (montant, quantité, durée) et des clés qui la relient aux tables de dimensions (quel client, quel produit, quelle date). C'est généralement la plus grande table du modèle : elle peut compter des milliards de lignes.",
+      "analogie": "Le journal de caisse d'un magasin : une ligne par article vendu, avec son prix et les références du client et du produit.",
+      "a_retenir": "Une table de faits répond à la question « combien ? » ; les dimensions répondent aux questions « qui, quoi, où, quand ? ».",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 2,
+      "titre": "la table de dimension",
+      "definition": "Une table de dimension décrit le contexte des faits : les clients, les produits, les magasins, le calendrier.",
+      "fonctionnement": "Chaque ligne décrit une entité, avec de nombreux attributs descriptifs (nom, catégorie, région, segment…). Ce sont ces attributs qu'on utilise pour filtrer et regrouper les analyses : le chiffre d'affaires par région, par catégorie de produit ou par mois.",
+      "analogie": "La fiche signalétique d'un produit ou d'un client, à laquelle chaque ticket de caisse renvoie.",
+      "a_retenir": "Les dimensions sont plus petites que les faits, mais ce sont elles qui rendent les chiffres compréhensibles.",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 3,
+      "titre": "la granularité",
+      "definition": "La granularité (le « grain ») d'une table de faits est la définition précise de ce que représente une ligne.",
+      "fonctionnement": "Par exemple : « une ligne par article sur un ticket de caisse » est un grain plus fin que « une ligne par ticket », lui-même plus fin que « une ligne par magasin et par jour ». Le grain doit être décidé avant tout le reste, car il détermine les dimensions et les mesures possibles.",
+      "analogie": "Le niveau de zoom d'une carte : on peut toujours dézoomer pour voir les régions, mais on ne retrouve jamais les rues sur une carte du pays.",
+      "a_retenir": "Choisir le grain le plus fin disponible est la règle de Kimball : on peut toujours agréger ensuite, jamais retrouver le détail perdu.",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 4,
+      "titre": "le modèle en étoile",
+      "definition": "Le modèle en étoile est une organisation des données analytiques avec une table de faits au centre, reliée directement à des tables de dimensions autour d'elle.",
+      "fonctionnement": "Chaque dimension est une seule table, dénormalisée : la dimension produit contient directement la catégorie et la marque, sans table séparée. Les requêtes n'ont besoin que d'une jointure entre les faits et chaque dimension, ce qui les rend simples et rapides.",
+      "analogie": "Une étoile : le centre (les ventes) et des branches (clients, produits, dates, magasins).",
+      "a_retenir": "C'est le modèle de référence des data marts et des outils de BI : facile à comprendre pour les utilisateurs métier, efficace pour les moteurs.",
+      "lien": "https://www.keboola.com/blog/star-schema-vs-snowflake-schema"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 5,
+      "titre": "le modèle en flocon",
+      "definition": "Le modèle en flocon (snowflake) est une variante du modèle en étoile dans laquelle les dimensions sont normalisées en plusieurs tables.",
+      "fonctionnement": "Au lieu d'une dimension produit qui contient tout, on a une table produit reliée à une table catégorie, elle-même reliée à une table famille. On évite les répétitions, mais chaque analyse demande davantage de jointures.",
+      "analogie": "Un flocon de neige : les branches de l'étoile se ramifient en branches plus petites.",
+      "a_retenir": "Le flocon économise un peu de stockage, mais complique les requêtes ; le modèle en étoile est en général préféré pour l'analyse.",
+      "lien": "https://www.keboola.com/blog/star-schema-vs-snowflake-schema"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 6,
+      "titre": "le modèle en constellation",
+      "definition": "Un modèle en constellation (ou en galaxie) contient plusieurs tables de faits qui partagent des tables de dimensions communes.",
+      "fonctionnement": "Par exemple, une table de faits des ventes et une table de faits des stocks partagent les dimensions produit, magasin et date. On peut ainsi comparer les ventes et les stocks d'un même produit, dans un même magasin, à une même date.",
+      "analogie": "Plusieurs étoiles reliées entre elles par des branches communes.",
+      "a_retenir": "C'est la forme naturelle d'un data warehouse d'entreprise : chaque processus métier a ses faits, et les dimensions partagées garantissent que tout le monde parle des mêmes produits et des mêmes dates.",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 7,
+      "titre": "la dimension conforme",
+      "definition": "Une dimension conforme est une dimension définie une seule fois et partagée, à l'identique, par plusieurs tables de faits.",
+      "fonctionnement": "La dimension date ou la dimension client a les mêmes clés, les mêmes attributs et les mêmes valeurs partout. Kimball recommande de lister les processus métier et les dimensions qu'ils partagent dans une « matrice de bus » pour organiser tout l'entrepôt.",
+      "analogie": "Une unité de mesure commune : si chaque service mesurait en unités différentes, aucune comparaison ne serait possible.",
+      "a_retenir": "Les dimensions conformes sont ce qui permet de croiser les données de plusieurs métiers sans résultats contradictoires.",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 8,
+      "titre": "la clé de substitution",
+      "definition": "Une clé de substitution (surrogate key) est un identifiant technique, sans signification métier, attribué par l'entrepôt à chaque ligne d'une dimension.",
+      "fonctionnement": "Le système source identifie un client par son numéro (la clé naturelle), mais l'entrepôt lui attribue en plus un simple entier : 1, 2, 3… C'est cette clé que référencent les tables de faits. Elle permet de stocker plusieurs versions d'un même client et protège l'entrepôt des changements de numérotation dans les sources.",
+      "analogie": "Le numéro de dossard d'un coureur : il ne dit rien de la personne, mais il l'identifie sans ambiguïté pendant la course.",
+      "a_retenir": "Les clés de substitution sont indispensables pour historiser les dimensions (SCD de type 2).",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 9,
+      "titre": "les dimensions à évolution lente (SCD)",
+      "definition": "Une SCD (Slowly Changing Dimension) est une dimension dont les attributs changent de temps en temps, comme l'adresse d'un client. Plusieurs méthodes existent pour gérer ces changements.",
+      "fonctionnement": "Type 1 : on écrase l'ancienne valeur ; l'historique est perdu. Type 2 : on ajoute une nouvelle ligne pour la nouvelle version, avec des dates de début et de fin de validité ; l'historique est conservé. Type 3 : on garde l'ancienne valeur dans une colonne supplémentaire.",
+      "analogie": "Type 1 : corriger un carnet d'adresses au crayon gommé. Type 2 : garder chaque ancienne fiche, en notant les dates de validité.",
+      "a_retenir": "Avec le type 2, les ventes passées restent rattachées à l'ancienne région d'un client qui a déménagé : les chiffres historiques ne changent pas. dbt le gère avec ses « snapshots ».",
+      "lien": "https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-warehouses/"
+    },
+    {
+      "module": "Modélisation",
+      "numero": 10,
+      "titre": "Data Vault et One Big Table",
+      "definition": "Data Vault et One Big Table sont deux autres approches de modélisation, aux deux extrêmes de la modélisation en étoile.",
+      "fonctionnement": "Data Vault découpe les données en hubs (les entités et leurs clés), links (les relations) et satellites (les attributs et leur historique) : il est très flexible et traçable, et sert souvent de couche intermédiaire dans les grandes entreprises. One Big Table (OBT) fait l'inverse : une seule très large table dénormalisée, qui évite toute jointure, possible grâce au stockage en colonnes.",
+      "analogie": "Data Vault : un jeu de construction très modulaire. One Big Table : un tableau géant prêt à l'emploi.",
+      "a_retenir": "Il n'y a pas de modèle universel : on choisit selon la taille de l'organisation, le besoin d'historique et les outils d'analyse.",
+      "lien": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 1,
+      "titre": "l'orchestrateur",
+      "definition": "Un orchestrateur est un outil qui planifie, enchaîne et surveille les tâches d'un pipeline de données. Exemples : Apache Airflow, Dagster, Prefect, et n8n pour l'automatisation.",
+      "fonctionnement": "Il lance chaque tâche au bon moment, dans le bon ordre, en respectant leurs dépendances. Il relance automatiquement une tâche qui échoue, garde l'historique de chaque exécution et alerte en cas de problème. L'orchestrateur ne fait pas forcément les calculs lui-même : il délègue souvent à d'autres outils (Spark, dbt, une base de données).",
+      "analogie": "Le chef d'orchestre : il ne joue d'aucun instrument, mais il donne le départ à chaque musicien au bon moment.",
+      "a_retenir": "Sans orchestrateur, un pipeline repose sur des tâches planifiées indépendamment (cron) : on ne sait plus ce qui a tourné, ni ce qui a échoué.",
+      "lien": "https://airflow.apache.org/docs/apache-airflow/stable/tutorial/fundamentals.html"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 2,
+      "titre": "le DAG",
+      "definition": "Un DAG (Directed Acyclic Graph, ou graphe orienté acyclique) est la représentation d'un pipeline sous forme de tâches reliées par des flèches de dépendance, sans boucle.",
+      "fonctionnement": "« Orienté » : chaque flèche a un sens (extraire, puis transformer). « Acyclique » : on ne revient jamais à une tâche déjà passée, ce qui garantit que le pipeline se termine. Dans Airflow, un DAG est défini en Python ; les tâches sans dépendance entre elles peuvent tourner en parallèle.",
+      "analogie": "Une recette : certaines étapes doivent attendre les précédentes (cuire après avoir coupé), d'autres peuvent se faire en même temps.",
+      "a_retenir": "Un workflow n8n est lui aussi un graphe orienté : les nœuds sont les tâches, les liens sont les dépendances.",
+      "lien": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 3,
+      "titre": "la planification et le backfill",
+      "definition": "La planification définit quand un pipeline s'exécute. Le backfill consiste à exécuter un pipeline pour des périodes passées.",
+      "fonctionnement": "Une planification s'écrit souvent avec une expression cron (« 0 3 * * * » : tous les jours à 3 h). Airflow associe chaque exécution à un intervalle de données (« les données du 10 novembre »). Si l'on corrige un bug ou ajoute un pipeline, le backfill relance les exécutions des jours passés, une par intervalle.",
+      "analogie": "Rattraper des cours manqués : on reprend chaque séance dans l'ordre, pour la date concernée.",
+      "a_retenir": "Un backfill n'est sûr que si le pipeline est idempotent : relancer le 3 novembre ne doit pas dupliquer les données du 3 novembre.",
+      "lien": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/backfill.html"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 4,
+      "titre": "les tâches, les relances et les executors d'Airflow",
+      "definition": "Dans Airflow, une tâche est une unité de travail du DAG ; l'executor détermine où et comment les tâches s'exécutent.",
+      "fonctionnement": "Chaque tâche peut être relancée automatiquement en cas d'échec (paramètres retries et retry_delay). L'executor choisit le mode d'exécution : en local, sur une flotte de workers (CeleryExecutor), ou dans un pod Kubernetes par tâche (KubernetesExecutor). Le scheduler, lui, décide quelles tâches sont prêtes à partir.",
+      "analogie": "Un chef d'équipe (le scheduler) qui distribue les tâches, et une agence d'intérim (l'executor) qui fournit les bras.",
+      "a_retenir": "Les relances automatiques absorbent les erreurs passagères (réseau, API indisponible), mais ne corrigent pas un bug : il faut aussi des alertes.",
+      "lien": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/tasks.html"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 5,
+      "titre": "l'orchestration orientée données",
+      "definition": "L'orchestration orientée données décrit un pipeline par les données qu'il produit (des « assets ») plutôt que par les tâches qu'il exécute. C'est l'approche de Dagster.",
+      "fonctionnement": "On déclare par exemple « la table clients_nettoyes dépend de la table clients_bruts ». L'outil en déduit l'ordre d'exécution, sait quand chaque table a été mise à jour et peut ne recalculer que ce qui est périmé. Airflow propose une logique proche avec ses assets (anciennement « datasets »).",
+      "analogie": "Une liste de plats à servir, plutôt qu'une liste de gestes à faire : le cuisinier en déduit lui-même les étapes.",
+      "a_retenir": "Penser en termes de données produites aide à répondre à la vraie question des utilisateurs : « cette table est-elle à jour ? »",
+      "lien": "https://dagster.io/docs/guides/build/assets"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 6,
+      "titre": "dbt et les modèles",
+      "definition": "dbt (data build tool) est un outil de transformation qui permet d'écrire chaque étape d'un pipeline sous forme d'une requête SELECT en SQL, appelée « modèle ».",
+      "fonctionnement": "Chaque modèle est un fichier .sql. dbt se charge de le transformer en table ou en vue dans l'entrepôt, dans le bon ordre. Il apporte aux transformations SQL les pratiques du développement logiciel : versionnement avec Git, tests, documentation, environnements séparés.",
+      "analogie": "Un compilateur pour le SQL analytique : on écrit des SELECT simples, dbt s'occupe de les assembler et de les exécuter.",
+      "a_retenir": "dbt ne déplace pas de données : il exécute du SQL dans la base existante. C'est le T de l'ELT.",
+      "lien": "https://docs.getdbt.com/docs/build/models"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 7,
+      "titre": "ref() et le lignage",
+      "definition": "Dans dbt, la fonction ref() permet à un modèle de faire référence à un autre modèle. dbt en déduit le lignage : le graphe de dépendances entre toutes les tables.",
+      "fonctionnement": "Au lieu d'écrire le nom d'une table en dur, on écrit {{ ref('clients_nettoyes') }}. dbt remplace l'expression par le bon nom de table selon l'environnement (développement ou production), et sait qu'il doit construire clients_nettoyes en premier. Il affiche ensuite ce lignage sous forme de graphe dans sa documentation.",
+      "analogie": "Un arbre généalogique des données : pour chaque table, on sait de quelles tables elle descend.",
+      "a_retenir": "Le lignage permet de savoir quelles tables seront touchées par une modification, et d'où vient une donnée erronée.",
+      "lien": "https://docs.getdbt.com/reference/dbt-jinja-functions/ref"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 8,
+      "titre": "les tests de données",
+      "definition": "Un test de données vérifie automatiquement qu'une table respecte des règles : pas de valeur vide, pas de doublon, des valeurs autorisées, des liens valides vers d'autres tables.",
+      "fonctionnement": "Dans dbt, on déclare par exemple qu'une colonne est unique et non nulle (unique, not_null), qu'elle ne prend que certaines valeurs (accepted_values), ou que chaque valeur existe dans une autre table (relationships). Les tests s'exécutent après chaque construction, et un échec peut bloquer la suite du pipeline. Great Expectations offre le même type de vérifications en Python.",
+      "analogie": "Le contrôle qualité en sortie d'usine : un produit défectueux ne part pas chez le client.",
+      "a_retenir": "Mieux vaut un pipeline qui s'arrête sur une erreur détectée qu'un tableau de bord qui affiche silencieusement des chiffres faux.",
+      "lien": "https://docs.getdbt.com/docs/build/data-tests"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 9,
+      "titre": "le modèle incrémental",
+      "definition": "Un modèle incrémental ne traite que les nouvelles données ou les données modifiées, au lieu de reconstruire toute la table à chaque exécution.",
+      "fonctionnement": "À la première exécution, la table est construite en entier. Ensuite, dbt n'ajoute ou ne met à jour que les lignes postérieures à la dernière exécution, grâce à une condition comme « date > date maximale déjà présente » et à une clé unique pour les mises à jour.",
+      "analogie": "Mettre à jour un relevé de compte en ajoutant les opérations du jour, plutôt que de tout recopier depuis l'ouverture du compte.",
+      "a_retenir": "L'incrémental réduit fortement les temps de calcul et les coûts sur les grandes tables, au prix d'une logique un peu plus délicate à tester.",
+      "lien": "https://docs.getdbt.com/docs/build/incremental-models-overview"
+    },
+    {
+      "module": "Orchestration et transformation",
+      "numero": 10,
+      "titre": "la fraîcheur des données",
+      "definition": "La fraîcheur indique depuis combien de temps une donnée n'a pas été mise à jour.",
+      "fonctionnement": "On compare la date de la ligne la plus récente d'une table à l'heure actuelle. dbt peut vérifier la fraîcheur des sources (source freshness) et lever un avertissement ou une erreur au-delà d'un seuil, par exemple « pas de nouvelle commande depuis 12 heures ». C'est l'un des piliers de l'observabilité des données, avec le volume et la qualité.",
+      "analogie": "La date de péremption d'un produit : un tableau de bord alimenté par des données vieilles de trois jours peut tromper sans que personne s'en aperçoive.",
+      "a_retenir": "Un pipeline peut « réussir » tout en ne traitant aucune donnée nouvelle : surveiller la fraîcheur détecte ce cas que les erreurs ne signalent pas.",
+      "lien": "https://docs.getdbt.com/docs/deploy/source-freshness"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 1,
+      "titre": "l'idempotence",
+      "definition": "Un traitement est idempotent si l'exécuter plusieurs fois donne le même résultat que l'exécuter une seule fois.",
+      "fonctionnement": "Un pipeline qui ajoute les ventes du jour avec un simple INSERT n'est pas idempotent : relancé deux fois, il les compte en double. Un pipeline qui remplace entièrement la partition du jour, ou qui fusionne sur une clé unique (MERGE), est idempotent : on peut le relancer sans risque.",
+      "analogie": "Appuyer sur le bouton d'un ascenseur : appuyer deux fois ne fait pas venir deux ascenseurs.",
+      "a_retenir": "L'idempotence est la propriété la plus utile d'un pipeline : elle rend les relances, les backfills et les corrections sans danger. Le dédoublonnage par clé de ce projet sert exactement à cela.",
+      "lien": "https://maximebeauchemin.medium.com/functional-data-engineering-a-modern-paradigm-for-batch-data-processing-2327ec32c42a"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 2,
+      "titre": "le traitement incrémental",
+      "definition": "Le traitement incrémental consiste à ne traiter, à chaque exécution, que les données nouvelles depuis la précédente.",
+      "fonctionnement": "Le pipeline mémorise un repère : la date ou l'identifiant de la dernière donnée traitée (on parle de « watermark »). À l'exécution suivante, il ne lit que ce qui est postérieur à ce repère. Les outils de capture des changements (CDC, comme Debezium) appliquent la même idée en lisant le journal des modifications d'une base.",
+      "analogie": "Lire un journal quotidien plutôt que relire chaque matin toute la collection depuis le premier numéro.",
+      "a_retenir": "Un pipeline qui retraite tout chaque jour devient de plus en plus lent à mesure que les données s'accumulent ; l'incrémental garde un temps de traitement stable.",
+      "lien": "https://docs.getdbt.com/docs/build/incremental-models-overview"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 3,
+      "titre": "monter en charge verticalement ou horizontalement",
+      "definition": "Pour traiter plus de données, on peut monter en charge verticalement (une machine plus puissante) ou horizontalement (plus de machines).",
+      "fonctionnement": "La montée verticale (scale up) est simple, mais limitée par la taille maximale d'une machine et son coût. La montée horizontale (scale out) répartit le travail entre plusieurs machines : c'est le principe de Spark, Kafka ou Cassandra. Elle n'a presque pas de limite, mais ajoute la complexité d'un système distribué : réseau, coordination, pannes partielles.",
+      "analogie": "Pour transporter plus de colis : acheter un plus gros camion (vertical) ou ajouter des camions (horizontal).",
+      "a_retenir": "Une seule machine moderne traite déjà des centaines de gigaoctets avec DuckDB ou Polars : on ne passe au distribué que lorsque c'est vraiment nécessaire.",
+      "lien": "https://duckdb.org/why_duckdb"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 4,
+      "titre": "le parallélisme et le partitionnement du travail",
+      "definition": "Paralléliser un traitement, c'est le découper en morceaux indépendants qui peuvent être traités en même temps.",
+      "fonctionnement": "Le découpage se fait selon une clé : par date, par client, par partition Kafka. Chaque morceau est confié à un worker, un executor Spark ou un consumer Kafka. Pour que ce soit efficace, les morceaux doivent être indépendants et de tailles comparables : si un morceau est beaucoup plus gros que les autres (on parle de « skew », de déséquilibre), tout le traitement attend le plus lent.",
+      "analogie": "Corriger des copies à plusieurs : on se répartit les paquets, mais si un correcteur reçoit la moitié des copies, tout le monde attend qu'il ait fini.",
+      "a_retenir": "Le nombre de morceaux fixe la limite du parallélisme : 6 partitions Kafka, c'est au maximum 6 consumers utiles dans un même groupe.",
+      "lien": "https://spark.apache.org/docs/latest/sql-performance-tuning.html"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 5,
+      "titre": "le batch et le streaming",
+      "definition": "Le traitement par lots (batch) traite les données par blocs, à intervalles réguliers. Le streaming les traite en continu, au fil de leur arrivée.",
+      "fonctionnement": "Un pipeline batch tourne par exemple chaque nuit sur les données de la veille : il est simple, robuste et économique. Un pipeline streaming (Kafka avec Flink, ou Spark Structured Streaming) traite chaque événement en quelques secondes : il est indispensable pour la détection de fraude ou le suivi en temps réel, mais plus complexe à exploiter.",
+      "analogie": "Le batch, c'est le facteur qui passe une fois par jour ; le streaming, c'est la messagerie instantanée.",
+      "a_retenir": "On choisit le streaming quand la valeur de la donnée diminue vite avec le temps ; sinon, le batch suffit. Le digest de ce projet est un traitement batch quotidien.",
+      "lien": "https://www.datacamp.com/blog/batch-vs-stream-processing"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 6,
+      "titre": "les architectures Lambda et Kappa",
+      "definition": "Lambda et Kappa sont deux architectures pour combiner traitement historique et temps réel.",
+      "fonctionnement": "L'architecture Lambda fait tourner deux chaînes en parallèle : une chaîne batch, exacte, qui recalcule tout l'historique, et une chaîne streaming, rapide, pour les données récentes ; on fusionne leurs résultats. L'architecture Kappa n'a qu'une chaîne streaming : pour recalculer l'historique, on relit simplement les événements conservés dans Kafka.",
+      "analogie": "Lambda : deux équipes qui font le même travail, l'une vite et l'autre avec soin. Kappa : une seule équipe, qui peut reprendre le travail depuis le début si besoin.",
+      "a_retenir": "Lambda oblige à écrire et maintenir deux fois la même logique ; c'est la principale raison pour laquelle Kappa a été proposée.",
+      "lien": "https://www.oreilly.com/radar/questioning-the-lambda-architecture/"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 7,
+      "titre": "la reprise sur erreur",
+      "definition": "La reprise sur erreur regroupe les mécanismes qui permettent à un pipeline de survivre aux pannes passagères et de reprendre là où il s'était arrêté.",
+      "fonctionnement": "Relances automatiques avec un délai croissant entre les essais (backoff exponentiel) pour les erreurs passagères. Points de reprise (checkpoints) pour ne pas tout recommencer. Mise à l'écart des données invalides dans une file séparée (dead letter queue) au lieu de bloquer tout le pipeline. Et des alertes pour les erreurs qui demandent une intervention humaine.",
+      "analogie": "Un randonneur qui note ses étapes sur une carte : s'il doit faire demi-tour à cause de la météo, il reprend à la dernière étape atteinte, pas au départ.",
+      "a_retenir": "Une relance n'est sûre que si le traitement est idempotent : sinon, chaque nouvel essai risque de dupliquer des données.",
+      "lien": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/tasks.html"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 8,
+      "titre": "la qualité des données dans le pipeline",
+      "definition": "Contrôler la qualité dans le pipeline, c'est vérifier les données à chaque étape, pour arrêter les erreurs avant qu'elles atteignent les utilisateurs.",
+      "fonctionnement": "On contrôle le schéma (colonnes et types attendus), les valeurs (pas de montant négatif, des dates plausibles), l'unicité des clés et le volume (une chute brutale du nombre de lignes signale souvent un problème en amont). Dans l'architecture médaillon, ces contrôles se placent naturellement entre bronze et silver.",
+      "analogie": "Des contrôles de sécurité à chaque étape d'une chaîne de montage, plutôt qu'une seule inspection à la fin.",
+      "a_retenir": "Une erreur détectée tôt coûte peu ; la même erreur découverte dans un tableau de direction coûte la confiance des utilisateurs.",
+      "lien": "https://medium.com/snowflake/how-to-ensure-data-quality-with-great-expectations-271e3ca8b4b9"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 9,
+      "titre": "le lignage et l'observabilité",
+      "definition": "L'observabilité des données est la capacité à savoir à tout moment si les données sont à jour, complètes et correctes, et d'où elles viennent.",
+      "fonctionnement": "Elle repose sur cinq signaux : la fraîcheur, le volume, la distribution des valeurs, le schéma et le lignage. Le lignage relie chaque table à ses sources : quand un chiffre semble faux, on remonte la chaîne jusqu'à l'étape fautive, et avant de modifier une table, on sait quelles autres tables seront touchées.",
+      "analogie": "Le tableau de bord d'un avion : les pilotes ne regardent pas seulement s'ils volent, mais l'altitude, la vitesse et le carburant.",
+      "a_retenir": "Un pipeline sans observabilité échoue en silence : ce sont les utilisateurs qui découvrent les problèmes.",
+      "lien": "https://www.castordoc.com/blog/data-lineage-vs-data-catalog"
+    },
+    {
+      "module": "Pipelines scalables",
+      "numero": 10,
+      "titre": "choisir ses technologies",
+      "definition": "Le choix des outils d'un pipeline dépend surtout du volume de données, de la latence attendue et des compétences de l'équipe, pas de la mode.",
+      "fonctionnement": "Quelques gigaoctets : Python avec pandas, Polars ou DuckDB, et PostgreSQL. Des centaines de gigaoctets à des téraoctets : Spark, ou un entrepôt dans le cloud, avec un lakehouse (Iceberg, Delta Lake). Du temps réel : Kafka, avec Flink ou Spark Structured Streaming. Pour transformer en SQL : dbt. Pour orchestrer : Airflow ou Dagster ; n8n pour des automatisations légères comme ce projet. Le tout dans des conteneurs Docker, éventuellement orchestrés par Kubernetes.",
+      "analogie": "On ne prend pas un semi-remorque pour faire ses courses, ni un vélo pour un déménagement.",
+      "a_retenir": "Commencer simple et passer au distribué seulement quand le volume l'exige évite des mois de complexité inutile.",
+      "lien": "https://www.startdataengineering.com/post/data-engineering-project-for-beginners-batch-edition/"
     }
   ]
 }
