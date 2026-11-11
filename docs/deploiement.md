@@ -113,11 +113,13 @@ Au premier passage, la collecte trouve toutes les annonces présentes dans les f
 
 ### 8. Publier
 
-Publier dans cet ordre : **03**, puis **02**, puis **04**. Ne pas publier le workflow 01 (exercice).
+Publier dans cet ordre : **00** (alertes), **03**, puis **02**, puis **04**. Ne pas publier le workflow 01 (exercice).
+
+Dans les réglages (**Settings**) des workflows 02, 03 et 04, le champ **Error Workflow** doit désigner **00 - Alertes** : en cas d'échec en production, une alerte part sur Telegram et par e-mail. Les exécutions manuelles ne déclenchent pas d'alerte.
 
 ## Mettre à jour la production
 
-1. Développer et tester sur le PC, exporter les workflows (`python scripts/exporter_workflows.py`), commiter.
+1. Développer et tester sur le PC, exporter les workflows (`python scripts/exporter_workflows.py`), commiter. Si une modification est faite directement sur le VPS, l'exporter du VPS vers le dépôt aussitôt après, pour que le dépôt reste la référence.
 2. Sur le VPS : `git pull`, puis réimporter les workflows modifiés (étape 6) et les republier.
 3. Si les sources ou les leçons ont changé : `python scripts/generer_donnees_sql.py` sur le PC, commiter, puis sur le VPS :
    ```bash

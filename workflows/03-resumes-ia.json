@@ -230,13 +230,13 @@
       ],
       "id": "a83cf421-2d98-4f65-8a56-2800ef0b9dd8",
       "name": "Annonces à résumer",
+      "executeOnce": true,
       "credentials": {
         "postgres": {
           "id": "v2PDaEmbeBXrtRJI",
           "name": "Postgres account"
         }
-      },
-      "executeOnce": true
+      }
     },
     {
       "parameters": {
@@ -316,7 +316,11 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "6EvmosCSnQZp8VHT",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "pinData": {},
   "meta": {
