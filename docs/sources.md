@@ -59,6 +59,8 @@
 
 ## Sources complémentaires (à activer après la v1)
 
+**Critère de choix : l'apprentissage d'abord.** Une source est retenue si elle aide à **comprendre comment fonctionnent** les technologies (articles techniques, documentation, explications des nouvelles versions). Les sources d'actualité générale, d'annonces commerciales ou de levées de fonds sont écartées, même si elles sont populaires.
+
 Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` avec `actif = false` : la v1 démarre avec les 13 sources ci-dessus, pour garder un volume maîtrisé pendant les tests. Une fois la v1 validée, il suffira de passer `actif` à `true`, sans modifier le workflow (c'est le test du critère « ajouter une source en moins de 5 minutes »).
 
 ### Newsletters et blogs d'ingénierie
@@ -79,6 +81,11 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Ollama (blog) | `https://ollama.com/blog/rss.xml` | *(aucun)* | 2 par mois | L'outil qui fait tourner le LLM de ce projet |
 | Hugging Face | `https://huggingface.co/blog/feed.xml` | *(aucun)* | 5 par semaine | Nouveaux modèles et techniques ouvertes ; volume élevé |
 | Simon Willison | `https://simonwillison.net/atom/entries/` | *(aucun)* | 1 à 2 par semaine | Référence sur l'usage pratique des LLM (flux « entries » : articles de fond seulement, pas les liens du jour) |
+| Sebastian Raschka (Ahead of AI) | `https://magazine.sebastianraschka.com/feed` | *(aucun)* | 2 par mois | Explique le fonctionnement interne des LLM en les reconstruisant pas à pas |
+| Hamel Husain | `https://hamel.dev/index.xml` | *(aucun)* | 1 par mois | Évaluer une application d'IA : méthodes concrètes |
+| Model Context Protocol (blog) | `https://blog.modelcontextprotocol.io/index.xml` | *(aucun)* | 1 par mois | Le protocole qui relie les LLM aux outils ; explications des nouvelles versions de la spécification |
+| LangGraph | `https://github.com/langchain-ai/langgraph/releases.atom` | `^langgraph==\d+\.\d+\.\d+$` | 2 par mois | Le framework d'agents utilisé dans le projet `rgpd-crag-agent`. Le filtre écarte `langgraph-sdk` et `langgraph-cli`. |
+| pgvector | `https://github.com/pgvector/pgvector/tags.atom` | `^v\d+\.\d+\.\d+$` | Moins de 1 par mois | La recherche vectorielle dans PostgreSQL, base déjà utilisée par ce projet (pas de *Releases* GitHub, d'où `tags.atom`) |
 
 ### Conteneurs et infrastructure
 
@@ -88,6 +95,48 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Docker Compose | `https://github.com/docker/compose/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 à 3 par mois | L'outil de déploiement de ce projet |
 | Docker Engine | `https://github.com/moby/moby/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 par mois | Le moteur Docker. Le filtre écarte les versions de test (`-rc`) et la branche `v2.0.0-beta` |
 | k3s | `https://github.com/k3s-io/k3s/releases.atom` | `^v\d+\.\d+\.0\+k3s\d+$` | Environ 1 tous les 4 mois | Le Kubernetes léger du VPS (projet murmetric). Le filtre ne garde que les nouvelles versions majeures (`x.y.0`) : k3s publie chaque correctif sur trois branches à la fois, ce qui ferait beaucoup de bruit. Au moment du test, aucune version `x.y.0` ne figurait dans les 10 dernières entrées. |
+
+### Écosystème Apache
+
+Le blog général de la fondation (`news.apache.org/feed`) fait déjà partie de la v1. Les sources ci-dessous ajoutent les annonces de **tous** les projets Apache de la data, et les blogs des projets qui en ont un.
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Annonces Apache (versions et failles de sécurité) | `https://lists.apache.org/api/atom.lua?list=announce&domain=apache.org` | voir ci-dessous | 5 à 10 par jour après filtrage, parfois beaucoup plus | Le flux de la liste officielle `announce@apache.org` : chaque nouvelle version et chaque faille de sécurité (CVE) de **tous** les projets Apache (environ 350). Le filtre ne garde que les projets data. |
+| Apache Flink (blog) | `https://flink.apache.org/posts/index.xml` | *(aucun)* | 1 par mois | Le traitement de flux, complémentaire de Kafka et Spark |
+| Apache Iceberg (blog) | `https://iceberg.apache.org/rss.xml` | `^(?!Apache Iceberg .*Release$)` | 1 par mois | Articles de fond seulement : le filtre écarte les annonces de versions, déjà suivies par GitHub |
+| Apache Arrow (blog) | `https://arrow.apache.org/feed.xml` | *(aucun)* | 2 par mois | Le format en mémoire utilisé par Spark, pandas, DuckDB, Polars… |
+| Apache Parquet (blog) | `https://parquet.apache.org/blog/index.xml` | *(aucun)* | Moins de 1 par mois | Le format de fichier des lakehouses |
+| Apache DataFusion (blog) | `https://datafusion.apache.org/blog/feed.xml` | *(aucun)* | 2 par mois | Moteur de requêtes en Rust ; Comet accélère Spark |
+| Apache Hudi (blog) | `https://hudi.apache.org/blog/rss.xml` | *(aucun)* | 2 par mois | Format de table concurrent d'Iceberg et Delta Lake |
+| Apache Polaris (blog) | `https://polaris.apache.org/blog/index.xml` | *(aucun)* | Moins de 1 par mois | Catalogue pour les tables Iceberg |
+| Apache Beam (blog) | `https://beam.apache.org/feed.xml` | *(aucun)* | 1 par mois | Modèle unifié batch et streaming |
+
+**Filtre des annonces Apache.** Il garde :
+
+- les **failles de sécurité** (titres qui commencent par `CVE-`) des projets data, y compris Kafka, Spark, Airflow et Iceberg ;
+- les **annonces de versions** (titres qui commencent par `[ANNOUNCE]`) des projets data **non suivis ailleurs**. Kafka, Spark, Airflow et Iceberg en sont exclus, car leurs versions arrivent déjà par GitHub : on évite ainsi les doublons.
+
+```
+^(CVE-.*Apache (Kafka|Spark|Airflow|Iceberg|Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)|\[ANNOUNCE\].*\b(Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)\b)
+```
+
+Test du 11 novembre 2026 : sur les 100 dernières annonces (2,5 jours), 19 sont gardées, dont **18 failles de sécurité d'Airflow** publiées le même jour.
+
+Points d'attention :
+
+- Le flux ne contient que les **100 dernières annonces**, soit 2 à 3 jours. Si la collecte s'arrête plus longtemps, des annonces seront perdues.
+- Les failles de sécurité arrivent parfois par dizaines le même jour. Une amélioration utile serait de les **regrouper par projet** dans le digest (« 18 failles de sécurité dans Airflow » plutôt que 18 lignes).
+- Les expressions régulières de n8n suivent la syntaxe JavaScript : pas de `(?i)` pour ignorer la casse, d'où les noms de projets écrits avec leur casse exacte.
+
+### Langages et outils de build
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Scala (blog officiel) | `https://www.scala-lang.org/feed/index.xml` | *(aucun)* | 2 par mois | Nouvelles versions de Scala et de sbt, avis de sécurité. Plus lisible que les versions GitHub de `scala/scala3`, dont les titres ne suivent pas un format régulier. |
+| Apache Maven | `https://github.com/apache/maven/releases.atom` | `^(Maven )?\d+\.\d+\.\d+$` | 1 tous les 2 à 4 mois | Le filtre écarte les versions candidates (`-rc`) et les entrées d'archivage de branches (`archive/…`, `backup/…`). Il gardera aussi « Maven 4.0.0 » à sa sortie. |
+
+Spark ne publie pas de flux d'actualités (`spark.apache.org/news` n'a pas de flux RSS) : ses versions sont déjà suivies par la source GitHub de la v1.
 
 ### Outils du projet
 
@@ -111,6 +160,20 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | CNCF (blog) | Surtout des annonces de nouveaux membres et d'événements |
 | Kubernetes (versions GitHub) | Plusieurs branches publiées le même jour, et versions alpha et bêta ; le blog officiel annonce déjà chaque version |
 | Helm | Outil non utilisé dans les projets actuels |
+| Apache Kafka (blog) | Le flux existe (`kafka.apache.org/blog/index.xml`) mais il est vide ; versions et failles arrivent par GitHub et par les annonces Apache |
+| Apache Spark, Druid, Superset, Cassandra, NiFi, Paimon | Pas de flux RSS sur leur site ; leurs versions et failles arrivent par les annonces Apache |
+| Apache Pinot | Flux introuvable (404) ; ses annonces arrivent par les annonces Apache |
+| Apache Hadoop | Une seule publication en 2026 ; ses annonces arrivent par les annonces Apache |
+| Apache Doris (blog) | Actif, mais surtout des articles de l'éditeur commercial du projet, et hors de la pile technique actuelle |
+| Planet Apache | Aucun flux trouvé |
+| OpenAI (actualités) | Environ 220 articles en 3 mois, surtout des témoignages clients |
+| Mistral AI (actualités) | Annonces de produits plutôt qu'explications |
+| Latent Space | Newsletter quotidienne d'actualité et podcasts longs |
+| Import AI | Orientée politique et recherche générale de l'IA |
+| LangChain (blog) | Environ 100 articles en 3 mois, nombreux témoignages clients ; LangGraph est suivi par ses versions |
+| Anthropic, Google DeepMind, LlamaIndex, The Batch | Pas de flux RSS exploitable |
+| Eugene Yan | Inactif depuis juin 2026 ; un de ses articles de référence est dans les ressources d'apprentissage |
+| Qdrant, vLLM | Outils non utilisés dans les projets actuels |
 
 ## Résultats de la vérification
 

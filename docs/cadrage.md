@@ -13,11 +13,13 @@ Le projet sert trois buts :
 - **Apprentissage** : apprendre n8n de A à Z (c'est le but principal).
 - **Portfolio** : montrer un pipeline de données complet, documenté et déployé.
 
+**Principe directeur : l'apprentissage d'abord.** Le digest doit d'abord aider à **monter en compétence** et à **comprendre comment fonctionnent** les technologies (Data Engineering, conteneurs, IA). Dans tous les choix (sources, ressources, contenu des résumés), une source qui explique passe avant une source qui annonce, et l'actualité commerciale est écartée.
+
 ## 2. Livrables
 
 | Livrable | Canal | Contenu |
 |----------|-------|---------|
-| Digest quotidien | **Telegram** (sur le téléphone) | Liste des nouveautés du jour avec titre, source, résumé et lien |
+| Digest quotidien | **Telegram** (sur le téléphone) | 1. **La notion du jour** : une courte leçon sur une notion technique. 2. Les nouveautés du jour, avec titre, source, résumé, « la notion à retenir » et lien. |
 | Digest quotidien | **E-mail** (envoyé via le SMTP de Gmail) | Le même contenu, mis en forme |
 | Historique | **PostgreSQL** | Toutes les annonces collectées et leur résumé ; sert aussi au dédoublonnage |
 
@@ -40,7 +42,8 @@ Ne jamais planifier de tâche entre 2 h et 3 h, à cause des changements d'heure
 
 ## 4. Rôle de l'IA
 
-- **v1 : le résumé uniquement.** 2 ou 3 phrases en français par annonce, à partir du titre et de la description fournis par la source.
+- **v1 : un résumé pédagogique.** 2 ou 3 phrases en français par annonce, à partir du titre et de la description fournis par la source, suivies d'une ligne **« La notion à retenir »** qui explique en une ou deux phrases le concept technique en jeu (par exemple, ce qu'est un *rebalancing* quand une version de Kafka l'améliore).
+- **Les leçons de « La notion du jour » ne sont pas générées par l'IA** : elles sont rédigées à l'avance et vérifiées, car un modèle de 8B se trompe régulièrement sur des points techniques précis (voir la section 10).
 - Les annonces sont résumées **une par une**, jamais en parallèle.
 - **Modèle : `llama3.1` (8B)**, configuré comme une variable dans n8n pour pouvoir en changer sans modifier le workflow.
 - **La consigne (le prompt) compte autant que le modèle.** Elle doit au minimum demander : un résumé en français, sans introduction, sans ajouter d'information absente du texte.
@@ -129,28 +132,50 @@ Ce que la vérification a changé par rapport à la liste de départ :
 
 - Pas d'interface web ni de tableau de bord : les seules sorties sont Telegram et l'e-mail.
 - Pas de temps réel : un seul digest par jour.
-- Pas plus de sources que la liste de départ (13 sources). Quatorze sources complémentaires sont déjà vérifiées et prêtes à être activées après la v1 (voir [sources.md](sources.md)) ; le système doit permettre de les ajouter facilement (voir la section 7).
+- Pas plus de sources que la liste de départ (13 sources). Trente sources complémentaires sont déjà vérifiées et prêtes à être activées après la v1 (voir [sources.md](sources.md)) ; le système doit permettre de les ajouter facilement (voir la section 7).
 - Pas de lecture des articles complets : l'IA résume à partir du titre et de la description.
 - Pas de classement ni de note d'importance par l'IA.
 - Pas de RAG ni de Chroma.
 - Pas de Hacker News.
 - Pas de filtre pour écarter le contenu marketing (Confluent, Databricks).
 
-## 10. v1.1 : « Le fondamental du jour »
+## 10. La notion du jour (v1)
 
-Prévue juste après la v1, pour ne pas la retarder.
+Rubrique au cœur du principe « l'apprentissage d'abord ». Chaque matin, le digest commence par **une courte leçon** sur une notion technique, suivie d'une lecture pour approfondir.
 
-- Chaque matin, le digest ajoute **une ressource d'apprentissage** (un article de fond sur une notion de Data Engineering), en plus des nouveautés.
-- Les ressources sont rangées dans une table `ressources` de la base `veille` et envoyées dans l'ordre, une seule fois chacune.
-- Liste de départ : 54 ressources, soit environ 11 semaines de parcours. Voir [ressources-apprentissage.md](ressources-apprentissage.md).
-- Ajouter une ressource = ajouter une ligne dans la table, sans modifier le workflow.
-
-Exemple de rendu :
+**Format d'une leçon**
 
 ```
-📚 Le fondamental du jour (7/54) : Slowly Changing Dimensions (SCD)
-https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-warehouses/
+🎓 La notion du jour — Kafka (5/10) : le consumer
+
+📖 Définition
+⚙️ Comment ça marche
+🧠 Analogie
+💡 À retenir
+🔗 Pour aller plus loin : <lien vers la documentation ou un article de référence>
 ```
+
+**Organisation**
+
+- Les leçons sont regroupées en **modules** (une technologie par module), chacun dans un ordre progressif.
+- Les modules **alternent** d'un jour à l'autre : Kafka 1, Spark 1, IA 1, Docker 1, Kafka 2, Spark 2…
+- Les leçons sont **rédigées à l'avance et vérifiées**, puis rangées dans une table `notions` de la base `veille`. Ajouter une leçon ou un module = ajouter des lignes, sans modifier le workflow.
+- **227 leçons en 22 modules**, soit environ 7 mois et demi à raison d'une leçon par jour. Source : [data/notions.json](../data/notions.json).
+- Chaque fois que c'est possible, les leçons s'appuient sur ce projet et sur le VPS (le `docker-compose.yml`, le cluster k3s, les tests d'Ollama, le token Telegram…), pour relier chaque notion à une situation vécue.
+- Les leçons doivent couvrir **tous** les sujets du projet : chaque nouveau thème de la veille ou des ressources donne lieu à de nouvelles leçons.
+
+| Domaine | Modules |
+|---------|---------|
+| Données et modélisation | SQL · Bases de données (SQL, NoSQL, vectorielles) · Stockage et architectures (data lake, warehouse, data mart, lakehouse, médaillon) · Modélisation (faits, dimensions, étoile, flocon, constellation, SCD) · Formats de fichiers (CSV, JSON, Avro, Parquet, ORC, Arrow, Iceberg, Delta Lake, Hudi) |
+| Traitement | Spark · Kafka · Streaming (fenêtres, watermark, Flink, CDC) · Orchestration et transformation (Airflow, Dagster, dbt) · Pipelines scalables (idempotence, incrémental, montée en charge, choix des technologies) |
+| Plateformes | Docker · Kubernetes (dont k3s et Helm) · Cloud (AWS, GCP, Azure, FinOps) · Linux et réseau · Git et CI/CD |
+| Langages et outils | Python pour la data (pandas, Polars, DuckDB, PySpark) · Scala et Maven · n8n |
+| IA | IA (tokens, LLM, embeddings, RAG, agents) · LLMOps (évaluation, observabilité, sécurité) |
+| Restitution et cadre | Visualisation (BI, Power BI, Tableau, Superset, Grafana) · Gouvernance et sécurité (RGPD, AI Act, contrats de données) |
+
+**Lectures d'approfondissement**
+
+Chaque leçon renvoie vers un lien de référence. La liste de 93 ressources de [ressources-apprentissage.md](ressources-apprentissage.md) (documentation officielle, articles fondateurs) sert de réservoir de lectures ; elle sera rangée dans une table `ressources`.
 
 ## 11. Idées pour la v2
 
@@ -187,6 +212,6 @@ https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-wa
 | 3 | Environnement ✅ | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
 | 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
 | 5 | Généralisation | Toutes les sources, lues depuis la table, avec dédoublonnage |
-| 6 | Brique IA | Résumés par Ollama, enregistrés en base |
+| 6 | Brique IA et notion du jour | Résumés pédagogiques par Ollama, enregistrés en base ; table `notions` et rubrique « La notion du jour » |
 | 7 | Diffusion et planification | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail |
 | 8 | Robustesse | Gestion des erreurs, nouveaux essais, logs, limites d'API |
