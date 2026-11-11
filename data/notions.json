@@ -110,6 +110,26 @@
       "nom": "LLMOps",
       "rang": 22,
       "emoji": "🧪"
+    },
+    {
+      "nom": "Statistiques",
+      "rang": 23,
+      "emoji": "📈"
+    },
+    {
+      "nom": "Machine learning",
+      "rang": 24,
+      "emoji": "🎯"
+    },
+    {
+      "nom": "API et intégration",
+      "rang": 25,
+      "emoji": "🔌"
+    },
+    {
+      "nom": "PostgreSQL",
+      "rang": 26,
+      "emoji": "🐘"
     }
   ],
   "notions": [
@@ -2382,6 +2402,426 @@
       "analogie": "Le RAG, c'est donner un dossier à un consultant ; le fine-tuning, c'est l'envoyer en formation.",
       "a_retenir": "Pour des connaissances qui évoluent (des textes de loi, une documentation), le RAG est presque toujours le premier choix ; le fine-tuning vient ensuite, pour la forme.",
       "lien": "https://arxiv.org/abs/2106.09685"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 1,
+      "titre": "la moyenne et la médiane",
+      "definition": "La moyenne est la somme des valeurs divisée par leur nombre. La médiane est la valeur du milieu, quand les valeurs sont triées : la moitié est au-dessous, la moitié au-dessus.",
+      "fonctionnement": "La moyenne est sensible aux valeurs extrêmes, la médiane beaucoup moins. Dans une équipe de neuf personnes payées 2 000 € et d'un dirigeant payé 50 000 €, la moyenne est de 6 800 €, alors que la médiane reste à 2 000 €. En SQL, AVG() calcule la moyenne ; la médiane s'obtient avec PERCENTILE_CONT(0.5) dans PostgreSQL.",
+      "analogie": "Si un milliardaire entre dans un café, le revenu moyen des clients explose, mais le revenu médian ne bouge presque pas.",
+      "a_retenir": "Quand une distribution est déséquilibrée (salaires, prix, temps de réponse), la médiane décrit mieux la situation « typique » que la moyenne.",
+      "lien": "https://en.wikipedia.org/wiki/Median"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 2,
+      "titre": "la variance et l'écart type",
+      "definition": "L'écart type mesure la dispersion des valeurs autour de la moyenne. La variance est le carré de l'écart type.",
+      "fonctionnement": "Un écart type faible signifie que les valeurs sont regroupées près de la moyenne ; un écart type élevé, qu'elles sont très étalées. Deux pipelines peuvent avoir la même durée moyenne de 10 minutes, l'un avec un écart type de 30 secondes (très régulier), l'autre de 8 minutes (très imprévisible). En SQL : STDDEV() et VARIANCE().",
+      "analogie": "Deux archers qui visent le centre : l'un regroupe ses flèches, l'autre les disperse partout, même si leur position moyenne est la même.",
+      "a_retenir": "Une moyenne seule ne suffit jamais : il faut toujours regarder aussi la dispersion.",
+      "lien": "https://en.wikipedia.org/wiki/Standard_deviation"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 3,
+      "titre": "les percentiles",
+      "definition": "Le percentile p est la valeur au-dessous de laquelle se trouvent p % des observations. Le 50e percentile (p50) est la médiane.",
+      "fonctionnement": "On les utilise beaucoup pour les temps de réponse : un p95 de 800 ms signifie que 95 % des requêtes répondent en moins de 800 ms, et que 5 % sont plus lentes. Le p99 révèle les cas les plus lents, que la moyenne cache complètement. Les quartiles sont les percentiles 25, 50 et 75.",
+      "analogie": "Le classement d'un concours : être au 90e percentile, c'est faire mieux que 90 % des candidats.",
+      "a_retenir": "Pour surveiller la performance d'un système, on suit le p95 ou le p99, et pas la moyenne : ce sont les utilisateurs les plus mal servis qui se plaignent.",
+      "lien": "https://en.wikipedia.org/wiki/Percentile"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 4,
+      "titre": "la distribution normale",
+      "definition": "La distribution normale (ou loi de Gauss) est la célèbre courbe en cloche : symétrique, avec la plupart des valeurs proches de la moyenne.",
+      "fonctionnement": "Dans une distribution normale, environ 68 % des valeurs se trouvent à moins d'un écart type de la moyenne, 95 % à moins de deux, et 99,7 % à moins de trois. Beaucoup de phénomènes s'en approchent (tailles, erreurs de mesure), mais pas tous : les revenus, les temps de réponse ou la popularité des produits sont très asymétriques.",
+      "analogie": "Une planche de Galton : des billes qui rebondissent au hasard finissent par former une cloche.",
+      "a_retenir": "Avant d'appliquer une méthode qui suppose une distribution normale (comme « une valeur à plus de 3 écarts types est anormale »), il faut vérifier que les données ont bien cette forme.",
+      "lien": "https://en.wikipedia.org/wiki/Normal_distribution"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 5,
+      "titre": "les valeurs aberrantes",
+      "definition": "Une valeur aberrante (outlier) est une observation très éloignée des autres.",
+      "fonctionnement": "Elle peut être une erreur (un âge de 250 ans, un montant saisi en centimes au lieu d'euros) ou un fait réel et important (une fraude, un pic de trafic). Une règle courante la repère à partir de l'écart interquartile (IQR, la différence entre le 75e et le 25e percentile) : est suspecte toute valeur à plus de 1,5 IQR au-delà des quartiles.",
+      "analogie": "Un éléphant dans une photo de classe : soit il s'est glissé là par erreur, soit c'est l'information la plus intéressante de la photo.",
+      "a_retenir": "On ne supprime jamais une valeur aberrante sans comprendre d'où elle vient : en data engineering, c'est souvent le symptôme d'un bug en amont.",
+      "lien": "https://en.wikipedia.org/wiki/Outlier"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 6,
+      "titre": "l'échantillonnage",
+      "definition": "Échantillonner, c'est étudier une partie des données (l'échantillon) pour en tirer des conclusions sur l'ensemble (la population).",
+      "fonctionnement": "Un échantillon aléatoire et suffisamment grand donne des estimations fiables, avec une marge d'erreur calculable. Le danger est le biais d'échantillonnage : un échantillon qui ne ressemble pas à la population. En data, on échantillonne aussi pour aller vite : tester une requête sur 1 % d'une table (TABLESAMPLE en SQL) avant de la lancer sur tout.",
+      "analogie": "Goûter une cuillère de soupe pour juger la marmite : ça marche si l'on a bien mélangé avant.",
+      "a_retenir": "Les 10 premières lignes d'une table ne sont pas un échantillon aléatoire : elles sont souvent les plus anciennes, et rarement représentatives.",
+      "lien": "https://en.wikipedia.org/wiki/Sampling_(statistics)"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 7,
+      "titre": "corrélation et causalité",
+      "definition": "Deux variables sont corrélées quand elles varient ensemble. La causalité signifie que l'une provoque l'autre. Une corrélation ne prouve pas une causalité.",
+      "fonctionnement": "Le coefficient de corrélation va de -1 (elles varient en sens inverse) à +1 (elles varient ensemble), 0 indiquant l'absence de relation linéaire. Une corrélation peut venir d'un facteur caché : les ventes de glaces et les noyades augmentent ensemble, parce que toutes deux augmentent en été. Seule une expérience contrôlée, comme un test A/B, permet d'établir une causalité.",
+      "analogie": "Le chant du coq précède le lever du soleil chaque matin, mais il ne le provoque pas.",
+      "a_retenir": "Face à une corrélation dans un tableau de bord, la bonne question est : « quel autre facteur pourrait expliquer les deux ? »",
+      "lien": "https://en.wikipedia.org/wiki/Correlation_does_not_imply_causation"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 8,
+      "titre": "le test A/B",
+      "definition": "Un test A/B compare deux versions (A et B) en les présentant au hasard à deux groupes d'utilisateurs, pour mesurer laquelle donne le meilleur résultat.",
+      "fonctionnement": "Le tirage au sort rend les deux groupes comparables : la seule différence est la version vue, donc l'écart de résultat lui est attribuable. On fixe à l'avance l'indicateur mesuré et la taille d'échantillon nécessaire, puis on vérifie que l'écart observé est statistiquement significatif, et non dû au hasard.",
+      "analogie": "Un essai clinique : un groupe reçoit le médicament, l'autre un placebo, et le hasard décide qui est dans quel groupe.",
+      "a_retenir": "Arrêter un test dès qu'il « semble » donner un résultat fausse les conclusions : il faut attendre la taille d'échantillon prévue.",
+      "lien": "https://en.wikipedia.org/wiki/A/B_testing"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 9,
+      "titre": "la p-valeur",
+      "definition": "La p-valeur est la probabilité d'observer un écart au moins aussi grand que celui mesuré, si en réalité il n'y avait aucune différence.",
+      "fonctionnement": "Une p-valeur faible (souvent moins de 0,05) indique que l'écart serait peu probable par simple hasard : on le dit « statistiquement significatif ». Attention : ce n'est pas la probabilité que l'hypothèse soit vraie, et « significatif » ne veut pas dire « important » : avec des millions d'utilisateurs, un écart minuscule peut être significatif.",
+      "analogie": "Une pièce qui tombe 9 fois sur pile en 10 lancers : c'est possible avec une pièce normale, mais assez improbable pour la soupçonner d'être truquée.",
+      "a_retenir": "Il faut toujours regarder la taille de l'effet en plus de sa significativité : un gain de 0,01 % peut être « significatif » et sans intérêt.",
+      "lien": "https://en.wikipedia.org/wiki/P-value"
+    },
+    {
+      "module": "Statistiques",
+      "numero": 10,
+      "titre": "le paradoxe de Simpson",
+      "definition": "Le paradoxe de Simpson se produit quand une tendance présente dans chaque groupe s'inverse quand on réunit les groupes.",
+      "fonctionnement": "Un traitement peut être meilleur chez les patients légers et chez les patients graves, et pourtant sembler pire au total, s'il a surtout été donné aux patients graves. Le résultat global mélange alors l'effet du traitement et la composition des groupes.",
+      "analogie": "Un élève meilleur que son camarade dans chaque matière, mais avec une moyenne générale plus faible, parce qu'il a pris davantage de matières difficiles.",
+      "a_retenir": "Avant de conclure sur un chiffre agrégé, il faut le découper selon les grandes catégories : c'est l'intérêt des dimensions dans un modèle en étoile.",
+      "lien": "https://en.wikipedia.org/wiki/Simpson%27s_paradox"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 1,
+      "titre": "l'apprentissage supervisé",
+      "definition": "L'apprentissage supervisé entraîne un modèle à partir d'exemples dont on connaît la bonne réponse (l'étiquette), pour qu'il prédise la réponse sur de nouveaux cas.",
+      "fonctionnement": "On distingue deux grandes tâches : la classification, qui prédit une catégorie (ce paiement est-il frauduleux ?), et la régression, qui prédit un nombre (quel sera le chiffre d'affaires du mois prochain ?). Le modèle ajuste ses paramètres pour réduire l'écart entre ses prédictions et les vraies réponses.",
+      "analogie": "Apprendre à reconnaître des champignons avec un guide où chaque photo porte la mention « comestible » ou « toxique ».",
+      "a_retenir": "Sans données étiquetées en quantité et de qualité, pas d'apprentissage supervisé : c'est souvent le travail du data engineer de les produire.",
+      "lien": "https://scikit-learn.org/stable/supervised_learning.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 2,
+      "titre": "l'apprentissage non supervisé",
+      "definition": "L'apprentissage non supervisé cherche des structures dans des données sans étiquette.",
+      "fonctionnement": "Le clustering regroupe les éléments qui se ressemblent : des segments de clients, par exemple, avec l'algorithme k-means. La réduction de dimension résume de nombreuses colonnes en quelques-unes, pour visualiser ou simplifier les données. La détection d'anomalies repère les cas qui ne ressemblent à aucun autre.",
+      "analogie": "Trier une boîte de boutons sans consigne : on finit par les grouper naturellement par couleur ou par taille.",
+      "a_retenir": "Les groupes trouvés par un algorithme non supervisé doivent toujours être interprétés par un humain : l'algorithme ne dit pas ce qu'ils signifient.",
+      "lien": "https://scikit-learn.org/stable/unsupervised_learning.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 3,
+      "titre": "les features",
+      "definition": "Les features (variables explicatives) sont les informations données au modèle pour faire sa prédiction : l'âge d'un client, le montant d'un achat, l'heure d'une transaction.",
+      "fonctionnement": "Le feature engineering consiste à construire de bonnes features à partir des données brutes : le nombre d'achats des 30 derniers jours, le jour de la semaine, l'écart avec le panier moyen. Les modèles exigent aussi des préparations : convertir les catégories en nombres, mettre les valeurs à la même échelle, gérer les valeurs manquantes.",
+      "analogie": "Les indices fournis à un détective : plus ils sont pertinents, plus il trouve vite le coupable.",
+      "a_retenir": "De bonnes features comptent souvent plus que le choix de l'algorithme ; c'est là que le travail de data engineering pèse le plus.",
+      "lien": "https://scikit-learn.org/stable/modules/preprocessing.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 4,
+      "titre": "les jeux d'entraînement et de test",
+      "definition": "On sépare les données en un jeu d'entraînement, qui sert à construire le modèle, et un jeu de test, qui sert uniquement à mesurer sa performance sur des cas qu'il n'a jamais vus.",
+      "fonctionnement": "Un modèle évalué sur ses propres données d'entraînement paraît toujours meilleur qu'il ne l'est. On réserve donc souvent 20 % des données au test. Quand les données ont une dimension temporelle, on teste sur la période la plus récente, pour reproduire la situation réelle : prédire l'avenir à partir du passé.",
+      "analogie": "Un élève qui a appris les réponses de l'examen par cœur réussira l'examen, pas l'exercice qu'il n'a jamais vu.",
+      "a_retenir": "Le jeu de test ne doit servir qu'à la toute fin : l'utiliser pour faire des choix revient à tricher sur l'examen.",
+      "lien": "https://scikit-learn.org/stable/modules/cross_validation.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 5,
+      "titre": "le surapprentissage",
+      "definition": "Il y a surapprentissage (overfitting) quand un modèle apprend les détails et le bruit de ses données d'entraînement, au point de mal prédire de nouveaux cas. Le sous-apprentissage (underfitting) est l'inverse : un modèle trop simple pour saisir la structure des données.",
+      "fonctionnement": "Le signe typique du surapprentissage : une excellente performance à l'entraînement et une mauvaise performance au test. On le combat avec plus de données, un modèle plus simple, de la régularisation (pénaliser la complexité) ou l'arrêt précoce de l'entraînement.",
+      "analogie": "Un costume taillé si exactement pour une personne qu'il ne va à personne d'autre, ni à elle-même si elle bouge un peu.",
+      "a_retenir": "Le but d'un modèle n'est pas de bien décrire le passé, mais de bien prédire ce qu'il n'a pas encore vu.",
+      "lien": "https://developers.google.com/machine-learning/crash-course/overfitting"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 6,
+      "titre": "la validation croisée",
+      "definition": "La validation croisée évalue un modèle plusieurs fois, sur des découpages différents des données, pour obtenir une mesure plus fiable de sa performance.",
+      "fonctionnement": "Avec une validation croisée en 5 plis, on découpe les données d'entraînement en 5 parts ; on entraîne 5 fois sur 4 parts et l'on évalue sur la cinquième, en changeant de part à chaque fois. La moyenne des 5 résultats est plus stable qu'une seule évaluation. On l'utilise pour comparer des modèles ou régler leurs paramètres.",
+      "analogie": "Juger un candidat sur plusieurs épreuves différentes plutôt que sur une seule, qui pourrait tomber sur son point fort ou son point faible.",
+      "a_retenir": "Avec des données temporelles, il faut une validation croisée qui respecte l'ordre du temps, sinon le modèle « voit » le futur pendant son entraînement.",
+      "lien": "https://scikit-learn.org/stable/modules/cross_validation.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 7,
+      "titre": "précision, rappel et F1",
+      "definition": "La précision et le rappel mesurent la qualité d'un classificateur. La précision : parmi les cas signalés, combien sont vrais. Le rappel : parmi les vrais cas, combien ont été trouvés. Le F1 combine les deux.",
+      "fonctionnement": "Pour une détection de fraude où 1 % des paiements sont frauduleux, un modèle qui dit toujours « pas de fraude » a 99 % d'exactitude (accuracy), mais un rappel de 0 : il ne trouve aucune fraude. Augmenter le rappel fait généralement baisser la précision, et inversement : on choisit le compromis selon le coût de chaque erreur.",
+      "analogie": "Un filet de pêche : à mailles serrées, il attrape tous les poissons voulus (rappel) mais aussi beaucoup de débris (précision faible).",
+      "a_retenir": "Sur des classes déséquilibrées, l'exactitude est trompeuse : il faut regarder la précision, le rappel et la matrice de confusion.",
+      "lien": "https://scikit-learn.org/stable/modules/model_evaluation.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 8,
+      "titre": "la descente de gradient",
+      "definition": "La descente de gradient est la méthode qui permet à la plupart des modèles, dont les réseaux de neurones et les LLM, d'apprendre leurs paramètres.",
+      "fonctionnement": "On mesure l'erreur du modèle avec une fonction de perte, puis l'on calcule dans quelle direction modifier chaque paramètre pour la réduire (le gradient). On fait un petit pas dans cette direction, et l'on recommence des milliers ou des millions de fois. La taille du pas, le taux d'apprentissage, est un réglage délicat : trop grand, on rate le minimum ; trop petit, l'entraînement n'en finit pas.",
+      "analogie": "Descendre une montagne dans le brouillard en faisant chaque pas dans le sens de la pente la plus forte.",
+      "a_retenir": "Les 8 milliards de paramètres de llama3.1 ont été ajustés ainsi, par descente de gradient sur d'immenses quantités de texte.",
+      "lien": "https://developers.google.com/machine-learning/crash-course/linear-regression/gradient-descent"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 9,
+      "titre": "les arbres de décision et les ensembles",
+      "definition": "Un arbre de décision prédit à partir d'une suite de questions simples (« montant > 500 € ? », « pays étranger ? »). Les méthodes d'ensemble combinent de nombreux arbres pour des prédictions bien plus fiables.",
+      "fonctionnement": "Un arbre seul est facile à comprendre mais instable. Une forêt aléatoire entraîne des centaines d'arbres sur des échantillons différents et fait voter leurs prédictions. Le gradient boosting (XGBoost, LightGBM) construit les arbres l'un après l'autre, chacun corrigeant les erreurs des précédents.",
+      "analogie": "Demander l'avis de nombreux experts différents plutôt que d'un seul.",
+      "a_retenir": "Sur des données en tableau (clients, transactions, capteurs), le gradient boosting est très souvent le meilleur choix, avant même les réseaux de neurones.",
+      "lien": "https://scikit-learn.org/stable/modules/ensemble.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 10,
+      "titre": "la fuite de données",
+      "definition": "Il y a fuite de données (data leakage) quand un modèle a accès, pendant son entraînement, à une information qui ne sera pas disponible au moment de prédire.",
+      "fonctionnement": "Exemples : une feature calculée après l'événement à prédire (le statut « remboursé » pour prédire une fraude), une normalisation calculée sur toutes les données avant la séparation entraînement-test, ou des doublons présents des deux côtés. Le modèle obtient alors des résultats excellents en test, puis s'effondre en production.",
+      "analogie": "Un élève qui a vu le corrigé avant l'examen : sa note ne dit rien de son niveau réel.",
+      "a_retenir": "Des résultats trop beaux pour être vrais doivent faire chercher une fuite de données avant de faire la fête.",
+      "lien": "https://scikit-learn.org/stable/common_pitfalls.html"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 11,
+      "titre": "le cycle de vie MLOps",
+      "definition": "Le MLOps applique au machine learning les pratiques d'ingénierie : versionner, tester, déployer et surveiller les modèles comme du logiciel.",
+      "fonctionnement": "Le cycle comprend : le suivi des expériences (quels paramètres, quelles données, quels résultats), un registre des modèles (quelle version est en production), le déploiement (par API ou en traitement par lots), puis la surveillance en production, notamment de la dérive : les données réelles changent avec le temps, et la performance du modèle baisse. MLflow est un outil open source courant pour ces étapes.",
+      "analogie": "Le carnet d'entretien d'un véhicule : on sait ce qui a été fait, quand, et quand il faut repasser au garage.",
+      "a_retenir": "Un modèle n'est jamais terminé : sans surveillance de la dérive, il se dégrade silencieusement.",
+      "lien": "https://mlflow.org/docs/latest/"
+    },
+    {
+      "module": "Machine learning",
+      "numero": 12,
+      "titre": "le feature store",
+      "definition": "Un feature store est un système qui stocke et sert les features d'un modèle, de façon identique pour l'entraînement et pour les prédictions en production.",
+      "fonctionnement": "Il calcule les features une fois, les historise (pour reconstituer leur valeur à n'importe quelle date passée, sans fuite de données) et les sert rapidement aux applications. Il évite que l'équipe data science calcule une feature d'une façon et l'équipe de production d'une autre. Feast est un feature store open source.",
+      "analogie": "Une cuisine centrale qui prépare les ingrédients pour tous les restaurants d'une chaîne, toujours selon la même recette.",
+      "a_retenir": "Un écart entre les features d'entraînement et celles de production (training-serving skew) est une cause classique de modèles décevants en production.",
+      "lien": "https://docs.feast.dev/"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 1,
+      "titre": "l'API REST",
+      "definition": "Une API REST expose des ressources (des utilisateurs, des commandes, des versions de logiciel) à des adresses web, que l'on manipule avec les méthodes HTTP.",
+      "fonctionnement": "Chaque ressource a une adresse (par exemple /repos/apache/airflow/releases/latest). On la lit avec GET, on en crée avec POST, on la modifie avec PUT ou PATCH, on la supprime avec DELETE. Les échanges se font le plus souvent en JSON, et chaque requête est indépendante : le serveur ne garde pas de mémoire entre deux appels.",
+      "analogie": "Un guichet de bibliothèque où chaque document a une cote, et où l'on demande « consulter », « ajouter », « modifier » ou « retirer ».",
+      "a_retenir": "L'API GitHub que tu as interrogée au début du projet est une API REST typique.",
+      "lien": "https://developer.mozilla.org/en-US/docs/Glossary/REST"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 2,
+      "titre": "les méthodes HTTP",
+      "definition": "Les méthodes HTTP indiquent l'action demandée : GET (lire), POST (créer ou déclencher), PUT (remplacer), PATCH (modifier en partie), DELETE (supprimer).",
+      "fonctionnement": "Certaines méthodes sont « sûres » : GET ne modifie rien. D'autres sont « idempotentes » : PUT et DELETE donnent le même résultat qu'on les envoie une ou dix fois. POST, lui, n'est pas idempotent : l'envoyer deux fois peut créer deux commandes.",
+      "analogie": "Consulter un compte (GET), faire un virement (POST), remplacer son adresse (PUT), corriger un chiffre de son code postal (PATCH), fermer le compte (DELETE).",
+      "a_retenir": "Savoir quelles méthodes sont idempotentes indique lesquelles on peut relancer sans risque en cas d'erreur réseau.",
+      "lien": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 3,
+      "titre": "les requêtes idempotentes",
+      "definition": "Une API peut rendre une requête POST idempotente grâce à une clé d'idempotence : un identifiant unique envoyé avec la requête.",
+      "fonctionnement": "Si le client n'a pas reçu de réponse (coupure réseau), il renvoie la même requête avec la même clé. Le serveur reconnaît la clé, ne refait pas l'opération, et renvoie le résultat de la première fois. Stripe utilise ce mécanisme pour éviter qu'un paiement soit débité deux fois.",
+      "analogie": "Un numéro de commande écrit sur un bon : si le bon arrive deux fois au service, il n'est traité qu'une fois.",
+      "a_retenir": "C'est le même principe que la clé de dédoublonnage de ce projet : un identifiant stable permet de rejouer sans dupliquer.",
+      "lien": "https://docs.stripe.com/api/idempotent_requests"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 4,
+      "titre": "la pagination",
+      "definition": "La pagination découpe un grand nombre de résultats en pages successives, qu'on demande l'une après l'autre.",
+      "fonctionnement": "Une API ne renvoie jamais un million de résultats d'un coup. On demande la page 1, puis la page 2… soit avec un numéro de page (page=2&per_page=100), soit avec un curseur fourni par la réponse précédente, plus fiable si des données sont ajoutées pendant la lecture. L'API GitHub indique la page suivante dans l'en-tête Link de sa réponse.",
+      "analogie": "Un catalogue papier : on tourne les pages une par une, plutôt que de recevoir tous les produits sur une seule feuille.",
+      "a_retenir": "Oublier la pagination est une erreur classique : le pipeline semble fonctionner, mais ne lit que les 30 premiers résultats.",
+      "lien": "https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 5,
+      "titre": "les limites de débit",
+      "definition": "Une limite de débit (rate limit) fixe le nombre maximal de requêtes autorisées par période, pour protéger un service.",
+      "fonctionnement": "Au-delà, l'API répond par une erreur, souvent 429 (Too Many Requests) ou 403, avec parfois un en-tête Retry-After qui indique quand réessayer. L'API GitHub autorise 60 requêtes par heure sans authentification, et beaucoup plus avec un token. Le client doit ralentir, attendre, puis réessayer, idéalement avec un délai croissant.",
+      "analogie": "Un distributeur de billets limité à trois retraits par jour : au-delà, il faut attendre le lendemain.",
+      "a_retenir": "Les flux Atom de GitHub utilisés dans ce projet évitent en grande partie cette contrainte, contrairement à l'API.",
+      "lien": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 6,
+      "titre": "les webhooks",
+      "definition": "Un webhook est un appel HTTP envoyé automatiquement par un service vers une adresse de ton choix, dès qu'un événement se produit.",
+      "fonctionnement": "Au lieu d'interroger régulièrement un service (« y a-t-il du nouveau ? »), on lui donne une adresse, et c'est lui qui prévient : nouveau paiement, nouveau commit, formulaire rempli. n8n peut recevoir des webhooks avec son nœud Webhook. Il faut vérifier la signature des appels reçus pour s'assurer qu'ils viennent bien du service attendu.",
+      "analogie": "Être prévenu par SMS quand un colis arrive, plutôt que d'aller vérifier sa boîte aux lettres toutes les heures.",
+      "a_retenir": "Les webhooks sont plus réactifs et moins coûteux que l'interrogation régulière, mais il faut prévoir le cas où un appel est perdu.",
+      "lien": "https://docs.github.com/en/webhooks/about-webhooks"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 7,
+      "titre": "l'authentification et OAuth 2.0",
+      "definition": "Une API doit savoir qui l'appelle. Les méthodes courantes sont la clé d'API (un secret fixe) et OAuth 2.0, qui délivre des jetons d'accès limités dans le temps et dans leurs droits.",
+      "fonctionnement": "Avec OAuth 2.0, l'utilisateur autorise une application à agir en son nom, avec des droits précis (les « scopes ») ; l'application reçoit un jeton d'accès, qui expire, et un jeton de rafraîchissement pour en obtenir un nouveau. C'est le mécanisme derrière « Se connecter avec Google ». Le token de ton bot Telegram, lui, est une simple clé d'API.",
+      "analogie": "Une carte d'accès temporaire remise à un prestataire, qui n'ouvre que certaines portes et expire en fin de journée.",
+      "a_retenir": "Un jeton à durée et à droits limités réduit les dégâts en cas de fuite, par rapport à une clé permanente qui donne tous les droits.",
+      "lien": "https://oauth.net/2/"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 8,
+      "titre": "OpenAPI et JSON Schema",
+      "definition": "OpenAPI est un format standard pour décrire une API REST : ses adresses, ses paramètres et ses réponses. JSON Schema décrit la structure attendue d'un document JSON.",
+      "fonctionnement": "À partir d'une description OpenAPI, des outils génèrent automatiquement une documentation interactive, du code client, des tests. JSON Schema, utilisé à l'intérieur d'OpenAPI, précise par exemple qu'un champ « montant » est un nombre positif obligatoire. Des frameworks comme FastAPI produisent la description OpenAPI directement à partir du code.",
+      "analogie": "Le mode d'emploi officiel d'un appareil, rédigé dans un format que des machines peuvent lire.",
+      "a_retenir": "JSON Schema est aussi ce qu'on fournit à un LLM pour obtenir une sortie structurée fiable.",
+      "lien": "https://swagger.io/specification/"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 9,
+      "titre": "GraphQL et gRPC",
+      "definition": "GraphQL et gRPC sont deux alternatives à REST. GraphQL laisse le client demander exactement les champs dont il a besoin ; gRPC échange des messages binaires très efficaces entre services.",
+      "fonctionnement": "Avec GraphQL, une seule requête peut récupérer un utilisateur, ses commandes et leurs produits, sans données superflues. gRPC décrit les appels et les messages avec Protocol Buffers, un format binaire compact, et convient aux échanges internes rapides entre microservices.",
+      "analogie": "REST, c'est un menu fixe ; GraphQL, c'est la carte où l'on compose son assiette ; gRPC, c'est le langage abrégé entre cuisiniers.",
+      "a_retenir": "REST reste le standard des API publiques ; GraphQL et gRPC répondent à des besoins précis de performance ou de flexibilité.",
+      "lien": "https://graphql.org/learn/"
+    },
+    {
+      "module": "API et intégration",
+      "numero": 10,
+      "titre": "les files de messages",
+      "definition": "Une file de messages transmet des messages d'un programme à un autre de façon asynchrone : l'émetteur dépose un message, le destinataire le traite quand il est prêt.",
+      "fonctionnement": "Dans une file classique comme RabbitMQ, un message est remis à un seul consommateur, puis supprimé une fois traité : idéal pour répartir des tâches. Kafka fonctionne différemment : les messages sont conservés dans un journal, et chaque groupe de lecteurs peut les relire à son rythme.",
+      "analogie": "Une boîte de dépôt de dossiers à traiter : on dépose et l'on repart, sans attendre que quelqu'un soit disponible.",
+      "a_retenir": "Une file absorbe les pics de charge et découple les systèmes : si le destinataire tombe en panne, les messages l'attendent au lieu d'être perdus.",
+      "lien": "https://www.rabbitmq.com/tutorials"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 1,
+      "titre": "le MVCC",
+      "definition": "Le MVCC (Multi-Version Concurrency Control) est le mécanisme qui permet à PostgreSQL de servir des lectures et des écritures simultanées sans qu'elles se bloquent.",
+      "fonctionnement": "Une mise à jour ne modifie pas la ligne en place : elle crée une nouvelle version de la ligne, et l'ancienne reste visible pour les transactions qui l'avaient commencée avant. Chaque transaction voit ainsi une image cohérente des données, comme une photo prise à son début.",
+      "analogie": "Un document partagé où chaque modification crée une nouvelle version, pendant que les lecteurs finissent tranquillement de lire l'ancienne.",
+      "a_retenir": "Avec le MVCC, les lecteurs ne bloquent jamais les écrivains, et inversement ; la contrepartie, ce sont les anciennes versions qu'il faut nettoyer.",
+      "lien": "https://www.postgresql.org/docs/current/mvcc-intro.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 2,
+      "titre": "VACUUM",
+      "definition": "VACUUM est l'opération qui nettoie les anciennes versions de lignes laissées par le MVCC, pour récupérer la place et garder la base performante.",
+      "fonctionnement": "Chaque UPDATE et chaque DELETE laissent des versions mortes. Le processus autovacuum les nettoie automatiquement, et met à jour les statistiques utilisées par le planificateur de requêtes. Sur une table très modifiée, si l'autovacuum ne suit pas, la table gonfle (on parle de « bloat ») et les requêtes ralentissent.",
+      "analogie": "Le ramassage des ordures d'une ville : s'il s'arrête, les rues s'encombrent et tout le monde circule plus lentement.",
+      "a_retenir": "Une table qui grossit alors que son nombre de lignes reste stable est le signe typique d'un autovacuum qui ne suit pas.",
+      "lien": "https://www.postgresql.org/docs/current/routine-vacuuming.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 3,
+      "titre": "le WAL",
+      "definition": "Le WAL (Write-Ahead Log, ou journal d'écriture anticipée) est le journal dans lequel PostgreSQL écrit chaque modification avant de l'appliquer aux fichiers de données.",
+      "fonctionnement": "Une modification est considérée comme validée dès qu'elle est écrite dans le WAL sur le disque. Après une panne, PostgreSQL rejoue le WAL pour retrouver un état cohérent. Le même journal sert à la réplication (les réplicas rejouent le WAL du serveur principal), aux sauvegardes à un instant précis, et à la capture des changements (CDC) avec Debezium.",
+      "analogie": "Le brouillon d'un comptable : il note chaque opération dans son journal avant de mettre à jour les comptes, pour pouvoir tout reconstituer après une coupure.",
+      "a_retenir": "Le WAL est au cœur de la durabilité (le D de ACID) et de presque toutes les fonctions avancées de PostgreSQL.",
+      "lien": "https://www.postgresql.org/docs/current/wal-intro.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 4,
+      "titre": "les niveaux d'isolation",
+      "definition": "Le niveau d'isolation d'une transaction définit ce qu'elle peut voir des modifications faites en même temps par les autres transactions.",
+      "fonctionnement": "PostgreSQL propose READ COMMITTED (par défaut : chaque requête voit les données validées à son lancement), REPEATABLE READ (toute la transaction voit la même photo des données) et SERIALIZABLE (le résultat est garanti identique à une exécution des transactions l'une après l'autre ; en cas de conflit, l'une est annulée et doit être relancée).",
+      "analogie": "Lire un tableau d'affichage : soit on relit la dernière version à chaque coup d'œil, soit on prend une photo au début et l'on ne regarde plus que la photo.",
+      "a_retenir": "Un niveau plus strict évite des anomalies subtiles, mais provoque plus d'annulations à gérer : on le choisit selon le besoin réel.",
+      "lien": "https://www.postgresql.org/docs/current/transaction-iso.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 5,
+      "titre": "l'UPSERT",
+      "definition": "Un UPSERT insère une ligne si elle n'existe pas, ou la met à jour si elle existe déjà. Dans PostgreSQL, il s'écrit INSERT … ON CONFLICT.",
+      "fonctionnement": "On précise la contrainte d'unicité à surveiller (par exemple la colonne cle), puis l'action en cas de conflit : DO NOTHING (ignorer la nouvelle ligne) ou DO UPDATE (mettre à jour certaines colonnes). L'opération est atomique, même avec des insertions simultanées.",
+      "analogie": "Le vestiaire d'un théâtre : si le manteau a déjà un ticket, on ne lui en donne pas un second.",
+      "a_retenir": "INSERT … ON CONFLICT (cle) DO NOTHING est exactement ce qu'il faut pour le dédoublonnage des annonces de ce projet : relancer la collecte ne crée jamais de doublon.",
+      "lien": "https://www.postgresql.org/docs/current/sql-insert.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 6,
+      "titre": "le type JSONB",
+      "definition": "JSONB est un type de colonne PostgreSQL qui stocke du JSON sous une forme binaire, qu'on peut interroger et indexer.",
+      "fonctionnement": "On peut lire un champ (donnees->>'titre'), filtrer sur son contenu (donnees @> '{\"type\": \"rss\"}') et créer un index GIN pour accélérer ces recherches. PostgreSQL combine ainsi la rigueur relationnelle et la souplesse d'une base orientée documents.",
+      "analogie": "Un classeur bien organisé qui accepte aussi, dans certains dossiers, des documents de forme libre.",
+      "a_retenir": "Stocker la réponse brute d'une API en JSONB, à côté des colonnes structurées, permet de retraiter les données plus tard sans réinterroger la source.",
+      "lien": "https://www.postgresql.org/docs/current/datatype-json.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 7,
+      "titre": "le partitionnement des tables",
+      "definition": "Le partitionnement découpe une grande table en plusieurs tables plus petites, les partitions, selon la valeur d'une colonne, tout en continuant à l'interroger comme une seule table.",
+      "fonctionnement": "Le plus courant est le partitionnement par intervalle de dates : une partition par mois, par exemple. Une requête sur novembre ne lit que la partition de novembre. Supprimer des données anciennes devient instantané : on détache ou supprime une partition entière au lieu d'effacer des millions de lignes.",
+      "analogie": "Des archives classées dans une boîte par mois, avec un seul registre qui renvoie vers la bonne boîte.",
+      "a_retenir": "C'est la même idée que le partitionnement des fichiers d'un data lake, appliquée à l'intérieur d'une base relationnelle.",
+      "lien": "https://www.postgresql.org/docs/current/ddl-partitioning.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 8,
+      "titre": "la réplication",
+      "definition": "La réplication maintient une ou plusieurs copies à jour d'une base sur d'autres serveurs, les réplicas.",
+      "fonctionnement": "Avec la réplication en continu (streaming replication), les réplicas rejouent le WAL du serveur principal en temps quasi réel. Ils peuvent servir des requêtes en lecture, pour alléger le serveur principal, et prendre le relais en cas de panne. Des outils comme Patroni automatisent cette bascule.",
+      "analogie": "Un notaire et ses clercs, qui recopient chaque acte au fur et à mesure : si le notaire est absent, un clerc peut prendre le relais.",
+      "a_retenir": "Une réplique n'est pas une sauvegarde : une suppression accidentelle est répliquée aussitôt sur toutes les copies.",
+      "lien": "https://www.postgresql.org/docs/current/high-availability.html"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 9,
+      "titre": "le pool de connexions",
+      "definition": "Un pool de connexions garde ouvertes un petit nombre de connexions à la base et les partage entre de nombreux clients.",
+      "fonctionnement": "Dans PostgreSQL, chaque connexion est un processus du système, qui consomme de la mémoire : quelques centaines de connexions directes suffisent à saturer un serveur. Un pooler comme PgBouncer accepte des milliers de clients et les fait passer, à tour de rôle, par quelques dizaines de connexions réelles.",
+      "analogie": "Un parc de vélos partagés : quelques dizaines de vélos servent des centaines d'usagers, car chacun ne les utilise que peu de temps.",
+      "a_retenir": "Quand une application ouvre beaucoup de connexions courtes (serverless, nombreux workers), un pool de connexions devient indispensable.",
+      "lien": "https://www.pgbouncer.org/"
+    },
+    {
+      "module": "PostgreSQL",
+      "numero": 10,
+      "titre": "la sauvegarde et la restauration",
+      "definition": "Sauvegarder une base, c'est en faire une copie qui permet de la reconstruire après une panne, une erreur ou une attaque.",
+      "fonctionnement": "pg_dump produit une sauvegarde logique (le schéma et les données) d'une base, facile à restaurer avec pg_restore. Pour les grandes bases, on combine une sauvegarde physique des fichiers et l'archivage continu du WAL : on peut alors restaurer la base dans l'état exact où elle était à n'importe quel instant (Point-In-Time Recovery).",
+      "analogie": "Une assurance : elle ne sert à rien tant qu'il n'y a pas de sinistre, et l'on regrette amèrement de ne pas l'avoir prise.",
+      "a_retenir": "Une sauvegarde qu'on n'a jamais essayé de restaurer n'est pas une sauvegarde fiable : il faut tester la restauration régulièrement.",
+      "lien": "https://www.postgresql.org/docs/current/backup.html"
     }
   ]
 }
