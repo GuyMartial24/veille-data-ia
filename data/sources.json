@@ -1,0 +1,54 @@
+{
+  "description": "Sources de veille. Fichier de référence pour la table sources (voir docs/sources.md pour les justifications). actif = false : source vérifiée, à activer après la v1. Les filtres sont des expressions régulières JavaScript.",
+  "sources": [
+    { "nom": "Apache Airflow", "type": "github_latest", "url": "https://api.github.com/repos/apache/airflow/releases/latest", "categorie": "Orchestration et transformation", "filtre_titre": null, "actif": true },
+    { "nom": "dbt Core", "type": "flux", "url": "https://github.com/dbt-labs/dbt-core/releases.atom", "categorie": "Orchestration et transformation", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Dagster", "type": "flux", "url": "https://github.com/dagster-io/dagster/releases.atom", "categorie": "Orchestration et transformation", "filtre_titre": "^\\d+\\.\\d+\\.\\d+ \\(core\\)", "actif": true },
+    { "nom": "Apache Kafka", "type": "flux", "url": "https://github.com/apache/kafka/releases.atom", "categorie": "Streaming et stockage", "filtre_titre": "^\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Apache Spark", "type": "flux", "url": "https://github.com/apache/spark/releases.atom", "categorie": "Streaming et stockage", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Apache Iceberg", "type": "flux", "url": "https://github.com/apache/iceberg/releases.atom", "categorie": "Streaming et stockage", "filtre_titre": "^apache-iceberg-\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Delta Lake", "type": "flux", "url": "https://github.com/delta-io/delta/releases.atom", "categorie": "Streaming et stockage", "filtre_titre": "^Delta Lake \\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "LangChain", "type": "flux", "url": "https://github.com/langchain-ai/langchain/releases.atom", "categorie": "IA et LLMOps", "filtre_titre": "^langchain==\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Chroma", "type": "flux", "url": "https://github.com/chroma-core/chroma/releases.atom", "categorie": "IA et LLMOps", "filtre_titre": "^\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Ollama", "type": "flux", "url": "https://github.com/ollama/ollama/releases.atom", "categorie": "IA et LLMOps", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": true },
+    { "nom": "Apache Software Foundation", "type": "flux", "url": "https://news.apache.org/feed", "categorie": "Blogs et fondations", "filtre_titre": null, "actif": true },
+    { "nom": "Confluent", "type": "flux", "url": "https://www.confluent.io/rss.xml", "categorie": "Blogs et fondations", "filtre_titre": null, "actif": true },
+    { "nom": "Databricks", "type": "flux", "url": "https://www.databricks.com/feed", "categorie": "Blogs et fondations", "filtre_titre": null, "actif": true },
+
+    { "nom": "Data Engineering Weekly", "type": "flux", "url": "https://www.dataengineeringweekly.com/feed", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+    { "nom": "Seattle Data Guy", "type": "flux", "url": "https://seattledataguy.substack.com/feed", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+    { "nom": "Netflix Technology Blog", "type": "flux", "url": "https://netflixtechblog.com/feed", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+    { "nom": "Airbnb Engineering", "type": "flux", "url": "https://medium.com/feed/airbnb-engineering", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Airflow (blog)", "type": "flux", "url": "https://airflow.apache.org/blog/index.xml", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+    { "nom": "DuckDB", "type": "flux", "url": "https://duckdb.org/feed.xml", "categorie": "Newsletters et blogs d'ingénierie", "filtre_titre": null, "actif": false },
+
+    { "nom": "Ollama (blog)", "type": "flux", "url": "https://ollama.com/blog/rss.xml", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "Hugging Face", "type": "flux", "url": "https://huggingface.co/blog/feed.xml", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "Simon Willison", "type": "flux", "url": "https://simonwillison.net/atom/entries/", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "Sebastian Raschka (Ahead of AI)", "type": "flux", "url": "https://magazine.sebastianraschka.com/feed", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "Hamel Husain", "type": "flux", "url": "https://hamel.dev/index.xml", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "Model Context Protocol (blog)", "type": "flux", "url": "https://blog.modelcontextprotocol.io/index.xml", "categorie": "IA et LLMOps", "filtre_titre": null, "actif": false },
+    { "nom": "LangGraph", "type": "flux", "url": "https://github.com/langchain-ai/langgraph/releases.atom", "categorie": "IA et LLMOps", "filtre_titre": "^langgraph==\\d+\\.\\d+\\.\\d+$", "actif": false },
+    { "nom": "pgvector", "type": "flux", "url": "https://github.com/pgvector/pgvector/tags.atom", "categorie": "IA et LLMOps", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": false },
+
+    { "nom": "Kubernetes (blog)", "type": "flux", "url": "https://kubernetes.io/feed.xml", "categorie": "Conteneurs et infrastructure", "filtre_titre": null, "actif": false },
+    { "nom": "Docker Compose", "type": "flux", "url": "https://github.com/docker/compose/releases.atom", "categorie": "Conteneurs et infrastructure", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": false },
+    { "nom": "Docker Engine", "type": "flux", "url": "https://github.com/moby/moby/releases.atom", "categorie": "Conteneurs et infrastructure", "filtre_titre": "^v\\d+\\.\\d+\\.\\d+$", "actif": false },
+    { "nom": "k3s", "type": "flux", "url": "https://github.com/k3s-io/k3s/releases.atom", "categorie": "Conteneurs et infrastructure", "filtre_titre": "^v\\d+\\.\\d+\\.0\\+k3s\\d+$", "actif": false },
+
+    { "nom": "Annonces Apache (versions et CVE)", "type": "flux", "url": "https://lists.apache.org/api/atom.lua?list=announce&domain=apache.org", "categorie": "Écosystème Apache", "filtre_titre": "^(CVE-.*Apache (Kafka|Spark|Airflow|Iceberg|Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)|\\[ANNOUNCE\\].*\\b(Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)\\b)", "actif": false },
+    { "nom": "Apache Flink (blog)", "type": "flux", "url": "https://flink.apache.org/posts/index.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Iceberg (blog)", "type": "flux", "url": "https://iceberg.apache.org/rss.xml", "categorie": "Écosystème Apache", "filtre_titre": "^(?!Apache Iceberg .*Release$)", "actif": false },
+    { "nom": "Apache Arrow (blog)", "type": "flux", "url": "https://arrow.apache.org/feed.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Parquet (blog)", "type": "flux", "url": "https://parquet.apache.org/blog/index.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache DataFusion (blog)", "type": "flux", "url": "https://datafusion.apache.org/blog/feed.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Hudi (blog)", "type": "flux", "url": "https://hudi.apache.org/blog/rss.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Polaris (blog)", "type": "flux", "url": "https://polaris.apache.org/blog/index.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Beam (blog)", "type": "flux", "url": "https://beam.apache.org/feed.xml", "categorie": "Écosystème Apache", "filtre_titre": null, "actif": false },
+
+    { "nom": "Scala (blog)", "type": "flux", "url": "https://www.scala-lang.org/feed/index.xml", "categorie": "Langages et outils de build", "filtre_titre": null, "actif": false },
+    { "nom": "Apache Maven", "type": "flux", "url": "https://github.com/apache/maven/releases.atom", "categorie": "Langages et outils de build", "filtre_titre": "^(Maven )?\\d+\\.\\d+\\.\\d+$", "actif": false },
+
+    { "nom": "n8n", "type": "flux", "url": "https://github.com/n8n-io/n8n/releases.atom", "categorie": "Outils du projet", "filtre_titre": "^n8n@\\d+\\.\\d+\\.0$", "actif": false }
+  ]
+}
