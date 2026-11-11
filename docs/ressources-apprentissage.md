@@ -1,9 +1,10 @@
 # Ressources d'apprentissage — « Le fondamental du jour »
 
 > Rubrique prévue en **v1.1** : chaque matin, le digest ajoute **une** ressource non encore envoyée.
-> 72 ressources, soit environ 10 semaines de parcours (une par jour).
+> 93 ressources, soit environ 13 semaines de parcours (une par jour).
 > Ressources 1 à 21 : une publication LinkedIn « Data Engineering : des fondamentaux aux systèmes prêts pour la production » (les liens raccourcis `lnkd.in` ont été remplacés par leur adresse réelle).
-> Ressources 22 à 72 : des références reconnues du domaine, ajoutées pour compléter le parcours (dont 14 sur Docker, Kubernetes et k3s, et 18 sur Scala, Maven, les RDD, Spark SQL et Structured Streaming).
+> Ressources 22 à 93 : des références reconnues du domaine, ajoutées pour compléter le parcours (dont 14 sur Docker, Kubernetes et k3s, 18 sur Scala, Maven, les RDD, Spark SQL et Structured Streaming, et 21 sur l'IA : Transformers, embeddings, RAG, agents, MCP, évaluations, modèles locaux).
+> Critère de choix : comprendre **comment fonctionnent** les technologies (documentation officielle, articles fondateurs, explications de référence).
 > Tous les liens ont été vérifiés le 11 novembre 2026.
 
 ## Structure prévue de la table `ressources`
@@ -96,6 +97,27 @@ Règle d'envoi : chaque jour, la ressource active **non encore envoyée** qui a 
 | 70 | Maven Shade Plugin | Scala et outils de build | Apache Maven (documentation) | https://maven.apache.org/plugins/maven-shade-plugin/ | Construire un « fat JAR » contenant toutes les dépendances, comme l'attend `spark-submit` |
 | 71 | Structured Streaming Programming Guide | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/streaming/index.html | Le traitement en flux avec Spark. L'ancienne API « Spark Streaming » (DStreams) est dépréciée : Structured Streaming la remplace. |
 | 72 | Structured Streaming + Kafka Integration | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/streaming/structured-streaming-kafka-integration.html | Lire et écrire dans Kafka depuis Spark ; relie Spark et Kafka |
+| 73 | The Illustrated Transformer | IA | Jay Alammar (blog) | https://jalammar.github.io/illustrated-transformer/ | L'explication visuelle de référence de l'architecture des LLM |
+| 74 | Attention Is All You Need | IA | arXiv (article de recherche, 2017) | https://arxiv.org/abs/1706.03762 | L'article fondateur des Transformers ; à lire après la ressource 73 |
+| 75 | Let's Build GPT: From Scratch, in Code | IA | YouTube (Andrej Karpathy) | https://www.youtube.com/watch?v=kCc8FmEb1nY | Vidéo de 2 h : construire un petit GPT ligne par ligne |
+| 76 | Hugging Face LLM Course | IA | Hugging Face | https://huggingface.co/learn/llm-course/chapter1/1 | Cours complet et gratuit, du Transformer au fine-tuning |
+| 77 | Getting Started With Embeddings | IA | Hugging Face (blog) | https://huggingface.co/blog/getting-started-with-embeddings | Ce que sont les embeddings, base de la recherche sémantique et du RAG |
+| 78 | Prompt Engineering Overview | IA | Anthropic (documentation) | https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview | Techniques de rédaction de consignes ; utile pour l'étape 6 de ce projet |
+| 79 | Retrieval-Augmented Generation (article de recherche, 2020) | IA | arXiv | https://arxiv.org/abs/2005.11401 | L'article qui a défini le RAG |
+| 80 | Lost in the Middle | IA | arXiv (article de recherche, 2023) | https://arxiv.org/abs/2307.03172 | Pourquoi un LLM utilise mal les informations placées au milieu d'un long contexte |
+| 81 | Self-RAG | IA | arXiv (article de recherche, 2023) | https://arxiv.org/abs/2310.11511 | Un RAG qui décide lui-même quand chercher et critique ses réponses |
+| 82 | Corrective Retrieval Augmented Generation (CRAG) | IA | arXiv (article de recherche, 2024) | https://arxiv.org/abs/2401.15884 | La méthode implémentée dans le projet `rgpd-crag-agent` |
+| 83 | Patterns for Building LLM-based Systems & Products | IA | Eugene Yan (blog) | https://eugeneyan.com/writing/llm-patterns/ | Les grands schémas d'une application LLM : évaluations, RAG, cache, garde-fous… |
+| 84 | Building Effective Agents | IA | Anthropic (blog) | https://www.anthropic.com/research/building-effective-agents | Workflows ou agents : quand utiliser lequel ; schémas simples et éprouvés |
+| 85 | LangGraph Overview | IA | LangChain (documentation) | https://docs.langchain.com/oss/python/langgraph/overview | Le framework utilisé dans `rgpd-crag-agent` |
+| 86 | Model Context Protocol: Introduction | IA | modelcontextprotocol.io | https://modelcontextprotocol.io/docs/getting-started/intro | Le protocole standard pour connecter un LLM à des outils et des données |
+| 87 | Your AI Product Needs Evals | IA | Hamel Husain (blog) | https://hamel.dev/blog/posts/evals/ | Pourquoi et comment évaluer une application d'IA |
+| 88 | Ragas | IA | Ragas (documentation) | https://docs.ragas.io/en/stable/ | Bibliothèque pour mesurer la qualité d'un RAG |
+| 89 | GGUF | IA | Hugging Face (documentation) | https://huggingface.co/docs/hub/gguf | Le format des modèles utilisés par Ollama, et la quantification (`Q4_K_M`…) |
+| 90 | Ollama Modelfile | IA | Ollama (documentation) | https://docs.ollama.com/modelfile | Personnaliser un modèle Ollama : consigne système, température, contexte |
+| 91 | LoRA: Low-Rank Adaptation | IA | arXiv (article de recherche, 2021) | https://arxiv.org/abs/2106.09685 | La technique de fine-tuning léger la plus utilisée |
+| 92 | pgvector | IA | GitHub (documentation) | https://github.com/pgvector/pgvector | La recherche vectorielle dans PostgreSQL |
+| 93 | Chroma: Introduction | IA | Chroma (documentation) | https://docs.trychroma.com/docs/overview/introduction | La base vectorielle suivie par la veille |
 
 ## Pourquoi ces liens ne sont pas des sources de veille
 

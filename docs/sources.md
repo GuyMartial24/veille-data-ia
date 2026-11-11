@@ -59,6 +59,8 @@
 
 ## Sources complémentaires (à activer après la v1)
 
+**Critère de choix : l'apprentissage d'abord.** Une source est retenue si elle aide à **comprendre comment fonctionnent** les technologies (articles techniques, documentation, explications des nouvelles versions). Les sources d'actualité générale, d'annonces commerciales ou de levées de fonds sont écartées, même si elles sont populaires.
+
 Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` avec `actif = false` : la v1 démarre avec les 13 sources ci-dessus, pour garder un volume maîtrisé pendant les tests. Une fois la v1 validée, il suffira de passer `actif` à `true`, sans modifier le workflow (c'est le test du critère « ajouter une source en moins de 5 minutes »).
 
 ### Newsletters et blogs d'ingénierie
@@ -79,6 +81,11 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Ollama (blog) | `https://ollama.com/blog/rss.xml` | *(aucun)* | 2 par mois | L'outil qui fait tourner le LLM de ce projet |
 | Hugging Face | `https://huggingface.co/blog/feed.xml` | *(aucun)* | 5 par semaine | Nouveaux modèles et techniques ouvertes ; volume élevé |
 | Simon Willison | `https://simonwillison.net/atom/entries/` | *(aucun)* | 1 à 2 par semaine | Référence sur l'usage pratique des LLM (flux « entries » : articles de fond seulement, pas les liens du jour) |
+| Sebastian Raschka (Ahead of AI) | `https://magazine.sebastianraschka.com/feed` | *(aucun)* | 2 par mois | Explique le fonctionnement interne des LLM en les reconstruisant pas à pas |
+| Hamel Husain | `https://hamel.dev/index.xml` | *(aucun)* | 1 par mois | Évaluer une application d'IA : méthodes concrètes |
+| Model Context Protocol (blog) | `https://blog.modelcontextprotocol.io/index.xml` | *(aucun)* | 1 par mois | Le protocole qui relie les LLM aux outils ; explications des nouvelles versions de la spécification |
+| LangGraph | `https://github.com/langchain-ai/langgraph/releases.atom` | `^langgraph==\d+\.\d+\.\d+$` | 2 par mois | Le framework d'agents utilisé dans le projet `rgpd-crag-agent`. Le filtre écarte `langgraph-sdk` et `langgraph-cli`. |
+| pgvector | `https://github.com/pgvector/pgvector/tags.atom` | `^v\d+\.\d+\.\d+$` | Moins de 1 par mois | La recherche vectorielle dans PostgreSQL, base déjà utilisée par ce projet (pas de *Releases* GitHub, d'où `tags.atom`) |
 
 ### Conteneurs et infrastructure
 
@@ -159,6 +166,14 @@ Spark ne publie pas de flux d'actualités (`spark.apache.org/news` n'a pas de fl
 | Apache Hadoop | Une seule publication en 2026 ; ses annonces arrivent par les annonces Apache |
 | Apache Doris (blog) | Actif, mais surtout des articles de l'éditeur commercial du projet, et hors de la pile technique actuelle |
 | Planet Apache | Aucun flux trouvé |
+| OpenAI (actualités) | Environ 220 articles en 3 mois, surtout des témoignages clients |
+| Mistral AI (actualités) | Annonces de produits plutôt qu'explications |
+| Latent Space | Newsletter quotidienne d'actualité et podcasts longs |
+| Import AI | Orientée politique et recherche générale de l'IA |
+| LangChain (blog) | Environ 100 articles en 3 mois, nombreux témoignages clients ; LangGraph est suivi par ses versions |
+| Anthropic, Google DeepMind, LlamaIndex, The Batch | Pas de flux RSS exploitable |
+| Eugene Yan | Inactif depuis juin 2026 ; un de ses articles de référence est dans les ressources d'apprentissage |
+| Qdrant, vLLM | Outils non utilisés dans les projets actuels |
 
 ## Résultats de la vérification
 
