@@ -3827,6 +3827,66 @@
       "analogie": "Acheter un livre qu'on garde chez soi, ou emprunter les services d'un expert qu'on consulte à distance.",
       "a_retenir": "Pour des données sensibles ou un projet « souverain » comme celui-ci, un modèle ouvert exécuté localement est souvent le bon choix ; il faut toujours vérifier sa licence.",
       "lien": "https://huggingface.co/learn/llm-course/chapter1/1"
+    },
+    {
+      "module": "SQL",
+      "numero": 11,
+      "titre": "le CRUD",
+      "definition": "CRUD désigne les quatre opérations de base sur des données : Create (créer), Read (lire), Update (modifier) et Delete (supprimer).",
+      "fonctionnement": "En SQL, elles correspondent à INSERT, SELECT, UPDATE et DELETE. Dans une API REST, à POST, GET, PUT ou PATCH, et DELETE. Presque toutes les applications de gestion se résument à ces quatre opérations sur leurs entités (clients, commandes, produits).",
+      "analogie": "Un carnet d'adresses : ajouter un contact, le consulter, corriger son numéro, le supprimer.",
+      "a_retenir": "Les bases transactionnelles (OLTP) sont optimisées pour un grand nombre de petites opérations CRUD ; les bases analytiques (OLAP), pour de grandes lectures.",
+      "lien": "https://en.wikipedia.org/wiki/Create,_read,_update_and_delete"
+    },
+    {
+      "module": "SQL",
+      "numero": 12,
+      "titre": "DDL, DML, DCL et TCL",
+      "definition": "Les commandes SQL se répartissent en quatre familles : DDL (définition des structures), DML (manipulation des données), DCL (contrôle des droits) et TCL (contrôle des transactions).",
+      "fonctionnement": "DDL (Data Definition Language) : CREATE, ALTER, DROP, pour créer ou modifier tables, vues et index. DML (Data Manipulation Language) : SELECT, INSERT, UPDATE, DELETE, pour travailler sur les lignes. DCL (Data Control Language) : GRANT et REVOKE, pour donner ou retirer des droits. TCL (Transaction Control Language) : BEGIN, COMMIT, ROLLBACK.",
+      "analogie": "Construire les meubles (DDL), ranger les affaires dedans (DML), distribuer les clés des tiroirs (DCL), et valider ou annuler un rangement (TCL).",
+      "a_retenir": "Une commande DDL comme DROP TABLE est souvent irréversible : en production, elle passe par une revue et une sauvegarde préalable.",
+      "lien": "https://www.postgresql.org/docs/current/sql-commands.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 13,
+      "titre": "les clés primaires et étrangères",
+      "definition": "Une clé primaire identifie de façon unique chaque ligne d'une table. Une clé étrangère est une colonne qui fait référence à la clé primaire d'une autre table.",
+      "fonctionnement": "La clé primaire est unique et jamais vide : c'est l'identifiant de la ligne. La clé étrangère crée le lien entre deux tables (chaque commande porte l'identifiant de son client), et la base vérifie qu'elle renvoie toujours à une ligne existante : on parle d'intégrité référentielle. Ce sont des « contraintes » : la base refuse toute écriture qui les viole.",
+      "analogie": "Le numéro de sécurité sociale (clé primaire) et, sur une ordonnance, le numéro du patient qui renvoie à son dossier (clé étrangère).",
+      "a_retenir": "Les contraintes protègent les données mieux que n'importe quel contrôle applicatif : la base refuse une commande rattachée à un client inexistant.",
+      "lien": "https://www.postgresql.org/docs/current/ddl-constraints.html"
+    },
+    {
+      "module": "SQL",
+      "numero": 14,
+      "titre": "l'injection SQL",
+      "definition": "Une injection SQL est une attaque dans laquelle un texte saisi par un utilisateur est interprété comme du code SQL, ce qui permet de lire, modifier ou supprimer des données.",
+      "fonctionnement": "Si une application construit une requête en collant directement la saisie (\"... WHERE nom = '\" + saisie + \"'\"), un attaquant peut saisir ' OR '1'='1 et récupérer toute la table. La parade : les requêtes paramétrées, où la saisie est transmise à part, comme une valeur, et ne peut jamais devenir du code. Il faut aussi limiter les droits du compte utilisé par l'application.",
+      "analogie": "Un formulaire où, dans la case « nom », quelqu'un écrirait « Dupont, et donnez-moi aussi la clé du coffre », et où l'employé exécuterait la phrase entière.",
+      "a_retenir": "Ne jamais construire une requête SQL en concaténant des textes venant de l'extérieur : toujours utiliser des paramètres. Le même principe vaut pour l'injection de prompt dans les LLM.",
+      "lien": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 11,
+      "titre": "ACID et BASE",
+      "definition": "ACID et BASE sont deux philosophies opposées pour les bases de données. ACID privilégie la cohérence stricte ; BASE privilégie la disponibilité, en acceptant une cohérence différée.",
+      "fonctionnement": "ACID : Atomicité, Cohérence, Isolation, Durabilité ; chaque transaction validée est immédiatement visible et cohérente partout. BASE : Basically Available (disponible en permanence), Soft state (l'état peut évoluer sans nouvelle écriture), Eventually consistent (les copies finissent par converger). Beaucoup de bases NoSQL distribuées, comme Cassandra, suivent la philosophie BASE.",
+      "analogie": "ACID, c'est un virement bancaire visible instantanément au centime près ; BASE, c'est le compteur de « j'aime » d'un réseau social, qui peut afficher un chiffre légèrement différent selon les personnes pendant quelques secondes.",
+      "a_retenir": "Le choix entre ACID et BASE découle du théorème CAP et du métier : de l'argent exige ACID, un compteur de vues se contente de BASE.",
+      "lien": "https://en.wikipedia.org/wiki/Eventual_consistency"
+    },
+    {
+      "module": "Bases de données",
+      "numero": 12,
+      "titre": "l'ORM",
+      "definition": "Un ORM (Object-Relational Mapping) fait correspondre les tables d'une base relationnelle à des objets d'un langage de programmation, pour manipuler les données sans écrire de SQL à la main.",
+      "fonctionnement": "Avec un ORM comme SQLAlchemy en Python, une classe Client correspond à la table clients, et l'on écrit session.add(client) au lieu d'un INSERT. L'ORM génère le SQL, gère les connexions et utilise des requêtes paramétrées, ce qui protège des injections SQL. En contrepartie, il peut produire des requêtes inefficaces, comme le problème « N+1 » : une requête par ligne au lieu d'une seule pour toutes.",
+      "analogie": "Un interprète entre deux langues : très pratique au quotidien, mais pour un texte délicat, mieux vaut parfois parler directement la langue.",
+      "a_retenir": "Pour une application, un ORM fait gagner du temps ; pour des traitements analytiques sur de gros volumes, on écrit le SQL directement.",
+      "lien": "https://docs.sqlalchemy.org/en/20/orm/quickstart.html"
     }
   ]
 }

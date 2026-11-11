@@ -160,7 +160,7 @@ Rubrique au cœur du principe « l'apprentissage d'abord ». Chaque matin, le di
 - Les leçons sont regroupées en **modules** (une technologie par module), chacun dans un ordre progressif.
 - Les modules **alternent** d'un jour à l'autre : Kafka 1, Spark 1, IA 1, Docker 1, Kafka 2, Spark 2…
 - Les leçons sont **rédigées à l'avance et vérifiées**, puis rangées dans une table `notions` de la base `veille`. Ajouter une leçon ou un module = ajouter des lignes, sans modifier le workflow.
-- **365 leçons en 35 modules : une par jour pendant un an.** Une fois la dernière envoyée, le parcours **reboucle** sur la première : chaque notion revient une fois par an, ce qui consolide l'apprentissage. Source : [data/notions.json](../data/notions.json).
+- **371 leçons en 35 modules : au moins une par jour pendant un an.** Une fois la dernière envoyée, le parcours **reboucle** sur la première : chaque notion revient une fois par an, ce qui consolide l'apprentissage. Source : [data/notions.json](../data/notions.json).
 - Chaque fois que c'est possible, les leçons s'appuient sur ce projet et sur le VPS (le `docker-compose.yml`, le cluster k3s, les tests d'Ollama, le token Telegram…), pour relier chaque notion à une situation vécue.
 - Les leçons doivent couvrir **tous** les sujets du projet : chaque nouveau thème de la veille ou des ressources donne lieu à de nouvelles leçons.
 
