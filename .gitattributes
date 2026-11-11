@@ -1,2 +1,8 @@
 # Les scripts shell doivent garder des fins de ligne Unix (LF), même édités sous Windows
 *.sh text eol=lf
+
+# Statistiques des langages sur GitHub (Linguist)
+# Les workflows n8n (JSON) sont comptés comme du code
+workflows/*.json linguist-detectable=true
+# Données générées par scripts/generer_donnees_sql.py : exclues des statistiques
+init-db/03-donnees.sql linguist-generated=true

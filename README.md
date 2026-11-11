@@ -1,5 +1,11 @@
 # Veille Data & IA
 
+![n8n](https://img.shields.io/badge/n8n-2.47-EA4B71?logo=n8n&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-llama3.1-000000?logo=ollama&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Telegram](https://img.shields.io/badge/Telegram-bot-26A5E4?logo=telegram&logoColor=white)
+
 Pipeline de veille technique et d'apprentissage quotidien pour Data et AI Engineers. Chaque matin, il envoie sur Telegram et par e-mail :
 
 - **une leçon** (« La notion du jour ») sur une notion technique, parmi 371 réparties en 35 modules ;
