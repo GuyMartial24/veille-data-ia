@@ -235,7 +235,8 @@
           "id": "v2PDaEmbeBXrtRJI",
           "name": "Postgres account"
         }
-      }
+      },
+      "executeOnce": true
     },
     {
       "parameters": {
