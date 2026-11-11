@@ -89,6 +89,39 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Docker Engine | `https://github.com/moby/moby/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 par mois | Le moteur Docker. Le filtre écarte les versions de test (`-rc`) et la branche `v2.0.0-beta` |
 | k3s | `https://github.com/k3s-io/k3s/releases.atom` | `^v\d+\.\d+\.0\+k3s\d+$` | Environ 1 tous les 4 mois | Le Kubernetes léger du VPS (projet murmetric). Le filtre ne garde que les nouvelles versions majeures (`x.y.0`) : k3s publie chaque correctif sur trois branches à la fois, ce qui ferait beaucoup de bruit. Au moment du test, aucune version `x.y.0` ne figurait dans les 10 dernières entrées. |
 
+### Écosystème Apache
+
+Le blog général de la fondation (`news.apache.org/feed`) fait déjà partie de la v1. Les sources ci-dessous ajoutent les annonces de **tous** les projets Apache de la data, et les blogs des projets qui en ont un.
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Annonces Apache (versions et failles de sécurité) | `https://lists.apache.org/api/atom.lua?list=announce&domain=apache.org` | voir ci-dessous | 5 à 10 par jour après filtrage, parfois beaucoup plus | Le flux de la liste officielle `announce@apache.org` : chaque nouvelle version et chaque faille de sécurité (CVE) de **tous** les projets Apache (environ 350). Le filtre ne garde que les projets data. |
+| Apache Flink (blog) | `https://flink.apache.org/posts/index.xml` | *(aucun)* | 1 par mois | Le traitement de flux, complémentaire de Kafka et Spark |
+| Apache Iceberg (blog) | `https://iceberg.apache.org/rss.xml` | `^(?!Apache Iceberg .*Release$)` | 1 par mois | Articles de fond seulement : le filtre écarte les annonces de versions, déjà suivies par GitHub |
+| Apache Arrow (blog) | `https://arrow.apache.org/feed.xml` | *(aucun)* | 2 par mois | Le format en mémoire utilisé par Spark, pandas, DuckDB, Polars… |
+| Apache Parquet (blog) | `https://parquet.apache.org/blog/index.xml` | *(aucun)* | Moins de 1 par mois | Le format de fichier des lakehouses |
+| Apache DataFusion (blog) | `https://datafusion.apache.org/blog/feed.xml` | *(aucun)* | 2 par mois | Moteur de requêtes en Rust ; Comet accélère Spark |
+| Apache Hudi (blog) | `https://hudi.apache.org/blog/rss.xml` | *(aucun)* | 2 par mois | Format de table concurrent d'Iceberg et Delta Lake |
+| Apache Polaris (blog) | `https://polaris.apache.org/blog/index.xml` | *(aucun)* | Moins de 1 par mois | Catalogue pour les tables Iceberg |
+| Apache Beam (blog) | `https://beam.apache.org/feed.xml` | *(aucun)* | 1 par mois | Modèle unifié batch et streaming |
+
+**Filtre des annonces Apache.** Il garde :
+
+- les **failles de sécurité** (titres qui commencent par `CVE-`) des projets data, y compris Kafka, Spark, Airflow et Iceberg ;
+- les **annonces de versions** (titres qui commencent par `[ANNOUNCE]`) des projets data **non suivis ailleurs**. Kafka, Spark, Airflow et Iceberg en sont exclus, car leurs versions arrivent déjà par GitHub : on évite ainsi les doublons.
+
+```
+^(CVE-.*Apache (Kafka|Spark|Airflow|Iceberg|Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)|\[ANNOUNCE\].*\b(Flink|Arrow|Parquet|Hudi|Beam|DataFusion|Polaris|Hadoop|Hive|NiFi|Cassandra|Superset|Druid|Pinot|Doris|Paimon|Avro|ORC|ZooKeeper|Kyuubi|Sedona|Gravitino|Fluss)\b)
+```
+
+Test du 11 novembre 2026 : sur les 100 dernières annonces (2,5 jours), 19 sont gardées, dont **18 failles de sécurité d'Airflow** publiées le même jour.
+
+Points d'attention :
+
+- Le flux ne contient que les **100 dernières annonces**, soit 2 à 3 jours. Si la collecte s'arrête plus longtemps, des annonces seront perdues.
+- Les failles de sécurité arrivent parfois par dizaines le même jour. Une amélioration utile serait de les **regrouper par projet** dans le digest (« 18 failles de sécurité dans Airflow » plutôt que 18 lignes).
+- Les expressions régulières de n8n suivent la syntaxe JavaScript : pas de `(?i)` pour ignorer la casse, d'où les noms de projets écrits avec leur casse exacte.
+
 ### Langages et outils de build
 
 | Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
@@ -120,6 +153,12 @@ Spark ne publie pas de flux d'actualités (`spark.apache.org/news` n'a pas de fl
 | CNCF (blog) | Surtout des annonces de nouveaux membres et d'événements |
 | Kubernetes (versions GitHub) | Plusieurs branches publiées le même jour, et versions alpha et bêta ; le blog officiel annonce déjà chaque version |
 | Helm | Outil non utilisé dans les projets actuels |
+| Apache Kafka (blog) | Le flux existe (`kafka.apache.org/blog/index.xml`) mais il est vide ; versions et failles arrivent par GitHub et par les annonces Apache |
+| Apache Spark, Druid, Superset, Cassandra, NiFi, Paimon | Pas de flux RSS sur leur site ; leurs versions et failles arrivent par les annonces Apache |
+| Apache Pinot | Flux introuvable (404) ; ses annonces arrivent par les annonces Apache |
+| Apache Hadoop | Une seule publication en 2026 ; ses annonces arrivent par les annonces Apache |
+| Apache Doris (blog) | Actif, mais surtout des articles de l'éditeur commercial du projet, et hors de la pile technique actuelle |
+| Planet Apache | Aucun flux trouvé |
 
 ## Résultats de la vérification
 

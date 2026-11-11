@@ -129,7 +129,7 @@ Ce que la vérification a changé par rapport à la liste de départ :
 
 - Pas d'interface web ni de tableau de bord : les seules sorties sont Telegram et l'e-mail.
 - Pas de temps réel : un seul digest par jour.
-- Pas plus de sources que la liste de départ (13 sources). Seize sources complémentaires sont déjà vérifiées et prêtes à être activées après la v1 (voir [sources.md](sources.md)) ; le système doit permettre de les ajouter facilement (voir la section 7).
+- Pas plus de sources que la liste de départ (13 sources). Vingt-cinq sources complémentaires sont déjà vérifiées et prêtes à être activées après la v1 (voir [sources.md](sources.md)) ; le système doit permettre de les ajouter facilement (voir la section 7).
 - Pas de lecture des articles complets : l'IA résume à partir du titre et de la description.
 - Pas de classement ni de note d'importance par l'IA.
 - Pas de RAG ni de Chroma.
