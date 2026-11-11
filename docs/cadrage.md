@@ -213,5 +213,5 @@ Chaque leçon renvoie vers un lien de référence. La liste de 93 ressources de 
 | 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
 | 5 | Généralisation ✅ | Toutes les sources, lues depuis la table, avec dédoublonnage ([workflows/02-collecte-des-sources.json](../workflows/02-collecte-des-sources.json)) |
 | 6 | Brique IA et notion du jour ✅ | Résumés pédagogiques par Ollama, enregistrés en base ([03-resumes-ia](../workflows/03-resumes-ia.json)) ; rubrique « La notion du jour » envoyée sur Telegram ([04-digest-quotidien](../workflows/04-digest-quotidien.json)) |
-| 7 | Diffusion et planification | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail |
-| 8 | Robustesse | Gestion des erreurs, nouveaux essais, logs, limites d'API |
+| 7 | Diffusion et planification ✅ | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail, déployés sur le VPS ([deploiement.md](deploiement.md)) |
+| 8 | Robustesse ✅ | Alertes en cas d'échec (Telegram et e-mail), patience avec l'Ollama partagé, annonces en échec isolées ; sauvegarde prête mais non activée ([deploiement.md](deploiement.md)) |
