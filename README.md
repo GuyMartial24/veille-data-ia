@@ -133,6 +133,24 @@ Les workflows **communiquent par la base de données** : chaque annonce passe pa
 | [`00-alertes`](workflows/00-alertes.json) | Échec d'un workflow | Alerte sur Telegram et par e-mail, avec le workflow, le nœud et l'erreur |
 | [`01-test-lecture-rss-kafka`](workflows/01-test-lecture-rss-kafka.json) | Manuel | Premier exercice du projet, non utilisé en production |
 
+### Les workflows en images
+
+**02 · Collecte des sources** : deux déclencheurs (horaire à 3 h et manuel pour les tests), une branche pour les flux RSS et Atom, une branche pour l'API GitHub, puis l'enregistrement sans doublon et le lancement des résumés.
+
+![Workflow de collecte des sources](docs/images/02-collecte-des-sources.png)
+
+**03 · Résumés IA** : appelé par le workflow 02 (ou à la main), il envoie chaque annonce à Ollama, extrait le résumé structuré et l'enregistre.
+
+![Workflow de résumés par l'IA](docs/images/03-resumes-ia.png)
+
+**04 · Digest quotidien** : la branche du haut envoie la notion du jour, celle du bas les nouveautés ; le nœud Merge réunit les deux pour composer un seul e-mail.
+
+![Workflow du digest quotidien](docs/images/04-digest-quotidien.png)
+
+**00 · Alertes** : déclenché par n8n quand un workflow de production échoue, il prévient en parallèle sur Telegram et par e-mail.
+
+![Workflow d'alertes](docs/images/00-alertes.png)
+
 ### Choix techniques
 
 | Exigence | Solution |
