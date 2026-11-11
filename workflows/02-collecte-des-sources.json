@@ -1,0 +1,488 @@
+{
+  "id": "Ld3WLJuzHND3ZEWV",
+  "name": "02 - Collecte des sources",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        -400
+      ],
+      "id": "93879940-02fd-4c6a-9277-9e7e0570c7f2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -752,
+        -400
+      ],
+      "id": "ca1d63fe-ba17-4bb5-ad0b-43b165b8a649",
+      "name": "RSS Read",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "6b439026-69a4-46f1-b3e9-d2f631a69a33",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "={{ $('Postgres').item.json.filtre_titre }}",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [
+        -592,
+        -400
+      ],
+      "id": "e7a7c1a2-5285-48a7-8889-f907d0215597",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, nom, url, COALESCE(filtre_titre, '.*') AS filtre_titre\nFROM sources\nWHERE actif AND type = 'flux'\nORDER BY id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -912,
+        -400
+      ],
+      "id": "03ec9b9d-823a-4e01-ac82-cc5710ca8804",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e69d02c4-eab3-4d9d-807d-134ea7d9a26b",
+              "name": "source_id",
+              "value": "=\t{{ $('Postgres').item.json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "e06d7442-b390-4562-9208-893407648825",
+              "name": "cle",
+              "value": "={{ ($json.id || $json.guid || $json.link).trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "35d5917e-673a-426a-957c-4aab65d87a7e",
+              "name": "titre",
+              "value": "={{ $json.title.trim()}}",
+              "type": "string"
+            },
+            {
+              "id": "966d745a-09a1-4d9e-b806-14f7c799e203",
+              "name": "lien",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "578fc759-eaad-4b2a-8aeb-21933acd00f4",
+              "name": "date_publication",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "8d0d289b-460c-4fbc-8e01-c162f6288b54",
+              "name": "contenu",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -416,
+        -400
+      ],
+      "id": "39e2ed5d-53a2-4543-84d5-212cdc391776",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, nom, url FROM sources WHERE actif AND type = 'github_latest' ORDER BY id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -912,
+        -208
+      ],
+      "id": "4bcee43f-b122-4b52-9c85-5d9446fa7947",
+      "name": "Postgres API",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -752,
+        -208
+      ],
+      "id": "92b53bad-d26d-45fa-86b4-cd8a69148624",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1c6aad8-029a-4294-8692-949153c7838e",
+              "name": "source_id",
+              "value": "={{ $('Postgres API').item.json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "48318112-ef28-401e-8412-e898a5d36c35",
+              "name": "cle",
+              "value": "={{ $json.html_url }}",
+              "type": "string"
+            },
+            {
+              "id": "1ab2fa90-a1a6-4861-af1c-e214370796fe",
+              "name": "titre",
+              "value": "={{ $json.name.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "b29d728e-a213-4853-b366-02acab5c4d2b",
+              "name": "lien",
+              "value": "={{ $json.html_url }}",
+              "type": "string"
+            },
+            {
+              "id": "14e85e02-73bc-47d0-bba2-4794bbaeb260",
+              "name": "date_publication",
+              "value": "={{ $json.published_at }}",
+              "type": "string"
+            },
+            {
+              "id": "23c2b54f-744a-4ca0-943d-ebf54f9e3562",
+              "name": "contenu",
+              "value": "={{ $json.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -592,
+        -208
+      ],
+      "id": "e7e4075d-5128-4e8f-9452-f19468221f14",
+      "name": "Edit Fields API"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "annonces",
+          "mode": "list",
+          "cachedResultName": "annonces"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cle",
+              "displayName": "cle",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_id",
+              "displayName": "source_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "titre",
+              "displayName": "titre",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lien",
+              "displayName": "lien",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date_publication",
+              "displayName": "date_publication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contenu",
+              "displayName": "contenu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "resume",
+              "displayName": "resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "notion_a_retenir",
+              "displayName": "notion_a_retenir",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "collectee_le",
+              "displayName": "collectee_le",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "envoyee_le",
+              "displayName": "envoyee_le",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.8,
+      "position": [
+        -176,
+        -400
+      ],
+      "id": "5526cca4-407b-4b8f-80e7-afd434a16db4",
+      "name": "Enregistrer annonces",
+      "credentials": {
+        "postgres": {
+          "id": "v2PDaEmbeBXrtRJI",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer annonces",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres API": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields API": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer annonces",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

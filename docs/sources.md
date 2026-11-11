@@ -1,6 +1,6 @@
 # Sources de veille — v1
 
-> Vérifiées le 10 novembre 2026. Ce fichier est la référence pour remplir la table `sources` (étape 5).
+> Vérifiées le 10 novembre 2026. Ce document explique et justifie chaque source. Les données elles-mêmes sont dans [data/sources.json](../data/sources.json), chargées dans la table `sources` par `scripts/generer_donnees_sql.py`.
 
 ## Structure de la table `sources`
 

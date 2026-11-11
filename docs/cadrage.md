@@ -160,18 +160,18 @@ Rubrique au cœur du principe « l'apprentissage d'abord ». Chaque matin, le di
 - Les leçons sont regroupées en **modules** (une technologie par module), chacun dans un ordre progressif.
 - Les modules **alternent** d'un jour à l'autre : Kafka 1, Spark 1, IA 1, Docker 1, Kafka 2, Spark 2…
 - Les leçons sont **rédigées à l'avance et vérifiées**, puis rangées dans une table `notions` de la base `veille`. Ajouter une leçon ou un module = ajouter des lignes, sans modifier le workflow.
-- **227 leçons en 22 modules**, soit environ 7 mois et demi à raison d'une leçon par jour. Source : [data/notions.json](../data/notions.json).
+- **371 leçons en 35 modules : au moins une par jour pendant un an.** Une fois la dernière envoyée, le parcours **reboucle** sur la première : chaque notion revient une fois par an, ce qui consolide l'apprentissage. Source : [data/notions.json](../data/notions.json).
 - Chaque fois que c'est possible, les leçons s'appuient sur ce projet et sur le VPS (le `docker-compose.yml`, le cluster k3s, les tests d'Ollama, le token Telegram…), pour relier chaque notion à une situation vécue.
 - Les leçons doivent couvrir **tous** les sujets du projet : chaque nouveau thème de la veille ou des ressources donne lieu à de nouvelles leçons.
 
 | Domaine | Modules |
 |---------|---------|
-| Données et modélisation | SQL · Bases de données (SQL, NoSQL, vectorielles) · Stockage et architectures (data lake, warehouse, data mart, lakehouse, médaillon) · Modélisation (faits, dimensions, étoile, flocon, constellation, SCD) · Formats de fichiers (CSV, JSON, Avro, Parquet, ORC, Arrow, Iceberg, Delta Lake, Hudi) |
-| Traitement | Spark · Kafka · Streaming (fenêtres, watermark, Flink, CDC) · Orchestration et transformation (Airflow, Dagster, dbt) · Pipelines scalables (idempotence, incrémental, montée en charge, choix des technologies) |
-| Plateformes | Docker · Kubernetes (dont k3s et Helm) · Cloud (AWS, GCP, Azure, FinOps) · Linux et réseau · Git et CI/CD |
-| Langages et outils | Python pour la data (pandas, Polars, DuckDB, PySpark) · Scala et Maven · n8n |
-| IA | IA (tokens, LLM, embeddings, RAG, agents) · LLMOps (évaluation, observabilité, sécurité) |
-| Restitution et cadre | Visualisation (BI, Power BI, Tableau, Superset, Grafana) · Gouvernance et sécurité (RGPD, AI Act, contrats de données) |
+| Données et modélisation | SQL · PostgreSQL · Bases de données (SQL, NoSQL, vectorielles) · Stockage et architectures (data lake, warehouse, data mart, lakehouse, médaillon) · Lakehouse en profondeur (Iceberg, Delta Lake) · Modélisation (faits, dimensions, étoile, flocon, constellation, SCD) · Formats de fichiers · Qualité des données |
+| Traitement | Spark · Spark avancé · Kafka · Kafka avancé · Streaming · Orchestration et transformation · Airflow et dbt en pratique · Pipelines scalables |
+| Plateformes | Docker · Kubernetes · Cloud (AWS, GCP, Azure) · Linux et réseau · Git et CI/CD · Observabilité |
+| Langages, outils et fondamentaux | Python pour la data · Scala et Maven · n8n · API et intégration · Algorithmes et structures de données · Statistiques |
+| IA | IA · IA approfondie · Machine learning · LLMOps |
+| Restitution, cadre et métier | Visualisation · Gouvernance et sécurité (RGPD, AI Act) · Métier de data engineer |
 
 **Lectures d'approfondissement**
 
@@ -211,7 +211,7 @@ Chaque leçon renvoie vers un lien de référence. La liste de 93 ressources de 
 | 2 | Vérification des sources ✅ | [sources.md](sources.md) : les sources testées et la structure de la table `sources` |
 | 3 | Environnement ✅ | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
 | 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
-| 5 | Généralisation | Toutes les sources, lues depuis la table, avec dédoublonnage |
+| 5 | Généralisation ✅ | Toutes les sources, lues depuis la table, avec dédoublonnage ([workflows/02-collecte-des-sources.json](../workflows/02-collecte-des-sources.json)) |
 | 6 | Brique IA et notion du jour | Résumés pédagogiques par Ollama, enregistrés en base ; table `notions` et rubrique « La notion du jour » |
 | 7 | Diffusion et planification | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail |
 | 8 | Robustesse | Gestion des erreurs, nouveaux essais, logs, limites d'API |
