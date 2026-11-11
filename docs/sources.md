@@ -89,6 +89,15 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Docker Engine | `https://github.com/moby/moby/releases.atom` | `^v\d+\.\d+\.\d+$` | 2 par mois | Le moteur Docker. Le filtre écarte les versions de test (`-rc`) et la branche `v2.0.0-beta` |
 | k3s | `https://github.com/k3s-io/k3s/releases.atom` | `^v\d+\.\d+\.0\+k3s\d+$` | Environ 1 tous les 4 mois | Le Kubernetes léger du VPS (projet murmetric). Le filtre ne garde que les nouvelles versions majeures (`x.y.0`) : k3s publie chaque correctif sur trois branches à la fois, ce qui ferait beaucoup de bruit. Au moment du test, aucune version `x.y.0` ne figurait dans les 10 dernières entrées. |
 
+### Langages et outils de build
+
+| Nom | URL | Filtre titre | Rythme constaté | Pourquoi |
+|-----|-----|--------------|-----------------|----------|
+| Scala (blog officiel) | `https://www.scala-lang.org/feed/index.xml` | *(aucun)* | 2 par mois | Nouvelles versions de Scala et de sbt, avis de sécurité. Plus lisible que les versions GitHub de `scala/scala3`, dont les titres ne suivent pas un format régulier. |
+| Apache Maven | `https://github.com/apache/maven/releases.atom` | `^(Maven )?\d+\.\d+\.\d+$` | 1 tous les 2 à 4 mois | Le filtre écarte les versions candidates (`-rc`) et les entrées d'archivage de branches (`archive/…`, `backup/…`). Il gardera aussi « Maven 4.0.0 » à sa sortie. |
+
+Spark ne publie pas de flux d'actualités (`spark.apache.org/news` n'a pas de flux RSS) : ses versions sont déjà suivies par la source GitHub de la v1.
+
 ### Outils du projet
 
 | Nom | URL | Filtre titre | Rythme constaté | Pourquoi |

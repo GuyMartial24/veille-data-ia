@@ -1,9 +1,9 @@
 # Ressources d'apprentissage — « Le fondamental du jour »
 
 > Rubrique prévue en **v1.1** : chaque matin, le digest ajoute **une** ressource non encore envoyée.
-> 54 ressources, soit environ 11 semaines de parcours.
+> 72 ressources, soit environ 10 semaines de parcours (une par jour).
 > Ressources 1 à 21 : une publication LinkedIn « Data Engineering : des fondamentaux aux systèmes prêts pour la production » (les liens raccourcis `lnkd.in` ont été remplacés par leur adresse réelle).
-> Ressources 22 à 54 : des références reconnues du domaine (dont 14 sur Docker, Kubernetes et k3s), ajoutées pour compléter le parcours.
+> Ressources 22 à 72 : des références reconnues du domaine, ajoutées pour compléter le parcours (dont 14 sur Docker, Kubernetes et k3s, et 18 sur Scala, Maven, les RDD, Spark SQL et Structured Streaming).
 > Tous les liens ont été vérifiés le 11 novembre 2026.
 
 ## Structure prévue de la table `ressources`
@@ -78,6 +78,24 @@ Règle d'envoi : chaque jour, la ressource active **non encore envoyée** qui a 
 | 52 | Running Spark on Kubernetes | Conteneurs et orchestration | Apache Spark (documentation) | https://spark.apache.org/docs/latest/running-on-kubernetes.html | Le lien entre data engineering et Kubernetes |
 | 53 | Airflow KubernetesExecutor | Conteneurs et orchestration | Apache Airflow (documentation) | https://airflow.apache.org/docs/apache-airflow-providers-cncf-kubernetes/stable/kubernetes_executor.html | Exécuter chaque tâche Airflow dans son propre pod |
 | 54 | Kubernetes the Hard Way | Conteneurs et orchestration | GitHub (Kelsey Hightower) | https://github.com/kelseyhightower/kubernetes-the-hard-way | Avancé : installer Kubernetes à la main pour comprendre chaque pièce |
+| 55 | Tour of Scala | Scala et outils de build | Scala (documentation) | https://docs.scala-lang.org/tour/tour-of-scala.html | Visite guidée du langage, en courts chapitres |
+| 56 | Scala 3 Book | Scala et outils de build | Scala (documentation) | https://docs.scala-lang.org/scala3/book/introduction.html | Le livre officiel et gratuit de Scala 3 |
+| 57 | Maven in 5 Minutes | Scala et outils de build | Apache Maven (documentation) | https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html | Créer et construire un premier projet |
+| 58 | Introduction to the POM | Scala et outils de build | Apache Maven (documentation) | https://maven.apache.org/guides/introduction/introduction-to-the-pom.html | Le fichier `pom.xml` : dépendances, héritage, modules |
+| 59 | Introduction to the Build Lifecycle | Scala et outils de build | Apache Maven (documentation) | https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html | Les phases `compile`, `test`, `package`, `install` |
+| 60 | sbt Getting Started | Scala et outils de build | sbt (documentation) | https://www.scala-sbt.org/1.x/docs/Getting-Started.html | L'outil de build le plus courant en Scala, alternative à Maven |
+| 61 | Spark Quick Start | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/quick-start.html | Premiers pas en Scala et en Python, puis une application autonome construite avec sbt ou Maven |
+| 62 | Cluster Mode Overview | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/cluster-overview.html | Driver, executors, gestionnaire de cluster : comment Spark répartit le travail |
+| 63 | RDD Programming Guide | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/rdd-programming-guide.html | Le guide officiel des RDD : transformations, actions, persistance, variables partagées |
+| 64 | Resilient Distributed Datasets (article de recherche, NSDI 2012) | Spark | USENIX (PDF) | https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf | L'article fondateur de Spark et des RDD ; en anglais, assez technique |
+| 65 | A Tale of Three Spark APIs: RDDs, DataFrames and Datasets | Spark | Databricks (blog, 2016) | https://www.databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html | Quand utiliser chaque API ; toujours d'actualité sur le fond |
+| 66 | Deep Dive into Spark SQL's Catalyst Optimizer | Spark | Databricks (blog, 2015) | https://www.databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html | Comment Spark SQL transforme une requête en plan d'exécution optimisé |
+| 67 | Spark SQL Built-in Functions | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/api/sql/index.html | Référence de toutes les fonctions SQL ; à garder sous la main |
+| 68 | Spark Web UI | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/web-ui.html | Lire les jobs, les stages et les tâches pour diagnostiquer une application lente |
+| 69 | Submitting Applications | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/submitting-applications.html | `spark-submit` et l'empaquetage d'une application avec ses dépendances |
+| 70 | Maven Shade Plugin | Scala et outils de build | Apache Maven (documentation) | https://maven.apache.org/plugins/maven-shade-plugin/ | Construire un « fat JAR » contenant toutes les dépendances, comme l'attend `spark-submit` |
+| 71 | Structured Streaming Programming Guide | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/streaming/index.html | Le traitement en flux avec Spark. L'ancienne API « Spark Streaming » (DStreams) est dépréciée : Structured Streaming la remplace. |
+| 72 | Structured Streaming + Kafka Integration | Spark | Apache Spark (documentation) | https://spark.apache.org/docs/latest/streaming/structured-streaming-kafka-integration.html | Lire et écrire dans Kafka depuis Spark ; relie Spark et Kafka |
 
 ## Pourquoi ces liens ne sont pas des sources de veille
 
