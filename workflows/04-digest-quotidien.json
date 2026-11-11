@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1136,
-        -544
+        -1584,
+        -656
       ],
       "id": "d7e4b8f7-5d85-4111-948a-74c6ce691463",
       "name": "When clicking ‘Execute workflow’"
@@ -22,8 +22,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -944,
-        -544
+        -1360,
+        -656
       ],
       "id": "d56b6f47-78c8-4ebb-8936-169222b0366e",
       "name": "Notion du jour",
@@ -31,32 +31,6 @@
         "postgres": {
           "id": "v2PDaEmbeBXrtRJI",
           "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
-        "text": "={{ (() => {\n  const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  return [\n    `🎓 <b>La notion du jour</b> (${$json.ordre}/${$json.total})`,\n    `${$json.emoji} <b>${e($json.module)}</b> (${$json.numero}/${$json.total_module}) : <b>${e($json.titre)}</b>`,\n    '',\n    '📖 <b>Définition</b>',\n    e($json.definition),\n    '',\n    '⚙️ <b>Comment ça marche</b>',\n    e($json.fonctionnement),\n    '',\n    '🧠 <b>Analogie</b>',\n    e($json.analogie),\n    '',\n    '💡 <b>À retenir</b>',\n    e($json.a_retenir),\n    '',\n    `🔗 <a href=\"${e($json.lien)}\">Pour aller plus loin</a>`\n  ].join('\\n');\n})() }}\n",
-        "additionalFields": {
-          "appendAttribution": false,
-          "disable_web_page_preview": true,
-          "parse_mode": "HTML"
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        -784,
-        -544
-      ],
-      "id": "1ee1e9b2-13ed-480d-a70b-77723bd458e9",
-      "name": "Send a text message",
-      "webhookId": "b9aea0c6-f937-467c-9b82-858061b6e988",
-      "credentials": {
-        "telegramApi": {
-          "id": "8pBYPF2V4CQJIb2f",
-          "name": "Telegram account"
         }
       }
     },
@@ -119,8 +93,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -624,
-        -544
+        -720,
+        -656
       ],
       "id": "34687f81-b29c-430a-9288-c08de79019e1",
       "name": "Noter l'envoi",
@@ -140,8 +114,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -944,
-        -352
+        -1376,
+        -304
       ],
       "id": "e1f6dc19-7426-4d6b-9b4d-b370621adf36",
       "name": "Annonces à envoyer",
@@ -154,32 +128,6 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
-        "text": "={{ $json.texte }}",
-        "additionalFields": {
-          "appendAttribution": false,
-          "disable_web_page_preview": false,
-          "parse_mode": "HTML"
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        -576,
-        -352
-      ],
-      "id": "5bc497bc-81d1-41e8-a779-a1543aa1528d",
-      "name": "Send a text message1",
-      "webhookId": "51027e4a-7453-41b3-a28c-f96cff1d42bf",
-      "credentials": {
-        "telegramApi": {
-          "id": "8pBYPF2V4CQJIb2f",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "UPDATE annonces SET envoyee_le = now()\nWHERE id IN ({{ $('Annonces à envoyer').all().map(item => item.json.id).join(',') }});\n",
         "options": {}
@@ -187,8 +135,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -384,
-        -352
+        -752,
+        -288
       ],
       "id": "2044465a-f675-49ba-87e0-eeeeea45bd49",
       "name": "Marquer comme envoyées",
@@ -207,11 +155,134 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -768,
-        -352
+        -1152,
+        -288
       ],
       "id": "1fdd2332-6bea-4c65-951f-079bcf3b9534",
       "name": "Composer les messages"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=Veille Data & IA <{{ $env.EMAIL_DESTINATAIRE }}>",
+        "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
+        "subject": "=📰 Veille Data & IA : les nouveautés du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
+        "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        -80
+      ],
+      "id": "dd691e00-cbb8-453c-bbe0-c9f96e54c32f",
+      "name": "E-mail des nouveautés",
+      "webhookId": "4fb905cf-f0c3-427e-9d57-e3cd0c47bbe7",
+      "credentials": {
+        "smtp": {
+          "id": "QM0F00t6QnHqdm6k",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "={{ $json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -928,
+        -288
+      ],
+      "id": "5bc497bc-81d1-41e8-a779-a1543aa1528d",
+      "name": "Telegram des nouveautés",
+      "webhookId": "51027e4a-7453-41b3-a28c-f96cff1d42bf",
+      "credentials": {
+        "telegramApi": {
+          "id": "8pBYPF2V4CQJIb2f",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "={{ $json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -912,
+        -656
+      ],
+      "id": "1ee1e9b2-13ed-480d-a70b-77723bd458e9",
+      "name": "Telegram de la notion",
+      "webhookId": "b9aea0c6-f937-467c-9b82-858061b6e988",
+      "credentials": {
+        "telegramApi": {
+          "id": "8pBYPF2V4CQJIb2f",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "=Veille Data & IA <{{ $env.EMAIL_DESTINATAIRE }}>",
+        "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
+        "subject": "=🎓 La notion du jour : {{ $('Notion du jour').item.json.module }}, {{ $('Notion du jour').item.json.titre }}\n",
+        "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -912,
+        -496
+      ],
+      "id": "8025204a-2939-48b1-bf08-0bedf8f9d0ab",
+      "name": "E-mail de la notion",
+      "webhookId": "4fb905cf-f0c3-427e-9d57-e3cd0c47bbe7",
+      "credentials": {
+        "smtp": {
+          "id": "QM0F00t6QnHqdm6k",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb777260-071c-485e-8a6a-c336453bae40",
+              "name": "=texte",
+              "value": "={{ (() => {   const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   return [     `🎓 <b>La notion du jour</b> (${$json.ordre}/${$json.total})`,     `${$json.emoji} <b>${e($json.module)}</b> (${$json.numero}/${$json.total_module}) : <b>${e($json.titre)}</b>`,     '',     '📖 <b>Définition</b>',     e($json.definition),     '',     '⚙️ <b>Comment ça marche</b>',     e($json.fonctionnement),     '',     '🧠 <b>Analogie</b>',     e($json.analogie),     '',     '💡 <b>À retenir</b>',     e($json.a_retenir),     '',     `🔗 <a href=\"${e($json.lien)}\">Pour aller plus loin</a>`   ].join('\\n'); })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -1136,
+        -656
+      ],
+      "id": "bad56af1-1da0-4b10-af2b-0cf7c1b724ca",
+      "name": "Message de la notion"
     }
   ],
   "connections": {
@@ -235,18 +306,7 @@
       "main": [
         [
           {
-            "node": "Send a text message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message": {
-      "main": [
-        [
-          {
-            "node": "Noter l'envoi",
+            "node": "Message de la notion",
             "type": "main",
             "index": 0
           }
@@ -264,7 +324,28 @@
         ]
       ]
     },
-    "Send a text message1": {
+    "Composer les messages": {
+      "main": [
+        [
+          {
+            "node": "E-mail des nouveautés",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram des nouveautés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E-mail des nouveautés": {
+      "main": [
+        []
+      ]
+    },
+    "Telegram des nouveautés": {
       "main": [
         [
           {
@@ -275,11 +356,27 @@
         ]
       ]
     },
-    "Composer les messages": {
+    "Telegram de la notion": {
       "main": [
         [
           {
-            "node": "Send a text message1",
+            "node": "Noter l'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message de la notion": {
+      "main": [
+        [
+          {
+            "node": "Telegram de la notion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "E-mail de la notion",
             "type": "main",
             "index": 0
           }
