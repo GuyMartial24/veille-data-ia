@@ -1,7 +1,7 @@
 # Veille Data & IA automatisée — Fiche de cadrage
 
 > Version 1 — 10 novembre 2026
-> Statut : validé (quelques points techniques restent ouverts, voir la section 11)
+> Statut : validé (quelques points techniques restent ouverts, voir la section 12)
 
 ## 1. Objectif
 
@@ -136,7 +136,23 @@ Ce que la vérification a changé par rapport à la liste de départ :
 - Pas de Hacker News.
 - Pas de filtre pour écarter le contenu marketing (Confluent, Databricks).
 
-## 10. Idées pour la v2
+## 10. v1.1 : « Le fondamental du jour »
+
+Prévue juste après la v1, pour ne pas la retarder.
+
+- Chaque matin, le digest ajoute **une ressource d'apprentissage** (un article de fond sur une notion de Data Engineering), en plus des nouveautés.
+- Les ressources sont rangées dans une table `ressources` de la base `veille` et envoyées dans l'ordre, une seule fois chacune.
+- Liste de départ : 21 ressources, soit 3 semaines de parcours. Voir [ressources-apprentissage.md](ressources-apprentissage.md).
+- Ajouter une ressource = ajouter une ligne dans la table, sans modifier le workflow.
+
+Exemple de rendu :
+
+```
+📚 Le fondamental du jour (7/21) : Slowly Changing Dimensions (SCD)
+https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-warehouses/
+```
+
+## 11. Idées pour la v2
 
 - Classer les annonces par l'IA (sécurité, changement incompatible, nouvelle fonctionnalité, article de fond).
 - Donner une note d'importance de 1 à 5 pour trier le digest.
@@ -147,14 +163,14 @@ Ce que la vérification a changé par rapport à la liste de départ :
 - Gérer les sources depuis une interface (Notion ou une page web).
 - Exposer n8n de façon sécurisée, derrière le reverse proxy existant.
 
-## 11. Points ouverts
+## 12. Points ouverts
 
 | # | Question | Comment la trancher |
 |---|----------|---------------------|
 | 1 | Plusieurs modèles chargés en même temps peuvent saturer la mémoire (environ 17 Go observés pendant les tests) | À traiter à l'étape 8 |
 | 2 | Quel programme appelle Ollama en continu ? | `sudo ss -tnp \| grep 11434` pendant une vague de requêtes |
 
-## 12. Critères de réussite de la v1
+## 13. Critères de réussite de la v1
 
 - Pendant **7 jours d'affilée**, je reçois chaque matin à 7 h un digest sur Telegram **et** par e-mail.
 - Aucune annonce n'apparaît deux fois.
@@ -162,7 +178,7 @@ Ce que la vérification a changé par rapport à la liste de départ :
 - La panne d'une source n'empêche pas l'envoi du digest.
 - Le projet ne ralentit pas les autres projets du VPS.
 
-## 13. Feuille de route
+## 14. Feuille de route
 
 | # | Étape | Livrable |
 |---|-------|----------|
