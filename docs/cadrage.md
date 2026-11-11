@@ -160,8 +160,18 @@ Rubrique au cœur du principe « l'apprentissage d'abord ». Chaque matin, le di
 - Les leçons sont regroupées en **modules** (une technologie par module), chacun dans un ordre progressif.
 - Les modules **alternent** d'un jour à l'autre : Kafka 1, Spark 1, IA 1, Docker 1, Kafka 2, Spark 2…
 - Les leçons sont **rédigées à l'avance et vérifiées**, puis rangées dans une table `notions` de la base `veille`. Ajouter une leçon ou un module = ajouter des lignes, sans modifier le workflow.
-- Premier lot : 4 modules de 10 leçons (Kafka, Spark, IA, Docker), soit 40 jours. Les leçons Docker s'appuient sur le `docker-compose.yml` de ce projet. Source : [data/notions.json](../data/notions.json).
-- Modules prévus ensuite : Airflow, dbt, SQL et modélisation, Kubernetes, formats de tables (Iceberg, Delta Lake), Scala, streaming.
+- **227 leçons en 22 modules**, soit environ 7 mois et demi à raison d'une leçon par jour. Source : [data/notions.json](../data/notions.json).
+- Chaque fois que c'est possible, les leçons s'appuient sur ce projet et sur le VPS (le `docker-compose.yml`, le cluster k3s, les tests d'Ollama, le token Telegram…), pour relier chaque notion à une situation vécue.
+- Les leçons doivent couvrir **tous** les sujets du projet : chaque nouveau thème de la veille ou des ressources donne lieu à de nouvelles leçons.
+
+| Domaine | Modules |
+|---------|---------|
+| Données et modélisation | SQL · Bases de données (SQL, NoSQL, vectorielles) · Stockage et architectures (data lake, warehouse, data mart, lakehouse, médaillon) · Modélisation (faits, dimensions, étoile, flocon, constellation, SCD) · Formats de fichiers (CSV, JSON, Avro, Parquet, ORC, Arrow, Iceberg, Delta Lake, Hudi) |
+| Traitement | Spark · Kafka · Streaming (fenêtres, watermark, Flink, CDC) · Orchestration et transformation (Airflow, Dagster, dbt) · Pipelines scalables (idempotence, incrémental, montée en charge, choix des technologies) |
+| Plateformes | Docker · Kubernetes (dont k3s et Helm) · Cloud (AWS, GCP, Azure, FinOps) · Linux et réseau · Git et CI/CD |
+| Langages et outils | Python pour la data (pandas, Polars, DuckDB, PySpark) · Scala et Maven · n8n |
+| IA | IA (tokens, LLM, embeddings, RAG, agents) · LLMOps (évaluation, observabilité, sécurité) |
+| Restitution et cadre | Visualisation (BI, Power BI, Tableau, Superset, Grafana) · Gouvernance et sécurité (RGPD, AI Act, contrats de données) |
 
 **Lectures d'approfondissement**
 
