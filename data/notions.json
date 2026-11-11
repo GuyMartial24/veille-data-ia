@@ -1,0 +1,411 @@
+{
+  "description": "Leçons de la rubrique « La notion du jour ». Chaque jour, une notion d'un module différent (rotation dans l'ordre des modules). Ce fichier sert à remplir la table notions de la base veille.",
+  "modules": [
+    { "nom": "Kafka", "rang": 1, "emoji": "📨" },
+    { "nom": "Spark", "rang": 2, "emoji": "⚡" },
+    { "nom": "IA", "rang": 3, "emoji": "🤖" },
+    { "nom": "Docker", "rang": 4, "emoji": "🐳" }
+  ],
+  "notions": [
+    {
+      "module": "Kafka",
+      "numero": 1,
+      "titre": "le topic",
+      "definition": "Un topic est une catégorie nommée dans laquelle des applications publient des messages, par exemple « commandes » ou « paiements ».",
+      "fonctionnement": "Un topic fonctionne comme un journal (un « log ») : chaque nouveau message est ajouté à la fin, et les messages existants ne sont jamais modifiés. Des applications écrivent dans le topic, d'autres le lisent, sans se connaître entre elles.",
+      "analogie": "Une chaîne de télévision : les émetteurs diffusent sur la chaîne, et chaque téléspectateur s'y branche quand il veut.",
+      "a_retenir": "Un topic découple ceux qui produisent les données de ceux qui les consomment : on peut ajouter un nouveau lecteur sans toucher à ceux qui écrivent.",
+      "lien": "https://kafka.apache.org/intro"
+    },
+    {
+      "module": "Kafka",
+      "numero": 2,
+      "titre": "la partition",
+      "definition": "Une partition est un morceau d'un topic. Chaque topic est découpé en une ou plusieurs partitions.",
+      "fonctionnement": "Chaque partition est un journal indépendant, stocké sur un serveur. Quand un message a une clé (par exemple l'identifiant d'un client), Kafka calcule une empreinte de cette clé pour choisir la partition : tous les messages d'un même client vont donc dans la même partition. L'ordre des messages est garanti à l'intérieur d'une partition, mais pas entre deux partitions.",
+      "analogie": "Les caisses d'un supermarché : plusieurs files avancent en parallèle, et dans chaque file l'ordre d'arrivée est respecté.",
+      "a_retenir": "Les partitions permettent le parallélisme : plus un topic a de partitions, plus on peut répartir l'écriture et la lecture entre plusieurs machines.",
+      "lien": "https://kafka.apache.org/intro"
+    },
+    {
+      "module": "Kafka",
+      "numero": 3,
+      "titre": "l'offset",
+      "definition": "L'offset est le numéro d'ordre d'un message dans une partition : 0 pour le premier, 1 pour le suivant, et ainsi de suite.",
+      "fonctionnement": "Kafka attribue l'offset au moment où le message est écrit, et il ne change plus jamais. Un lecteur utilise les offsets pour savoir où il en est : « j'ai traité jusqu'au message 1 523 de la partition 2 ». Cette position est elle-même enregistrée dans Kafka, dans un topic interne nommé __consumer_offsets.",
+      "analogie": "Les numéros de page d'un livre, avec un marque-page qui indique où l'on s'est arrêté.",
+      "a_retenir": "Un offset n'a de sens que dans une partition donnée : l'offset 10 de la partition 0 et l'offset 10 de la partition 1 sont deux messages différents.",
+      "lien": "https://kafka.apache.org/intro"
+    },
+    {
+      "module": "Kafka",
+      "numero": 4,
+      "titre": "le producer",
+      "definition": "Un producer est une application qui écrit des messages dans un ou plusieurs topics Kafka.",
+      "fonctionnement": "Le producer choisit la partition de chaque message, le plus souvent à partir de sa clé. Pour être efficace, il regroupe les messages en lots avant de les envoyer. Le réglage « acks » fixe le niveau de sécurité : avec acks=all, le producer attend que toutes les copies à jour de la partition aient bien reçu le message avant de le considérer comme écrit.",
+      "analogie": "Un expéditeur qui dépose ses colis au bureau de poste et peut demander un accusé de réception.",
+      "a_retenir": "Plus le niveau d'accusé de réception est exigeant (acks=all), moins on risque de perdre un message, mais plus l'écriture est lente.",
+      "lien": "https://kafka.apache.org/documentation/"
+    },
+    {
+      "module": "Kafka",
+      "numero": 5,
+      "titre": "le consumer",
+      "definition": "Un consumer est une application qui lit les messages d'un ou plusieurs topics Kafka.",
+      "fonctionnement": "Le consumer va chercher lui-même les messages auprès du serveur, à son rythme : Kafka ne les lui « pousse » pas. Pour chaque partition, il retient sa position grâce à l'offset, qu'il enregistre dans Kafka (on dit qu'il « commite » son offset). S'il redémarre, il reprend exactement là où il s'était arrêté.",
+      "analogie": "Un lecteur avec un marque-page : il lit à sa vitesse, et peut refermer le livre puis reprendre à la bonne page.",
+      "a_retenir": "Lire un message ne le supprime pas : Kafka le conserve pendant une durée configurée, et plusieurs applications peuvent donc lire les mêmes messages, chacune avec sa propre position.",
+      "lien": "https://kafka.apache.org/intro"
+    },
+    {
+      "module": "Kafka",
+      "numero": 6,
+      "titre": "le consumer group",
+      "definition": "Un consumer group est un ensemble de consumers qui se partagent la lecture d'un topic. Ils déclarent le même identifiant de groupe (group.id).",
+      "fonctionnement": "Kafka répartit les partitions du topic entre les membres du groupe : chaque partition est lue par un seul consumer du groupe. Avec 6 partitions et 3 consumers, chacun en lit 2. Avec 8 consumers pour 6 partitions, 2 consumers restent inactifs. Deux groupes différents, eux, reçoivent chacun la totalité des messages.",
+      "analogie": "Une équipe qui se partage une pile de dossiers : chaque dossier est traité par une seule personne de l'équipe, mais une autre équipe peut traiter les mêmes dossiers pour un autre usage.",
+      "a_retenir": "Le nombre de partitions fixe la limite du parallélisme : un groupe ne peut pas avoir plus de consumers actifs que le topic n'a de partitions.",
+      "lien": "https://kafka.apache.org/intro"
+    },
+    {
+      "module": "Kafka",
+      "numero": 7,
+      "titre": "le broker et le cluster",
+      "definition": "Un broker est un serveur Kafka. Plusieurs brokers reliés ensemble forment un cluster.",
+      "fonctionnement": "Les partitions des topics sont réparties entre les brokers du cluster. Pour chaque partition, un broker joue le rôle de leader : c'est lui qui reçoit les écritures et sert les lectures. Les applications se connectent à n'importe quel broker, qui leur indique où se trouvent les leaders.",
+      "analogie": "Les entrepôts d'une chaîne logistique : chaque entrepôt stocke une partie des stocks, et tous ensemble forment le réseau.",
+      "a_retenir": "Ajouter des brokers permet de répartir la charge et le stockage ; c'est ainsi que Kafka passe à l'échelle.",
+      "lien": "https://kafka.apache.org/documentation/"
+    },
+    {
+      "module": "Kafka",
+      "numero": 8,
+      "titre": "la réplication",
+      "definition": "La réplication consiste à garder plusieurs copies de chaque partition, sur des brokers différents.",
+      "fonctionnement": "Le « facteur de réplication » fixe le nombre de copies, souvent 3. Une copie est le leader, les autres sont des followers qui recopient ses messages. Les copies à jour forment l'ISR (In-Sync Replicas). Si le broker du leader tombe en panne, Kafka choisit un nouveau leader parmi l'ISR, et le service continue.",
+      "analogie": "Un document important dont on garde des photocopies dans plusieurs bureaux : si un bureau brûle, le document existe encore ailleurs.",
+      "a_retenir": "Avec un facteur de réplication de 3, le cluster supporte la perte d'un broker sans perdre de données ; c'est le réglage courant en production.",
+      "lien": "https://kafka.apache.org/documentation/"
+    },
+    {
+      "module": "Kafka",
+      "numero": 9,
+      "titre": "le rebalancing",
+      "definition": "Le rebalancing est la nouvelle répartition des partitions entre les consumers d'un groupe.",
+      "fonctionnement": "Il se déclenche quand un consumer rejoint le groupe, le quitte, ou ne donne plus signe de vie. Kafka redistribue alors les partitions entre les membres restants. Pendant l'opération, les partitions concernées ne sont pas lues. Les versions récentes de Kafka (le nouveau protocole des consumers, disponible en version 4) confient cette coordination aux brokers et ne déplacent que les partitions nécessaires, ce qui réduit fortement les interruptions.",
+      "analogie": "Une équipe qui se répartit à nouveau les dossiers quand un collègue arrive ou part en congé.",
+      "a_retenir": "Des rebalancings trop fréquents ralentissent la lecture : un consumer qui met trop de temps à traiter ses messages peut être considéré comme mort et en déclencher un.",
+      "lien": "https://kafka.apache.org/documentation/"
+    },
+    {
+      "module": "Kafka",
+      "numero": 10,
+      "titre": "la rétention et le compactage",
+      "definition": "La rétention fixe combien de temps Kafka conserve les messages. Le compactage est une autre politique, qui ne garde que le dernier message de chaque clé.",
+      "fonctionnement": "Par défaut, Kafka supprime les messages au bout de 7 jours (réglage retention.ms), qu'ils aient été lus ou non. Avec le compactage (cleanup.policy=compact), Kafka supprime au contraire les anciennes versions d'une même clé et garde la plus récente : le topic devient l'état à jour de chaque clé.",
+      "analogie": "La rétention, c'est une boîte aux lettres vidée chaque semaine. Le compactage, c'est un carnet d'adresses où l'on remplace l'ancienne adresse d'un contact par la nouvelle.",
+      "a_retenir": "Un topic compacté sert à conserver un état (le dernier prix de chaque produit, le dernier statut de chaque commande) plutôt qu'un historique.",
+      "lien": "https://kafka.apache.org/documentation/"
+    },
+    {
+      "module": "Spark",
+      "numero": 1,
+      "titre": "le driver et les executors",
+      "definition": "Une application Spark se compose d'un driver, qui organise le travail, et d'executors, qui l'exécutent.",
+      "fonctionnement": "Le driver exécute ton programme principal : il transforme ton code en plan de travail et le découpe en petites tâches. Les executors sont des processus lancés sur les machines du cluster : ils exécutent ces tâches en parallèle sur des morceaux de données, puis renvoient les résultats. Un gestionnaire de cluster (Kubernetes, YARN ou le mode standalone de Spark) fournit les machines.",
+      "analogie": "Un chef de chantier (le driver) qui répartit le travail entre des ouvriers (les executors).",
+      "a_retenir": "Ramener une très grande quantité de données vers le driver (avec collect(), par exemple) peut saturer sa mémoire : le gros du travail doit rester sur les executors.",
+      "lien": "https://spark.apache.org/docs/latest/cluster-overview.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 2,
+      "titre": "le DataFrame",
+      "definition": "Un DataFrame est un tableau de données distribué, organisé en colonnes nommées et typées, comme une table SQL.",
+      "fonctionnement": "Les lignes d'un DataFrame sont réparties sur plusieurs machines. On le manipule avec des opérations proches du SQL (select, filter, groupBy, join), ou directement en SQL avec Spark SQL. Comme Spark connaît le schéma des colonnes, il peut optimiser automatiquement les calculs.",
+      "analogie": "Un tableur géant dont les lignes sont réparties entre plusieurs ordinateurs, mais qu'on manipule comme une seule feuille.",
+      "a_retenir": "Le DataFrame est l'API recommandée aujourd'hui : il est plus simple et généralement plus rapide que les RDD, car Spark peut l'optimiser.",
+      "lien": "https://spark.apache.org/docs/latest/sql-programming-guide.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 3,
+      "titre": "les transformations et les actions",
+      "definition": "Spark distingue deux types d'opérations : les transformations, qui décrivent un nouveau jeu de données, et les actions, qui demandent un résultat.",
+      "fonctionnement": "Les transformations (filter, select, join…) sont « paresseuses » : Spark se contente de les noter, sans rien calculer. Le calcul ne démarre qu'au moment d'une action (count, show, write, collect…). Spark connaît alors toute la chaîne d'opérations et peut l'optimiser avant de l'exécuter.",
+      "analogie": "Écrire une recette (les transformations) ne cuisine rien ; c'est l'ordre « on passe à table » (l'action) qui lance la préparation.",
+      "a_retenir": "Une erreur dans une transformation n'apparaît souvent qu'à la première action : c'est normal, c'est là que Spark exécute réellement le code.",
+      "lien": "https://spark.apache.org/docs/latest/rdd-programming-guide.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 4,
+      "titre": "le plan d'exécution et Catalyst",
+      "definition": "Catalyst est l'optimiseur de Spark SQL : il transforme une requête en un plan d'exécution efficace.",
+      "fonctionnement": "À partir de ta requête, Catalyst construit un plan logique, l'améliore avec des règles (par exemple appliquer les filtres le plus tôt possible, ou ne lire que les colonnes utiles), puis choisit un plan physique, c'est-à-dire la façon concrète de calculer. La méthode explain() affiche ce plan.",
+      "analogie": "Un GPS : tu donnes la destination, et il calcule lui-même le meilleur itinéraire.",
+      "a_retenir": "Lire le résultat de explain() est le premier réflexe pour comprendre pourquoi une requête Spark est lente.",
+      "lien": "https://www.databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 5,
+      "titre": "les partitions",
+      "definition": "Dans Spark, une partition est un morceau des données d'un DataFrame. Chaque partition est traitée par une tâche.",
+      "fonctionnement": "Spark découpe les données en partitions et lance une tâche par partition, en parallèle sur les executors. Trop peu de partitions, et une partie des machines reste inactive. Trop de partitions minuscules, et Spark perd du temps à organiser des milliers de petites tâches. Les méthodes repartition() et coalesce() permettent d'ajuster leur nombre.",
+      "analogie": "Découper un gros travail en lots : des lots trop gros laissent des ouvriers sans rien faire, des lots trop petits font perdre du temps en distribution.",
+      "a_retenir": "Le nombre de partitions est l'un des réglages qui influencent le plus les performances d'un traitement Spark.",
+      "lien": "https://spark.apache.org/docs/latest/sql-performance-tuning.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 6,
+      "titre": "le shuffle",
+      "definition": "Le shuffle est l'échange de données entre executors, pour regrouper au même endroit les lignes qui doivent être traitées ensemble.",
+      "fonctionnement": "Certaines opérations, comme filter ou select, peuvent travailler sur chaque partition séparément : ce sont des transformations « étroites ». D'autres, comme groupBy, join ou orderBy, ont besoin de rassembler toutes les lignes d'une même clé : ce sont des transformations « larges », qui provoquent un shuffle. Les données sont alors écrites sur disque et envoyées sur le réseau.",
+      "analogie": "Trier le courrier de toute une ville par quartier : chaque centre de tri doit envoyer des lettres à tous les autres.",
+      "a_retenir": "Le shuffle est souvent l'étape la plus coûteuse d'un traitement Spark : réduire le volume de données avant une jointure ou un regroupement accélère beaucoup le calcul.",
+      "lien": "https://spark.apache.org/docs/latest/rdd-programming-guide.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 7,
+      "titre": "le job, le stage et la tâche",
+      "definition": "Spark découpe le travail en trois niveaux : chaque action crée un job, chaque job est découpé en stages, et chaque stage en tâches.",
+      "fonctionnement": "Un job correspond à une action (un count, un write…). Spark le découpe en stages à chaque shuffle : à l'intérieur d'un stage, les données peuvent être traitées sans échange entre machines. Chaque stage contient une tâche par partition, et ce sont ces tâches qui s'exécutent en parallèle sur les executors.",
+      "analogie": "Un projet (le job) découpé en phases (les stages), elles-mêmes découpées en tâches confiées à chaque membre de l'équipe.",
+      "a_retenir": "L'interface web de Spark (port 4040 par défaut) affiche les jobs, les stages et les tâches : c'est l'outil principal pour trouver ce qui ralentit une application.",
+      "lien": "https://spark.apache.org/docs/latest/web-ui.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 8,
+      "titre": "le cache",
+      "definition": "Mettre un DataFrame en cache, c'est demander à Spark de garder son résultat en mémoire pour le réutiliser.",
+      "fonctionnement": "Comme les transformations sont paresseuses, Spark recalcule normalement toute la chaîne d'opérations à chaque action. Avec cache() ou persist(), le résultat est conservé, en mémoire ou sur disque, après le premier calcul, et les actions suivantes le réutilisent. La méthode unpersist() libère la place.",
+      "analogie": "Garder un plat préparé au réfrigérateur au lieu de refaire toute la recette à chaque repas.",
+      "a_retenir": "Le cache n'est utile que si un même DataFrame sert plusieurs fois ; sinon, il occupe de la mémoire pour rien.",
+      "lien": "https://spark.apache.org/docs/latest/rdd-programming-guide.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 9,
+      "titre": "la jointure par broadcast",
+      "definition": "Une jointure par broadcast consiste à copier une petite table sur chaque executor, pour éviter de déplacer la grande.",
+      "fonctionnement": "Une jointure classique entre deux grandes tables provoque un shuffle des deux côtés. Si l'une des tables est petite (une table de référence de pays, par exemple), Spark peut l'envoyer en entier à chaque executor : chaque partition de la grande table est alors jointe sur place, sans échange réseau. Spark le fait automatiquement sous un certain seuil de taille, et on peut le forcer avec la fonction broadcast().",
+      "analogie": "Plutôt que de faire venir tous les élèves au même endroit pour consulter un dictionnaire, on distribue une copie du dictionnaire dans chaque salle.",
+      "a_retenir": "Joindre une grande table avec une petite table de référence est le cas idéal pour un broadcast ; il ne faut jamais le forcer sur une grande table, qui saturerait la mémoire des executors.",
+      "lien": "https://spark.apache.org/docs/latest/sql-performance-tuning.html"
+    },
+    {
+      "module": "Spark",
+      "numero": 10,
+      "titre": "le RDD",
+      "definition": "Le RDD (Resilient Distributed Dataset) est la structure de données historique de Spark : une collection d'objets répartie sur plusieurs machines.",
+      "fonctionnement": "Un RDD est immuable : chaque transformation crée un nouveau RDD. Spark retient la suite des transformations qui a produit chaque RDD (son « lignage »). Si une machine tombe en panne, Spark recalcule les partitions perdues à partir de ce lignage, sans avoir besoin de copies : c'est ce que veut dire « resilient ». Les DataFrames sont construits au-dessus des RDD.",
+      "analogie": "Une recette notée étape par étape : si un plat est renversé, on peut le refaire en suivant la recette.",
+      "a_retenir": "On utilise encore les RDD pour des traitements très particuliers, mais les DataFrames sont préférables dans la grande majorité des cas, car Spark ne peut pas optimiser le code d'un RDD.",
+      "lien": "https://spark.apache.org/docs/latest/rdd-programming-guide.html"
+    },
+    {
+      "module": "IA",
+      "numero": 1,
+      "titre": "le token",
+      "definition": "Un token est le morceau de texte élémentaire qu'un modèle de langage lit et produit. Ce peut être un mot entier, une partie de mot ou un signe de ponctuation.",
+      "fonctionnement": "Avant d'être traité, le texte est découpé en tokens par un « tokenizer », et chaque token est converti en nombre. En anglais, un token correspond en moyenne à environ 4 caractères ; en français, il en faut un peu plus pour le même texte. Les limites des modèles, leur vitesse et leur coût se mesurent en tokens.",
+      "analogie": "Les pièces d'un jeu de construction : le modèle assemble des pièces standardisées plutôt que des lettres.",
+      "a_retenir": "Quand Ollama affiche « 4,6 tokens/s », c'est la vitesse à laquelle le modèle produit ces morceaux de texte, soit environ 3 mots par seconde.",
+      "lien": "https://huggingface.co/learn/llm-course/chapter1/1"
+    },
+    {
+      "module": "IA",
+      "numero": 2,
+      "titre": "le LLM",
+      "definition": "Un LLM (Large Language Model, ou grand modèle de langage) est un réseau de neurones entraîné à prédire le token suivant d'un texte.",
+      "fonctionnement": "Le modèle a appris sur d'immenses quantités de textes. Pour répondre, il prédit le token le plus probable, l'ajoute au texte, puis recommence, token après token. Son architecture, le Transformer, lui permet de tenir compte de tout le texte précédent pour chaque prédiction. Les « paramètres » (8 milliards pour llama3.1:8b) sont les nombres appris pendant l'entraînement.",
+      "analogie": "Une saisie automatique de téléphone, mais entraînée sur une bibliothèque entière et capable de tenir compte de pages de contexte.",
+      "a_retenir": "Un LLM ne « consulte » pas de base de connaissances : il produit le texte le plus probable. C'est ce qui explique à la fois ses capacités et ses erreurs.",
+      "lien": "https://jalammar.github.io/illustrated-transformer/"
+    },
+    {
+      "module": "IA",
+      "numero": 3,
+      "titre": "l'embedding",
+      "definition": "Un embedding est une liste de nombres (un vecteur) qui représente le sens d'un texte.",
+      "fonctionnement": "Un modèle spécialisé, comme bge-m3 sur ton VPS, transforme un texte en un vecteur de quelques centaines à quelques milliers de nombres. Deux textes de sens proche obtiennent des vecteurs proches, même s'ils n'ont aucun mot en commun. On mesure cette proximité, le plus souvent par la « similarité cosinus ».",
+      "analogie": "Des coordonnées GPS pour le sens : « voiture » et « automobile » sont voisines, « voiture » et « banane » sont loin.",
+      "a_retenir": "C'est la base de la recherche sémantique et du RAG : on retrouve des documents par leur sens, pas par leurs mots exacts.",
+      "lien": "https://huggingface.co/blog/getting-started-with-embeddings"
+    },
+    {
+      "module": "IA",
+      "numero": 4,
+      "titre": "la fenêtre de contexte",
+      "definition": "La fenêtre de contexte est la quantité maximale de texte, en tokens, qu'un modèle peut prendre en compte en une seule fois : la consigne, les documents fournis et sa propre réponse.",
+      "fonctionnement": "Tout ce qui dépasse la fenêtre est ignoré, ou provoque une erreur. Avec Ollama, la taille utilisée est un réglage (num_ctx) qui peut être plus petit que le maximum du modèle : c'est ce qu'affichait la colonne CONTEXT (4096) de la commande ollama ps sur ton VPS. Plus la fenêtre est grande, plus elle consomme de mémoire.",
+      "analogie": "Le plan de travail d'un cuisinier : il ne peut manipuler que ce qui tient dessus en même temps.",
+      "a_retenir": "C'est pour cela que les notes de version de 480 000 caractères d'Iceberg devront être coupées avant d'être résumées dans ce projet.",
+      "lien": "https://arxiv.org/abs/2307.03172"
+    },
+    {
+      "module": "IA",
+      "numero": 5,
+      "titre": "la température",
+      "definition": "La température est un réglage qui contrôle la part de hasard dans le choix des tokens.",
+      "fonctionnement": "À chaque étape, le modèle calcule une probabilité pour chaque token possible. Avec une température basse (proche de 0), il choisit presque toujours le plus probable : les réponses sont stables et prévisibles. Avec une température haute (proche de 1 ou plus), des tokens moins probables sont choisis plus souvent : les réponses sont plus variées, mais aussi plus risquées.",
+      "analogie": "Un musicien qui joue la partition à la lettre (température basse) ou qui improvise (température haute).",
+      "a_retenir": "Pour résumer fidèlement un texte, comme dans ce projet, on choisit une température basse ; pour écrire un texte créatif, une température plus haute.",
+      "lien": "https://docs.ollama.com/modelfile"
+    },
+    {
+      "module": "IA",
+      "numero": 6,
+      "titre": "le prompt système",
+      "definition": "Le prompt système est une consigne générale donnée au modèle, qui s'applique à toute la conversation : son rôle, son ton, ses règles.",
+      "fonctionnement": "Une requête à un modèle contient en général deux parties : le prompt système (« Tu es un assistant qui résume des notes de version en français, sans rien inventer ») et le message de l'utilisateur (le texte à résumer). Le modèle donne la priorité aux règles du prompt système pour traiter chaque message.",
+      "analogie": "La fiche de poste d'un employé, par rapport aux demandes qu'il reçoit au fil de la journée.",
+      "a_retenir": "Séparer les règles (prompt système) des données (message) rend les réponses plus régulières : c'est ce que fera le workflow de résumé de ce projet à l'étape 6.",
+      "lien": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview"
+    },
+    {
+      "module": "IA",
+      "numero": 7,
+      "titre": "l'hallucination",
+      "definition": "Une hallucination est une information fausse ou inventée, présentée par le modèle avec la même assurance qu'une information exacte.",
+      "fonctionnement": "Comme un LLM produit le texte le plus probable, il peut générer une phrase plausible mais fausse, surtout quand l'information lui manque. C'est arrivé lors des tests de ce projet : sans consigne précise, llama3.1 avait ajouté qu'une version d'Airflow apportait « une maintenance accrue », ce que le texte ne disait pas.",
+      "analogie": "Un élève qui ne connaît pas la réponse mais rédige quelque chose de crédible pour ne pas laisser la copie blanche.",
+      "a_retenir": "On réduit les hallucinations en fournissant le texte source au modèle, en lui interdisant explicitement d'ajouter des informations, et en vérifiant ses réponses.",
+      "lien": "https://eugeneyan.com/writing/llm-patterns/"
+    },
+    {
+      "module": "IA",
+      "numero": 8,
+      "titre": "le RAG",
+      "definition": "Le RAG (Retrieval-Augmented Generation) consiste à chercher des documents pertinents, puis à les donner au modèle pour qu'il réponde en s'appuyant dessus.",
+      "fonctionnement": "Les documents sont découpés en morceaux, transformés en embeddings et rangés dans une base vectorielle (Chroma, pgvector…). Quand une question arrive, on calcule son embedding, on retrouve les morceaux les plus proches, puis on les place dans le prompt avec la question. Le modèle répond alors à partir de ces documents plutôt que de sa seule mémoire.",
+      "analogie": "Un examen à livre ouvert : on cherche d'abord les bonnes pages, puis on rédige la réponse en s'appuyant dessus.",
+      "a_retenir": "Le RAG permet d'utiliser des documents récents ou privés sans réentraîner le modèle. La qualité de la recherche compte autant que celle du modèle : c'est l'idée du CRAG, qui évalue et corrige la recherche.",
+      "lien": "https://arxiv.org/abs/2005.11401"
+    },
+    {
+      "module": "IA",
+      "numero": 9,
+      "titre": "la quantification",
+      "definition": "La quantification consiste à stocker les paramètres d'un modèle avec moins de précision, pour qu'il prenne moins de mémoire et tourne plus vite.",
+      "fonctionnement": "À l'origine, chaque paramètre est stocké sur 16 bits. Quantifié sur environ 4 bits, le modèle devient près de 4 fois plus léger, au prix d'une légère perte de qualité. C'est ce qui permet à llama3.1:8b de tenir dans environ 5 Go. Le nom Q4_K_M, affiché par Ollama pour qwen2.5:3b, désigne justement une méthode de quantification sur 4 bits du format GGUF.",
+      "analogie": "Compresser une photo en JPEG : le fichier est bien plus léger, et la différence se voit à peine.",
+      "a_retenir": "La quantification est ce qui rend possible un LLM local sur un PC ou un VPS sans carte graphique, comme dans ce projet.",
+      "lien": "https://huggingface.co/docs/hub/gguf"
+    },
+    {
+      "module": "IA",
+      "numero": 10,
+      "titre": "l'agent et les outils",
+      "definition": "Un agent est un programme dans lequel le LLM décide lui-même des actions à mener, en appelant des outils (chercher sur le web, lire une base, envoyer un message…).",
+      "fonctionnement": "On décrit au modèle les outils disponibles. Il répond soit par une réponse finale, soit par une demande d'appel d'outil, avec ses paramètres. Le programme exécute l'outil, renvoie le résultat au modèle, et la boucle continue jusqu'à la réponse finale. Dans un workflow, au contraire, c'est le développeur qui fixe l'enchaînement à l'avance.",
+      "analogie": "Un assistant à qui l'on confie un objectif et un trousseau de clés, plutôt qu'une liste d'instructions à suivre dans l'ordre.",
+      "a_retenir": "Un agent est plus souple mais moins prévisible qu'un workflow. Pour une tâche dont les étapes sont connues, comme ce digest, un workflow reste le meilleur choix.",
+      "lien": "https://www.anthropic.com/research/building-effective-agents"
+    },
+    {
+      "module": "Docker",
+      "numero": 1,
+      "titre": "l'image",
+      "definition": "Une image Docker est un modèle figé qui contient tout ce qu'il faut pour faire tourner une application : le système de fichiers, les bibliothèques, le programme et sa configuration par défaut.",
+      "fonctionnement": "Une image ne change jamais une fois construite. Elle porte un nom et une étiquette (un « tag ») qui indique sa version, par exemple n8nio/n8n:2.47.3 ou postgres:17.11-alpine dans le docker-compose.yml de ce projet. À partir d'une même image, on peut lancer autant de conteneurs que l'on veut.",
+      "analogie": "Un moule à gâteau : le moule ne change pas, et il permet de produire autant de gâteaux identiques qu'on le souhaite.",
+      "a_retenir": "Fixer une version précise de l'image (2.47.3 plutôt que latest) garantit que l'application sera la même sur le PC et sur le VPS.",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/"
+    },
+    {
+      "module": "Docker",
+      "numero": 2,
+      "titre": "le conteneur",
+      "definition": "Un conteneur est une instance en cours d'exécution d'une image : un processus isolé, avec son propre système de fichiers et son propre réseau.",
+      "fonctionnement": "Docker isole le conteneur grâce à des fonctions du noyau Linux : il ne voit ni les fichiers ni les processus des autres conteneurs. Contrairement à une machine virtuelle, il n'embarque pas de système d'exploitation complet et partage le noyau de la machine hôte : il démarre donc en quelques secondes et consomme peu de ressources.",
+      "analogie": "Un appartement dans un immeuble : chacun a son espace privé, mais tous partagent les fondations et les canalisations.",
+      "a_retenir": "Un conteneur est jetable : tout ce qui est écrit à l'intérieur disparaît s'il est supprimé, sauf ce qui est stocké dans un volume.",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/"
+    },
+    {
+      "module": "Docker",
+      "numero": 3,
+      "titre": "le Dockerfile",
+      "definition": "Un Dockerfile est un fichier texte qui décrit, étape par étape, comment construire une image.",
+      "fonctionnement": "Il commence par une image de base (FROM python:3.12-slim, par exemple), puis enchaîne des instructions : copier des fichiers (COPY), installer des dépendances (RUN), définir la commande de démarrage (CMD). La commande docker build lit le Dockerfile et produit l'image.",
+      "analogie": "Une recette de cuisine : la liste des étapes qui, suivies dans l'ordre, donnent toujours le même plat.",
+      "a_retenir": "Ce projet n'a pas de Dockerfile : il utilise directement les images officielles de n8n et de PostgreSQL. On en écrit un quand on veut empaqueter son propre code.",
+      "lien": "https://docs.docker.com/reference/dockerfile/"
+    },
+    {
+      "module": "Docker",
+      "numero": 4,
+      "titre": "les couches et le cache de construction",
+      "definition": "Une image est composée de couches empilées. Chaque instruction du Dockerfile qui modifie les fichiers ajoute une couche.",
+      "fonctionnement": "Lors d'une nouvelle construction, Docker réutilise les couches qui n'ont pas changé : c'est le cache de construction. Dès qu'une instruction change, cette couche et toutes les suivantes sont reconstruites. C'est pourquoi on copie d'abord la liste des dépendances (requirements.txt), on les installe, et on copie le code seulement ensuite.",
+      "analogie": "Un mille-feuille : si l'on change la couche du haut, inutile de refaire celles du dessous.",
+      "a_retenir": "Placer en premier les instructions qui changent rarement et en dernier celles qui changent souvent peut faire passer une construction de plusieurs minutes à quelques secondes.",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/"
+    },
+    {
+      "module": "Docker",
+      "numero": 5,
+      "titre": "le registre",
+      "definition": "Un registre est un serveur qui stocke et distribue des images Docker. Docker Hub est le registre public par défaut.",
+      "fonctionnement": "Quand tu as lancé docker compose up, Docker a téléchargé (« pull ») les images n8nio/n8n et postgres depuis Docker Hub. On peut aussi envoyer (« push ») ses propres images vers un registre, public ou privé (GitHub Container Registry, un registre interne d'entreprise…), pour les déployer ailleurs.",
+      "analogie": "Une boutique d'applications : on y publie des images, et chaque serveur vient y télécharger celles dont il a besoin.",
+      "a_retenir": "Une même image peut exister pour plusieurs architectures : c'est grâce à cela que les images de ce projet fonctionnent à la fois sur ton PC (x86_64) et sur le VPS (ARM).",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-registry/"
+    },
+    {
+      "module": "Docker",
+      "numero": 6,
+      "titre": "le volume",
+      "definition": "Un volume est un espace de stockage géré par Docker, qui existe indépendamment des conteneurs.",
+      "fonctionnement": "On « monte » un volume dans un dossier du conteneur. Ce qui y est écrit est stocké en dehors du conteneur et survit à sa suppression. Dans ce projet, le volume postgres_data est monté sur /var/lib/postgresql/data : c'est pour cela que tes workflows n8n n'ont pas disparu quand le conteneur a été recréé.",
+      "analogie": "Un disque dur externe : on peut changer d'ordinateur, les fichiers restent sur le disque.",
+      "a_retenir": "docker compose down supprime les conteneurs mais garde les volumes ; docker compose down -v supprime aussi les volumes, et donc toutes les données.",
+      "lien": "https://docs.docker.com/engine/storage/volumes/"
+    },
+    {
+      "module": "Docker",
+      "numero": 7,
+      "titre": "le réseau Docker",
+      "definition": "Docker crée des réseaux virtuels qui permettent aux conteneurs de communiquer entre eux.",
+      "fonctionnement": "Docker Compose crée automatiquement un réseau pour chaque projet. Sur ce réseau, chaque conteneur est joignable par le nom de son service : c'est pourquoi n8n se connecte à la base avec DB_POSTGRESDB_HOST: postgres, sans connaître son adresse IP. Pour joindre un programme installé sur la machine hôte, comme Ollama, on utilise le nom spécial host.docker.internal.",
+      "analogie": "Le réseau téléphonique interne d'une entreprise : on appelle un collègue par son nom, pas par un numéro qui pourrait changer.",
+      "a_retenir": "Les conteneurs d'un même projet Compose se parlent sans rien publier à l'extérieur : la base de ce projet n'expose aucun port et reste invisible depuis l'extérieur.",
+      "lien": "https://docs.docker.com/engine/network/"
+    },
+    {
+      "module": "Docker",
+      "numero": 8,
+      "titre": "Docker Compose",
+      "definition": "Docker Compose est l'outil qui décrit et lance une application composée de plusieurs conteneurs à partir d'un seul fichier, docker-compose.yml.",
+      "fonctionnement": "Le fichier décrit des services (ici n8n et postgres), leurs images, variables, volumes, réseaux et dépendances. La commande docker compose up -d crée ou met à jour tout ce qui est décrit, dans le bon ordre : grâce à depends_on et au healthcheck, n8n ne démarre qu'une fois PostgreSQL prêt. Si la configuration change, Compose ne recrée que les conteneurs concernés.",
+      "analogie": "Une partition d'orchestre : un seul document indique à chaque musicien quoi jouer et quand.",
+      "a_retenir": "Le docker-compose.yml décrit l'état souhaité de l'application : le même fichier recrée exactement le même environnement sur le PC et sur le VPS.",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-docker-compose/"
+    },
+    {
+      "module": "Docker",
+      "numero": 9,
+      "titre": "les variables d'environnement et le fichier .env",
+      "definition": "Les variables d'environnement transmettent la configuration à un conteneur sans modifier son image. Le fichier .env fournit leurs valeurs à Docker Compose.",
+      "fonctionnement": "Dans docker-compose.yml, l'écriture ${POSTGRES_PASSWORD} est remplacée par la valeur trouvée dans le fichier .env, placé à côté. Le conteneur reçoit ensuite ces valeurs comme variables d'environnement. Le même fichier docker-compose.yml peut ainsi servir partout, et seul le .env change entre le PC et le VPS.",
+      "analogie": "Un formulaire type (docker-compose.yml) rempli avec des informations différentes selon la personne (le .env).",
+      "a_retenir": "Le .env contient les secrets : il ne doit jamais être versionné. C'est pour cela que ce projet versionne un .env.example sans valeurs réelles.",
+      "lien": "https://docs.docker.com/compose/how-tos/environment-variables/"
+    },
+    {
+      "module": "Docker",
+      "numero": 10,
+      "titre": "la publication de ports",
+      "definition": "Publier un port, c'est relier un port de la machine hôte à un port du conteneur, pour rendre un service accessible depuis l'extérieur du réseau Docker.",
+      "fonctionnement": "La ligne \"127.0.0.1:5678:5678\" du docker-compose.yml signifie : le port 5678 de la machine hôte, mais seulement sur l'adresse 127.0.0.1, mène au port 5678 du conteneur n8n. Sans le préfixe 127.0.0.1, le port serait ouvert sur toutes les interfaces réseau, et donc potentiellement accessible depuis Internet.",
+      "analogie": "Une porte entre l'appartement (le conteneur) et la rue (l'extérieur) : on peut la limiter à l'intérieur de l'immeuble (127.0.0.1) au lieu de l'ouvrir sur la rue.",
+      "a_retenir": "Ne publier que les ports nécessaires, et sur 127.0.0.1 quand c'est possible, est l'une des mesures de sécurité les plus simples et les plus efficaces.",
+      "lien": "https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/"
+    }
+  ]
+}

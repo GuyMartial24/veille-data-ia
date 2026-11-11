@@ -1,6 +1,6 @@
-# Ressources d'apprentissage — « Le fondamental du jour »
+# Ressources d'apprentissage
 
-> Rubrique prévue en **v1.1** : chaque matin, le digest ajoute **une** ressource non encore envoyée.
+> Réservoir de lectures d'approfondissement pour la rubrique « La notion du jour » (v1) : chaque leçon renvoie vers un lien de référence. Voir la section 10 du [cadrage](cadrage.md).
 > 93 ressources, soit environ 13 semaines de parcours (une par jour).
 > Ressources 1 à 21 : une publication LinkedIn « Data Engineering : des fondamentaux aux systèmes prêts pour la production » (les liens raccourcis `lnkd.in` ont été remplacés par leur adresse réelle).
 > Ressources 22 à 93 : des références reconnues du domaine, ajoutées pour compléter le parcours (dont 14 sur Docker, Kubernetes et k3s, 18 sur Scala, Maven, les RDD, Spark SQL et Structured Streaming, et 21 sur l'IA : Transformers, embeddings, RAG, agents, MCP, évaluations, modèles locaux).
