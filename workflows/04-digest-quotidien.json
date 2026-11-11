@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1584,
-        -656
+        -1600,
+        -800
       ],
       "id": "d7e4b8f7-5d85-4111-948a-74c6ce691463",
       "name": "When clicking ‘Execute workflow’"
@@ -22,8 +22,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -1360,
-        -656
+        -1376,
+        -800
       ],
       "id": "d56b6f47-78c8-4ebb-8936-169222b0366e",
       "name": "Notion du jour",
@@ -93,8 +93,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -720,
-        -656
+        -800,
+        -800
       ],
       "id": "34687f81-b29c-430a-9288-c08de79019e1",
       "name": "Noter l'envoi",
@@ -115,7 +115,7 @@
       "typeVersion": 2.8,
       "position": [
         -1376,
-        -304
+        -480
       ],
       "id": "e1f6dc19-7426-4d6b-9b4d-b370621adf36",
       "name": "Annonces à envoyer",
@@ -135,8 +135,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.8,
       "position": [
-        -752,
-        -288
+        -784,
+        -464
       ],
       "id": "2044465a-f675-49ba-87e0-eeeeea45bd49",
       "name": "Marquer comme envoyées",
@@ -156,34 +156,10 @@
       "typeVersion": 2,
       "position": [
         -1152,
-        -288
+        -464
       ],
       "id": "1fdd2332-6bea-4c65-951f-079bcf3b9534",
       "name": "Composer les messages"
-    },
-    {
-      "parameters": {
-        "fromEmail": "=Veille Data & IA <{{ $env.EMAIL_DESTINATAIRE }}>",
-        "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
-        "subject": "=📰 Veille Data & IA : les nouveautés du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
-        "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [
-        -928,
-        -80
-      ],
-      "id": "dd691e00-cbb8-453c-bbe0-c9f96e54c32f",
-      "name": "E-mail des nouveautés",
-      "webhookId": "4fb905cf-f0c3-427e-9d57-e3cd0c47bbe7",
-      "credentials": {
-        "smtp": {
-          "id": "QM0F00t6QnHqdm6k",
-          "name": "SMTP account"
-        }
-      }
     },
     {
       "parameters": {
@@ -198,8 +174,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -928,
-        -288
+        -960,
+        -464
       ],
       "id": "5bc497bc-81d1-41e8-a779-a1543aa1528d",
       "name": "Telegram des nouveautés",
@@ -224,8 +200,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -912,
-        -656
+        -960,
+        -800
       ],
       "id": "1ee1e9b2-13ed-480d-a70b-77723bd458e9",
       "name": "Telegram de la notion",
@@ -234,30 +210,6 @@
         "telegramApi": {
           "id": "8pBYPF2V4CQJIb2f",
           "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "fromEmail": "=Veille Data & IA <{{ $env.EMAIL_DESTINATAIRE }}>",
-        "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
-        "subject": "=🎓 La notion du jour : {{ $('Notion du jour').item.json.module }}, {{ $('Notion du jour').item.json.titre }}\n",
-        "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [
-        -912,
-        -496
-      ],
-      "id": "8025204a-2939-48b1-bf08-0bedf8f9d0ab",
-      "name": "E-mail de la notion",
-      "webhookId": "4fb905cf-f0c3-427e-9d57-e3cd0c47bbe7",
-      "credentials": {
-        "smtp": {
-          "id": "QM0F00t6QnHqdm6k",
-          "name": "SMTP account"
         }
       }
     },
@@ -278,11 +230,59 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -1136,
-        -656
+        -1152,
+        -800
       ],
       "id": "bad56af1-1da0-4b10-af2b-0cf7c1b724ca",
       "name": "Message de la notion"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -960,
+        -640
+      ],
+      "id": "d0517160-e6d9-4db5-8e09-e44e8c55df62",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Chaque item contient un message (la notion, puis les nouveautés)\nconst separateur = '<hr style=\"border:none; border-top:1px solid #ddd; margin:24px 0\">';\nconst corps = $input.all()\n  .map(item => item.json.texte.replace(/\\n/g, '<br>'))\n  .join(separateur);\n\n// Un seul item en sortie : un seul e-mail\nreturn [{\n  json: {\n    html: `<div style=\"font-family:Arial, sans-serif; font-size:15px; line-height:1.5; max-width:680px\">${corps}</div>`\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        -640
+      ],
+      "id": "3cef2702-08e4-4696-9b83-0eb32b5381a0",
+      "name": "Composer l'e-mail"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=<{{ $env.EMAIL_DESTINATAIRE }}>",
+        "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
+        "subject": "=📰 Veille Data & IA du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -656,
+        -640
+      ],
+      "id": "896f5c3a-403e-4ce2-b841-2a1cc4721744",
+      "name": "E-mail du digest",
+      "webhookId": "f4da5181-a99d-40d8-9c88-5107534de269",
+      "credentials": {
+        "smtp": {
+          "id": "QM0F00t6QnHqdm6k",
+          "name": "SMTP account"
+        }
+      }
     }
   ],
   "connections": {
@@ -328,9 +328,9 @@
       "main": [
         [
           {
-            "node": "E-mail des nouveautés",
+            "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 1
           },
           {
             "node": "Telegram des nouveautés",
@@ -338,11 +338,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "E-mail des nouveautés": {
-      "main": [
-        []
       ]
     },
     "Telegram des nouveautés": {
@@ -376,7 +371,29 @@
             "index": 0
           },
           {
-            "node": "E-mail de la notion",
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Composer l'e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Composer l'e-mail": {
+      "main": [
+        [
+          {
+            "node": "E-mail du digest",
             "type": "main",
             "index": 0
           }
