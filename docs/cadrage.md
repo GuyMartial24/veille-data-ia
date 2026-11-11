@@ -129,7 +129,7 @@ Ce que la vérification a changé par rapport à la liste de départ :
 
 - Pas d'interface web ni de tableau de bord : les seules sorties sont Telegram et l'e-mail.
 - Pas de temps réel : un seul digest par jour.
-- Pas plus de sources que la liste de départ (le système doit cependant permettre d'en ajouter facilement, voir la section 7).
+- Pas plus de sources que la liste de départ (13 sources). Dix sources complémentaires sont déjà vérifiées et prêtes à être activées après la v1 (voir [sources.md](sources.md)) ; le système doit permettre de les ajouter facilement (voir la section 7).
 - Pas de lecture des articles complets : l'IA résume à partir du titre et de la description.
 - Pas de classement ni de note d'importance par l'IA.
 - Pas de RAG ni de Chroma.
@@ -142,13 +142,13 @@ Prévue juste après la v1, pour ne pas la retarder.
 
 - Chaque matin, le digest ajoute **une ressource d'apprentissage** (un article de fond sur une notion de Data Engineering), en plus des nouveautés.
 - Les ressources sont rangées dans une table `ressources` de la base `veille` et envoyées dans l'ordre, une seule fois chacune.
-- Liste de départ : 21 ressources, soit 3 semaines de parcours. Voir [ressources-apprentissage.md](ressources-apprentissage.md).
+- Liste de départ : 40 ressources, soit 8 semaines de parcours. Voir [ressources-apprentissage.md](ressources-apprentissage.md).
 - Ajouter une ressource = ajouter une ligne dans la table, sans modifier le workflow.
 
 Exemple de rendu :
 
 ```
-📚 Le fondamental du jour (7/21) : Slowly Changing Dimensions (SCD)
+📚 Le fondamental du jour (7/40) : Slowly Changing Dimensions (SCD)
 https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-warehouses/
 ```
 
