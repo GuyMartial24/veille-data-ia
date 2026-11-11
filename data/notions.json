@@ -50,6 +50,21 @@
       "nom": "Pipelines scalables",
       "rang": 10,
       "emoji": "🏗️"
+    },
+    {
+      "nom": "Formats de fichiers",
+      "rang": 11,
+      "emoji": "📄"
+    },
+    {
+      "nom": "Cloud",
+      "rang": 12,
+      "emoji": "☁️"
+    },
+    {
+      "nom": "Visualisation",
+      "rang": 13,
+      "emoji": "📊"
     }
   ],
   "notions": [
@@ -1052,6 +1067,316 @@
       "analogie": "On ne prend pas un semi-remorque pour faire ses courses, ni un vélo pour un déménagement.",
       "a_retenir": "Commencer simple et passer au distribué seulement quand le volume l'exige évite des mois de complexité inutile.",
       "lien": "https://www.startdataengineering.com/post/data-engineering-project-for-beginners-batch-edition/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 1,
+      "titre": "le CSV",
+      "definition": "Le CSV (Comma-Separated Values) est un fichier texte où chaque ligne est un enregistrement et où les valeurs sont séparées par un caractère, en général la virgule ou le point-virgule.",
+      "fonctionnement": "Sa simplicité en fait le format d'échange le plus répandu : n'importe quel outil sait le lire, et un humain aussi. Mais il ne contient aucun type : « 007 » peut devenir le nombre 7, une date peut être lue de travers. Le séparateur, l'encodage (UTF-8 ou non) et les guillemets autour des valeurs qui contiennent le séparateur varient d'un fichier à l'autre.",
+      "analogie": "Une liste de courses écrite à la main : tout le monde peut la lire, mais rien ne dit si « 2 » veut dire deux kilos ou deux paquets.",
+      "a_retenir": "Le CSV est parfait pour échanger de petites données, mais lent et fragile pour l'analyse : on le convertit en Parquet dès son arrivée dans un data lake.",
+      "lien": "https://www.rfc-editor.org/info/rfc4180/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 2,
+      "titre": "JSON et JSON Lines",
+      "definition": "JSON est un format texte qui représente des données structurées, avec des objets (des paires clé-valeur) et des listes, éventuellement imbriqués. JSON Lines (ou NDJSON) met un objet JSON par ligne.",
+      "fonctionnement": "JSON est le format des API web : la réponse de l'API GitHub que tu as lue au début du projet était en JSON. Il gère les structures imbriquées, mais répète le nom de chaque champ dans chaque enregistrement, ce qui le rend volumineux. Un gros fichier JSON doit être lu en entier, alors qu'un fichier JSON Lines se lit ligne par ligne, ce qui convient aux logs et aux gros volumes.",
+      "analogie": "JSON : une fiche détaillée avec des sous-rubriques. JSON Lines : une pile de ces fiches, qu'on peut traiter une par une.",
+      "a_retenir": "Pour stocker des événements au fil de l'eau, JSON Lines est bien plus pratique qu'un seul grand tableau JSON.",
+      "lien": "https://jsonlines.org/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 3,
+      "titre": "Avro",
+      "definition": "Avro est un format binaire orienté lignes, dont le schéma (les champs et leurs types) est stocké avec les données.",
+      "fonctionnement": "Chaque enregistrement est écrit en binaire compact, sans répéter le nom des champs. Le schéma décrit la structure, et Avro sait lire des données écrites avec une ancienne version du schéma, à condition de respecter des règles d'évolution (par exemple, un nouveau champ doit avoir une valeur par défaut). Écrire un enregistrement est très rapide.",
+      "analogie": "Un formulaire officiel numéroté : on ne recopie pas l'intitulé des cases à chaque fois, le modèle du formulaire suffit pour comprendre chaque valeur.",
+      "a_retenir": "Avro est le format de prédilection des messages Kafka, souvent associé à un registre de schémas : idéal pour écrire enregistrement par enregistrement, moins pour l'analyse.",
+      "lien": "https://avro.apache.org/docs/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 4,
+      "titre": "Parquet en détail",
+      "definition": "Parquet est un format binaire en colonnes, optimisé pour l'analyse de gros volumes.",
+      "fonctionnement": "Un fichier est découpé en groupes de lignes (row groups). Dans chacun, les valeurs de chaque colonne sont stockées ensemble, encodées et compressées. Le pied du fichier contient le schéma et des statistiques par colonne (minimum, maximum, nombre de valeurs vides). Un moteur qui cherche les ventes de novembre lit ces statistiques et saute les groupes qui ne peuvent pas en contenir : c'est le « predicate pushdown ».",
+      "analogie": "Une encyclopédie en plusieurs tomes, avec sur chaque tranche les premières et dernières entrées : on n'ouvre que le tome utile.",
+      "a_retenir": "Parquet est lent à écrire ligne par ligne mais très rapide à lire en analyse : c'est le format de base des data lakes et des lakehouses.",
+      "lien": "https://parquet.apache.org/docs/file-format/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 5,
+      "titre": "ORC",
+      "definition": "ORC (Optimized Row Columnar) est un format en colonnes proche de Parquet, né dans l'écosystème Hadoop et Hive.",
+      "fonctionnement": "Comme Parquet, il range les données par colonnes dans des blocs (les « stripes »), avec des index et des statistiques qui permettent de sauter les blocs inutiles. Il est très efficace avec Hive et prend en charge les transactions ACID de Hive. Parquet est aujourd'hui plus répandu en dehors de cet écosystème.",
+      "analogie": "Un cousin de Parquet : même idée, autre famille d'outils.",
+      "a_retenir": "Dans un nouveau projet, Parquet est le choix le plus courant ; on rencontre surtout ORC dans les plateformes Hadoop et Hive existantes.",
+      "lien": "https://orc.apache.org/docs/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 6,
+      "titre": "la compression",
+      "definition": "Compresser un fichier réduit sa taille en encodant plus efficacement les données répétitives. Les algorithmes courants en data sont Snappy, Gzip et Zstandard (zstd).",
+      "fonctionnement": "Snappy compresse peu mais très vite. Gzip compresse davantage mais plus lentement. Zstandard offre souvent le meilleur compromis entre les deux. Dans un format en colonnes, la compression est particulièrement efficace, car une colonne contient des valeurs semblables (les mêmes pays, des dates proches).",
+      "analogie": "Faire sa valise : plier vite (Snappy) ou rouler chaque vêtement avec soin pour gagner de la place (Gzip).",
+      "a_retenir": "Un fichier .csv.gz ne peut pas être découpé pour être lu en parallèle, alors qu'un fichier Parquet compressé le peut : la compression se fait à l'intérieur du fichier, bloc par bloc.",
+      "lien": "https://parquet.apache.org/docs/file-format/data-pages/compression/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 7,
+      "titre": "le schéma et son évolution",
+      "definition": "Le schéma décrit la structure des données : le nom, le type et l'ordre des champs. L'évolution du schéma est la façon de le modifier sans casser les données ni les programmes existants.",
+      "fonctionnement": "Ajouter une colonne facultative est en général sans risque. Supprimer ou renommer une colonne, ou changer un type, peut casser les programmes qui la lisent. Avro, Parquet et les formats de tables gèrent certaines évolutions : Iceberg, par exemple, identifie chaque colonne par un numéro interne, ce qui permet de la renommer sans réécrire les fichiers.",
+      "analogie": "Modifier un formulaire administratif : ajouter une case facultative ne gêne personne, supprimer une case obligatoire bloque tous ceux qui la remplissaient.",
+      "a_retenir": "Une modification de schéma non coordonnée est l'une des premières causes de pannes de pipelines : c'est ce que cherchent à éviter les « contrats de données ».",
+      "lien": "https://iceberg.apache.org/docs/latest/evolution/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 8,
+      "titre": "Apache Arrow",
+      "definition": "Apache Arrow est un format standard pour représenter des données en colonnes en mémoire vive, et non sur disque.",
+      "fonctionnement": "Quand deux outils échangent des données, ils doivent souvent les convertir d'un format interne à un autre, ce qui coûte du temps. Avec Arrow, pandas, Polars, DuckDB ou Spark partagent la même représentation en mémoire : les données passent d'un outil à l'autre presque sans conversion ni copie.",
+      "analogie": "Une langue commune entre des collègues de pays différents : plus besoin d'interprète à chaque échange.",
+      "a_retenir": "Parquet sert à stocker sur disque, Arrow à traiter en mémoire : les deux sont complémentaires et souvent utilisés ensemble.",
+      "lien": "https://arrow.apache.org/overview/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 9,
+      "titre": "Iceberg, Delta Lake et Hudi",
+      "definition": "Iceberg, Delta Lake et Hudi sont les trois grands formats de tables ouverts : ils ajoutent des fonctions de base de données à des fichiers Parquet.",
+      "fonctionnement": "Les trois apportent les transactions ACID, la modification et la suppression de lignes, l'historique des versions (time travel) et l'évolution du schéma. Delta Lake, créé par Databricks, est très intégré à Spark. Apache Iceberg, né chez Netflix, est conçu pour être lu par de nombreux moteurs (Spark, Trino, Flink, Snowflake…). Apache Hudi, né chez Uber, est optimisé pour les mises à jour fréquentes et l'ingestion incrémentale.",
+      "analogie": "Trois systèmes de classement différents pour la même bibliothèque de fichiers Parquet.",
+      "a_retenir": "Le choix dépend surtout des moteurs utilisés ; des outils comme Apache XTable permettent même de lire une table dans un format comme si elle était dans un autre.",
+      "lien": "https://hudi.apache.org/docs/overview/"
+    },
+    {
+      "module": "Formats de fichiers",
+      "numero": 10,
+      "titre": "choisir un format",
+      "definition": "Le bon format dépend de l'usage : échanger, transmettre des messages, stocker pour l'analyse, ou gérer des tables qui évoluent.",
+      "fonctionnement": "Pour échanger avec un humain ou un outil quelconque : CSV ou JSON. Pour des messages dans Kafka : Avro (ou Protobuf), avec un registre de schémas. Pour stocker des données à analyser : Parquet. Pour des tables qu'on met à jour, avec historique et transactions : Parquet géré par Iceberg ou Delta Lake. En mémoire, entre outils d'analyse : Arrow.",
+      "analogie": "On ne range pas des vêtements, des documents et des surgelés dans le même type de contenant.",
+      "a_retenir": "Un pipeline type reçoit du JSON ou du CSV, les convertit tôt en Parquet (couche bronze ou silver), et gère ses tables avec Iceberg ou Delta Lake.",
+      "lien": "https://parquet.apache.org/docs/file-format/"
+    },
+    {
+      "module": "Cloud",
+      "numero": 1,
+      "titre": "IaaS, PaaS et SaaS",
+      "definition": "IaaS, PaaS et SaaS sont trois niveaux de services cloud, selon la part de travail que l'on confie au fournisseur.",
+      "fonctionnement": "IaaS (Infrastructure as a Service) : on loue des machines virtuelles, du réseau et du stockage, et on gère tout le reste (système, logiciels) ; ton VPS en est un exemple. PaaS (Platform as a Service) : on fournit son code ou ses requêtes, la plateforme gère les serveurs ; BigQuery ou Databricks en sont des exemples. SaaS (Software as a Service) : on utilise directement un logiciel prêt à l'emploi, comme Gmail ou Power BI en ligne.",
+      "analogie": "Se loger : louer un terrain et construire (IaaS), louer un appartement meublé (PaaS), ou aller à l'hôtel (SaaS).",
+      "a_retenir": "Plus on monte vers le SaaS, moins on a de travail d'administration, mais moins on a de contrôle sur la configuration.",
+      "lien": "https://csrc.nist.gov/pubs/sp/800/145/final"
+    },
+    {
+      "module": "Cloud",
+      "numero": 2,
+      "titre": "les régions et les zones de disponibilité",
+      "definition": "Un fournisseur cloud répartit ses centres de données en régions (une zone géographique, comme Paris ou Francfort), elles-mêmes découpées en zones de disponibilité (des centres de données indépendants).",
+      "fonctionnement": "Chaque zone de disponibilité a sa propre alimentation électrique et son propre réseau. Déployer une application sur plusieurs zones d'une même région la protège de la panne d'un centre de données. Le choix de la région détermine la latence pour les utilisateurs, les prix, et l'endroit où les données sont légalement stockées.",
+      "analogie": "Une chaîne d'hôtels présente dans plusieurs villes (les régions), avec plusieurs bâtiments indépendants dans chaque ville (les zones).",
+      "a_retenir": "Pour des données personnelles d'Européens, choisir une région située dans l'Union européenne facilite le respect du RGPD.",
+      "lien": "https://aws.amazon.com/about-aws/global-infrastructure/regions_az/"
+    },
+    {
+      "module": "Cloud",
+      "numero": 3,
+      "titre": "le stockage objet dans les trois clouds",
+      "definition": "Les trois grands fournisseurs proposent chacun un stockage objet : Amazon S3 chez AWS, Cloud Storage chez Google Cloud (GCP) et Blob Storage ou Data Lake Storage chez Azure.",
+      "fonctionnement": "Le principe est le même partout : des fichiers rangés dans des conteneurs (buckets ou containers), une durabilité très élevée, un paiement au volume stocké et aux requêtes. Tous proposent des classes de stockage moins chères pour les données rarement lues (archives). Azure Data Lake Storage Gen2 ajoute de vrais dossiers, pratiques pour les data lakes.",
+      "analogie": "Trois marques de garde-meubles qui fonctionnent de la même façon, avec des noms différents.",
+      "a_retenir": "Le stockage objet est le socle de presque toutes les architectures data dans le cloud : savoir l'utiliser sur un fournisseur, c'est savoir l'utiliser sur les trois.",
+      "lien": "https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction"
+    },
+    {
+      "module": "Cloud",
+      "numero": 4,
+      "titre": "les entrepôts de données cloud",
+      "definition": "Chaque cloud propose un entrepôt de données managé : Amazon Redshift (AWS), BigQuery (GCP) et Microsoft Fabric, qui succède à Azure Synapse (Azure). Snowflake est un entrepôt indépendant, disponible sur les trois.",
+      "fonctionnement": "Ces services séparent le stockage et le calcul : les données sont stockées une fois, et la puissance de calcul s'ajuste à la demande. BigQuery est entièrement serverless : on n'a aucun serveur à dimensionner et l'on paie en fonction des données lues par chaque requête. On les interroge en SQL standard.",
+      "analogie": "Une salle de lecture dont on peut agrandir les tables de travail à volonté, sans déplacer les livres.",
+      "a_retenir": "Avec une facturation au volume lu, une requête SELECT * sur une grande table peut coûter cher : on ne sélectionne que les colonnes utiles.",
+      "lien": "https://docs.cloud.google.com/bigquery/docs/introduction"
+    },
+    {
+      "module": "Cloud",
+      "numero": 5,
+      "titre": "les services d'intégration de données",
+      "definition": "Les services d'intégration managés déplacent et transforment les données sans gérer de serveurs : AWS Glue, Azure Data Factory et Google Cloud Dataflow en sont des exemples.",
+      "fonctionnement": "AWS Glue exécute des traitements Spark et tient un catalogue des données du lac. Azure Data Factory orchestre des copies et des transformations avec une interface visuelle et des centaines de connecteurs. Dataflow exécute des pipelines Apache Beam, en batch comme en streaming, et ajuste automatiquement le nombre de machines.",
+      "analogie": "Des services de déménagement clés en main : on indique d'où à où, ils fournissent les camions et les déménageurs.",
+      "a_retenir": "Ces services font gagner du temps, mais lient le pipeline à un fournisseur ; des outils ouverts (Spark, Airflow, dbt) restent portables d'un cloud à l'autre.",
+      "lien": "https://learn.microsoft.com/en-us/azure/data-factory/introduction"
+    },
+    {
+      "module": "Cloud",
+      "numero": 6,
+      "titre": "le serverless",
+      "definition": "Le serverless (sans serveur) désigne des services où l'on exécute du code sans gérer de serveur : le fournisseur démarre, dimensionne et arrête les ressources automatiquement.",
+      "fonctionnement": "Avec des fonctions comme AWS Lambda, Azure Functions ou Google Cloud Functions, on écrit une fonction déclenchée par un événement : un fichier déposé, un message, une requête web. On paie à l'exécution, à la milliseconde, et rien quand rien ne tourne. Les limites : une durée d'exécution maximale, et un temps de démarrage parfois plus long au premier appel.",
+      "analogie": "Prendre un taxi plutôt qu'acheter une voiture : on paie le trajet, pas le stationnement.",
+      "a_retenir": "Le serverless est idéal pour des traitements courts et irréguliers (convertir chaque fichier déposé en Parquet, par exemple), moins pour des calculs longs et continus.",
+      "lien": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+    },
+    {
+      "module": "Cloud",
+      "numero": 7,
+      "titre": "IAM et le moindre privilège",
+      "definition": "L'IAM (Identity and Access Management) gère qui peut faire quoi sur quelles ressources du cloud. Le principe du moindre privilège consiste à n'accorder que les droits strictement nécessaires.",
+      "fonctionnement": "On définit des identités (utilisateurs, groupes, et comptes de service pour les programmes) et des politiques qui leur accordent des actions précises sur des ressources précises : « ce pipeline peut lire ce bucket, et écrire dans celui-là ». Chaque appel au cloud est vérifié par rapport à ces politiques.",
+      "analogie": "Les badges d'accès d'une entreprise : chaque badge n'ouvre que les portes nécessaires au travail de son porteur.",
+      "a_retenir": "Une clé d'accès avec des droits d'administrateur qui fuite peut compromettre tout un compte cloud ; des droits limités limitent aussi les dégâts.",
+      "lien": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+    },
+    {
+      "module": "Cloud",
+      "numero": 8,
+      "titre": "Kubernetes managé",
+      "definition": "Les trois clouds proposent Kubernetes en service managé : EKS (AWS), GKE (Google Cloud) et AKS (Azure).",
+      "fonctionnement": "Le fournisseur gère le « plan de contrôle » de Kubernetes (l'API, l'ordonnanceur, la base de configuration), ses mises à jour et sa haute disponibilité. On ne s'occupe que des machines qui exécutent les applications, voire de rien du tout avec les modes entièrement gérés comme GKE Autopilot. Les fichiers de déploiement Kubernetes restent les mêmes d'un fournisseur à l'autre.",
+      "analogie": "Louer un immeuble dont le syndic gère l'ascenseur, le chauffage et la sécurité : on s'occupe seulement de ses appartements.",
+      "a_retenir": "Le k3s de ton VPS et un GKE en production utilisent les mêmes concepts et les mêmes fichiers YAML : ce qu'on apprend sur l'un sert sur l'autre.",
+      "lien": "https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview"
+    },
+    {
+      "module": "Cloud",
+      "numero": 9,
+      "titre": "Databricks et Snowflake",
+      "definition": "Databricks et Snowflake sont deux plateformes de données indépendantes des fournisseurs cloud, disponibles sur AWS, Azure et Google Cloud.",
+      "fonctionnement": "Databricks est née autour de Spark : c'est une plateforme lakehouse, avec Delta Lake, des notebooks, des pipelines et des outils d'IA. Snowflake est née comme un entrepôt de données SQL, très simple à administrer, avec un stockage et un calcul séparés. Avec le temps, chacune s'est rapprochée du terrain de l'autre.",
+      "analogie": "Deux grandes enseignes présentes dans tous les centres commerciaux, quel que soit le propriétaire du bâtiment.",
+      "a_retenir": "Ces plateformes évitent de dépendre des services propres à un seul cloud, mais ont leur propre logique de facturation à maîtriser.",
+      "lien": "https://docs.snowflake.com/en/user-guide/intro-key-concepts"
+    },
+    {
+      "module": "Cloud",
+      "numero": 10,
+      "titre": "les équivalences entre AWS, GCP et Azure",
+      "definition": "La plupart des services existent chez les trois fournisseurs, sous des noms différents.",
+      "fonctionnement": "Stockage objet : S3, Cloud Storage, Blob Storage. Entrepôt : Redshift, BigQuery, Fabric (anciennement Synapse). Spark managé : EMR, Dataproc, HDInsight, ou Databricks sur les trois. Streaming : Kinesis ou MSK (Kafka managé), Pub/Sub, Event Hubs. Orchestration : MWAA, Cloud Composer (tous deux des Airflow managés), Data Factory. Kubernetes : EKS, GKE, AKS. Fonctions : Lambda, Cloud Functions, Azure Functions.",
+      "analogie": "Les mêmes plats, sous des noms différents selon le restaurant.",
+      "a_retenir": "Apprendre les concepts (stockage objet, entrepôt, Spark, orchestration) plutôt que les noms de produits permet de passer d'un cloud à l'autre ; Microsoft et Google publient des tableaux d'équivalence officiels.",
+      "lien": "https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison"
+    },
+    {
+      "module": "Cloud",
+      "numero": 11,
+      "titre": "les coûts et le FinOps",
+      "definition": "Le FinOps est la pratique qui consiste à suivre et maîtriser les coûts du cloud, en associant les équipes techniques, financières et métier.",
+      "fonctionnement": "Dans le cloud, on paie à l'usage : chaque machine allumée, chaque gigaoctet stocké ou lu, chaque requête. Les bonnes pratiques : éteindre ce qui ne sert pas, choisir la bonne taille de machine, utiliser des classes de stockage moins chères pour les archives, étiqueter les ressources par projet, et fixer des alertes de budget.",
+      "analogie": "Une facture d'électricité : chaque appareil laissé allumé se paie, même si personne ne s'en sert.",
+      "a_retenir": "Pour la data, les gros postes de coût sont souvent le calcul (clusters Spark oubliés) et les requêtes qui lisent des tables entières : le partitionnement et Parquet font aussi baisser la facture.",
+      "lien": "https://www.finops.org/introduction/what-is-finops/"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 1,
+      "titre": "la BI et le tableau de bord",
+      "definition": "La BI (Business Intelligence, ou informatique décisionnelle) regroupe les outils et méthodes qui transforment les données en informations utiles à la décision. Le tableau de bord en est la forme la plus courante.",
+      "fonctionnement": "Un tableau de bord rassemble sur un écran les indicateurs clés d'une activité, souvent mis à jour automatiquement à partir d'un entrepôt ou d'un data mart. Il permet de filtrer (par période, par région) et d'explorer le détail d'un chiffre.",
+      "analogie": "Le tableau de bord d'une voiture : les quelques indicateurs dont le conducteur a besoin, lisibles d'un coup d'œil.",
+      "a_retenir": "Un tableau de bord n'est utile que s'il répond à des questions précises de ses utilisateurs ; trop d'indicateurs tuent l'information.",
+      "lien": "https://learn.microsoft.com/en-us/power-bi/fundamentals/power-bi-overview"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 2,
+      "titre": "l'indicateur clé (KPI)",
+      "definition": "Un KPI (Key Performance Indicator, ou indicateur clé de performance) est une mesure chiffrée qui indique si un objectif est atteint.",
+      "fonctionnement": "Un bon KPI a une définition précise (comment il est calculé, sur quelle période, avec quelles exclusions), une cible, et un responsable. Par exemple : « taux de commandes livrées en moins de 48 h, par semaine ». Il est souvent présenté avec sa tendance et son écart par rapport à l'objectif.",
+      "analogie": "La note d'un examen : un seul chiffre, mais il faut savoir sur combien elle est calculée et quel score vise l'élève.",
+      "a_retenir": "Deux équipes qui calculent le même KPI de deux façons différentes produisent deux chiffres contradictoires : d'où l'intérêt d'une définition unique, dans une couche sémantique.",
+      "lien": "https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 3,
+      "titre": "la couche sémantique",
+      "definition": "Une couche sémantique définit, en un seul endroit, les indicateurs et les notions métier (chiffre d'affaires, client actif…) à partir des tables techniques.",
+      "fonctionnement": "Au lieu de recalculer le chiffre d'affaires dans chaque tableau de bord, on le définit une fois : quelles tables, quelles règles, quels filtres. Les outils de visualisation, les tableurs, et même les assistants d'IA interrogent ensuite cette définition commune. Exemples : la couche sémantique de dbt, LookML (Looker), ou le modèle sémantique de Power BI.",
+      "analogie": "Un dictionnaire officiel de l'entreprise : chaque mot a une seule définition, que tout le monde utilise.",
+      "a_retenir": "La couche sémantique est ce qui garantit que tout le monde dans l'entreprise parle des mêmes chiffres.",
+      "lien": "https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 4,
+      "titre": "Power BI",
+      "definition": "Power BI est l'outil de visualisation et de BI de Microsoft, très répandu en entreprise.",
+      "fonctionnement": "On importe ou on connecte des données, on construit un modèle (les tables et leurs relations, idéalement en étoile), on écrit des mesures avec le langage DAX, puis on crée des rapports interactifs, publiés en ligne et partagés. Il s'intègre étroitement à Excel, Teams et Microsoft Fabric.",
+      "analogie": "Excel, en version spécialisée dans les rapports interactifs et partagés.",
+      "a_retenir": "Power BI fonctionne le mieux avec un modèle en étoile : Microsoft le recommande explicitement dans sa documentation.",
+      "lien": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 5,
+      "titre": "Tableau",
+      "definition": "Tableau est un outil de visualisation reconnu pour la qualité et la souplesse de ses graphiques. Il appartient à Salesforce.",
+      "fonctionnement": "On glisse des champs sur des lignes, des colonnes, des couleurs ou des tailles, et Tableau propose une représentation adaptée. Il excelle dans l'exploration visuelle des données : on passe facilement d'une vue d'ensemble au détail, ou d'un type de graphique à un autre.",
+      "analogie": "Un atelier de dessin pour les données : on compose un graphique en déplaçant des éléments plutôt qu'en le programmant.",
+      "a_retenir": "Power BI et Tableau répondent aux mêmes besoins ; le choix dépend souvent de l'écosystème déjà en place dans l'entreprise.",
+      "lien": "https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-home.htm"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 6,
+      "titre": "Apache Superset et Metabase",
+      "definition": "Apache Superset et Metabase sont deux outils de visualisation open source, que l'on peut installer gratuitement sur son propre serveur.",
+      "fonctionnement": "Metabase vise la simplicité : un utilisateur métier peut poser une question aux données sans écrire de SQL. Superset s'adresse davantage aux profils techniques : éditeur SQL, très nombreux types de graphiques, et connexion à la plupart des bases et entrepôts. Les deux se déploient facilement avec Docker.",
+      "analogie": "Des alternatives libres aux grandes marques, qu'on peut installer et adapter chez soi.",
+      "a_retenir": "Ces outils permettent de construire une plateforme de BI complète sans licence ; Superset pourrait par exemple afficher l'historique de ce projet de veille.",
+      "lien": "https://superset.apache.org/docs/intro/"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 7,
+      "titre": "Grafana",
+      "definition": "Grafana est un outil open source de tableaux de bord, spécialisé dans les données qui évoluent dans le temps : métriques techniques, capteurs, journaux.",
+      "fonctionnement": "Il se connecte à des bases de séries temporelles (InfluxDB, Prometheus) et à des bases classiques, affiche des courbes mises à jour en continu et déclenche des alertes quand un seuil est dépassé. Ton projet murmetric l'utilise justement avec InfluxDB.",
+      "analogie": "Le tableau de contrôle d'une centrale électrique : des courbes en direct, et une alarme qui sonne quand une valeur sort des limites.",
+      "a_retenir": "Grafana sert surtout à la supervision (est-ce que ça fonctionne, maintenant ?) ; Power BI ou Superset servent plutôt à l'analyse métier (que s'est-il passé, et pourquoi ?).",
+      "lien": "https://grafana.com/docs/grafana/latest/introduction/"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 8,
+      "titre": "les applications de données en Python",
+      "definition": "Des bibliothèques Python comme Streamlit permettent de créer une application web interactive autour de données, en quelques dizaines de lignes de code.",
+      "fonctionnement": "On écrit un script Python qui lit les données, les filtre et affiche des graphiques ; Streamlit en fait une page web avec des curseurs, des listes et des boutons, sans écrire de HTML ni de JavaScript. C'est pratique pour un prototype, une démonstration de modèle d'IA ou un outil interne.",
+      "analogie": "Un tableau blanc interactif : rapide à monter, idéal pour une démonstration, moins pour une installation définitive.",
+      "a_retenir": "Streamlit est idéal pour un portfolio : une interface au-dessus d'un projet data le rend immédiatement compréhensible.",
+      "lien": "https://docs.streamlit.io/"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 9,
+      "titre": "choisir le bon graphique",
+      "definition": "Le type de graphique dépend de la question posée : comparer, suivre une évolution, montrer une répartition, une relation ou une position.",
+      "fonctionnement": "Comparer des catégories : un diagramme en barres. Suivre une évolution dans le temps : une courbe. Montrer les parts d'un tout : des barres empilées, ou un camembert s'il y a très peu de parts. Montrer la relation entre deux mesures : un nuage de points. Montrer une distribution : un histogramme. Le Financial Times a publié un guide de référence, le « Visual Vocabulary ».",
+      "analogie": "Choisir un outil dans une boîte à outils : un marteau ne sert pas à visser.",
+      "a_retenir": "Le graphique le plus simple qui répond à la question est presque toujours le meilleur.",
+      "lien": "https://github.com/Financial-Times/chart-doctor/tree/main/visual-vocabulary"
+    },
+    {
+      "module": "Visualisation",
+      "numero": 10,
+      "titre": "les bonnes pratiques de visualisation",
+      "definition": "Une bonne visualisation transmet un message clair, sans déformer les données.",
+      "fonctionnement": "Quelques règles : un titre qui dit ce qu'il faut retenir (« Les ventes ont doublé en 2026 ») plutôt que ce qui est affiché (« Ventes par année ») ; des axes de barres qui commencent à zéro ; peu de couleurs, utilisées pour mettre en avant l'essentiel ; des étiquettes directes plutôt qu'une légende éloignée ; et pas d'effets 3D, qui faussent la lecture des proportions.",
+      "analogie": "Une bonne carte routière : elle montre le chemin, pas tous les détails du paysage.",
+      "a_retenir": "Si un lecteur doit chercher le message d'un graphique, c'est le graphique qu'il faut améliorer, pas le lecteur.",
+      "lien": "https://github.com/Financial-Times/chart-doctor/tree/main/visual-vocabulary"
     }
   ]
 }
