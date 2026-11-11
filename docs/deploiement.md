@@ -135,22 +135,33 @@ Dans les réglages (**Settings**) des workflows 02, 03 et 04, le champ **Error W
   docker compose exec postgres psql -U veille -d veille -c "SELECT count(*) FILTER (WHERE envoyee_le::date = current_date) AS envoyees_aujourdhui, count(*) FILTER (WHERE envoyee_le IS NULL) AS en_attente FROM annonces;"
   ```
 
-## Sauvegarde (non activée)
+## Sauvegarde
 
-La sauvegarde automatique des bases n'est **pas activée** en production (choix du 11 novembre 2026). Sans elle, une erreur de manipulation ou une panne du VPS ferait perdre l'historique des annonces et la progression dans les leçons. Les workflows, les sources et les leçons, eux, sont dans le dépôt Git et peuvent être réinstallés.
+Activée le 11 novembre 2026. Chaque nuit à **1 h 30** (avant la collecte de 3 h, et hors du créneau 2 h - 3 h des changements d'heure), cron lance `scripts/sauvegarder_base.sh` :
 
-Pour l'activer :
+- `pg_dump` des bases `veille` (sources, annonces, leçons, progression) et `n8n` (workflows, exécutions, credentials chiffrés) ;
+- un fichier par base et par jour dans `~/sauvegardes/veille-data-ia`, lisible par le seul propriétaire ;
+- conservation de 14 jours ; journal dans `~/sauvegardes/veille-data-ia/sauvegarde.log`.
 
-1. Lancer une première sauvegarde : `~/Projets_en_Production/veille-data-ia/scripts/sauvegarder_base.sh` (bases `veille` et `n8n`, rotation sur 14 jours, dans `~/sauvegardes/veille-data-ia`).
-2. Vérifier qu'elle se restaure, dans une base temporaire :
-   ```bash
-   docker compose exec -T postgres createdb -U veille veille_test
-   docker compose exec -T postgres pg_restore -U veille -d veille_test < ~/sauvegardes/veille-data-ia/veille_$(date +%F).dump
-   docker compose exec -T postgres dropdb -U veille veille_test
-   ```
-3. La programmer chaque nuit à 1 h 30 (`crontab -e`) :
-   ```
-   30 1 * * * /home/ubuntu/Projets_en_Production/veille-data-ia/scripts/sauvegarder_base.sh >> /home/ubuntu/sauvegardes/veille-data-ia/sauvegarde.log 2>&1
-   ```
-4. Idéalement, copier régulièrement les sauvegardes hors du VPS (règle 3-2-1).
+Ligne cron (`crontab -l`) :
 
+```
+30 1 * * * /home/ubuntu/Projets_en_Production/veille-data-ia/scripts/sauvegarder_base.sh >> /home/ubuntu/sauvegardes/veille-data-ia/sauvegarde.log 2>&1
+```
+
+Restauration testée le 11 novembre 2026 dans une base temporaire : contenu identique à l'original (43 sources, 69 annonces, 371 notions, progression dans le parcours).
+
+### Restaurer
+
+```bash
+cd ~/Projets_en_Production/veille-data-ia
+docker compose exec -T postgres dropdb -U veille veille
+docker compose exec -T postgres createdb -U veille veille
+docker compose exec -T postgres pg_restore -U veille -d veille < ~/sauvegardes/veille-data-ia/veille_AAAA-MM-JJ.dump
+```
+
+La base `n8n` se restaure de la même façon, conteneur n8n arrêté (`docker compose stop n8n`). Ses credentials ne sont lisibles qu'avec la `N8N_ENCRYPTION_KEY` du `.env` de production.
+
+### Limite
+
+Les sauvegardes sont sur le disque du VPS : elles protègent des erreurs de manipulation, pas d'une perte du VPS. Amélioration possible : en copier régulièrement une hors du VPS (règle 3-2-1).
