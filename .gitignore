@@ -1,3 +1,6 @@
 # Secrets : tokens Telegram et GitHub, mot de passe d'application Gmail, etc.
 .env
 *.env
+
+# Notes personnelles contenant des identifiants (ne jamais publier)
+ID_importants*

@@ -71,7 +71,7 @@ Vérifiées le 11 novembre 2026. Elles seront ajoutées à la table `sources` av
 | Seattle Data Guy | `https://seattledataguy.substack.com/feed` | *(aucun)* | 2 par mois | Analyses du métier de data engineer |
 | Netflix Technology Blog | `https://netflixtechblog.com/feed` | *(aucun)* | 3 à 4 par mois | Retours d'expérience sur des architectures data à très grande échelle |
 | Airbnb Engineering | `https://medium.com/feed/airbnb-engineering` | *(aucun)* | 3 par mois | Idem ; Airbnb est à l'origine d'Airflow |
-| Apache Airflow (blog) | `https://airflow.apache.org/blog/index.xml` | *(aucun)* | Variable | Articles détaillés sur chaque version (plus riches que les notes GitHub). ⚠️ Toutes les entrées portent la même date : le dédoublonnage doit se faire sur le lien, pas sur la date. |
+| Apache Airflow (blog) | `https://airflow.apache.org/blog/index.xml` | *(aucun)* | Variable | Articles détaillés sur chaque version (plus riches que les notes GitHub). Attention : Toutes les entrées portent la même date : le dédoublonnage doit se faire sur le lien, pas sur la date. |
 | DuckDB | `https://duckdb.org/feed.xml` | *(aucun)* | 3 par mois | Base analytique embarquée, très utilisée en data engineering |
 
 ### IA et LLMOps
@@ -179,20 +179,20 @@ Spark ne publie pas de flux d'actualités (`spark.apache.org/news` n'a pas de fl
 
 | Source | Résultat | Remarque |
 |--------|----------|----------|
-| Airflow | ✅ par l'API | Le flux Atom ne contient que les 10 dernières entrées, et Airflow publie une dizaine de *providers* par jour : la version 3.4.0 en avait déjà disparu. L'API `releases/latest` renvoie bien la 3.4.0. |
-| dbt Core | ✅ 5 versions gardées sur 10 | Notes de version complètes |
-| Dagster | ✅ 10 sur 10 | Une version par semaine environ |
-| Kafka | ✅ 3 sur 10 | Pas de *Releases* GitHub, seulement des tags : le texte est vide, donc pas de résumé IA |
-| Spark | ✅ 4 sur 10 | Même situation que Kafka |
-| Iceberg | ✅ 3 sur 10 | Versions candidates (`-rc0`, `-rc1`…) rejetées. Notes très longues (jusqu'à 480 000 caractères). |
-| Delta Lake | ✅ 3 sur 10 | Builds internes `dbr-…` et `dbi-…` rejetés |
-| LangChain | ✅ 1 sur 10 | Dépôt contenant de nombreux paquets : seul le paquet principal `langchain` est gardé |
-| Chroma | ✅ 4 sur 10 | Aucune version depuis mai 2026, à surveiller |
-| Ollama | ✅ 4 sur 10 | Plusieurs versions par semaine |
-| Apache Software Foundation | ✅ | L'ancienne adresse `blogs.apache.org/foundation/feed/entries/atom` renvoie une erreur 404 : le blog a déménagé sur `news.apache.org` |
-| Confluent | ✅ | Beaucoup de contenu marketing (accepté en v1) |
-| Databricks | ✅ | L'ancienne adresse `databricks.com/blog/rss.xml` renvoie une erreur 404. Mélange de technique et de marketing (accepté en v1). |
-| Hacker News (hnrss.org) | ❌ Reporté en v2 | Erreurs 502 à répétition ; la requête combinée (4 mots-clés + `points=50`) échoue systématiquement |
+| Airflow | OK, par l'API | Le flux Atom ne contient que les 10 dernières entrées, et Airflow publie une dizaine de *providers* par jour : la version 3.4.0 en avait déjà disparu. L'API `releases/latest` renvoie bien la 3.4.0. |
+| dbt Core | OK, 5 versions gardées sur 10 | Notes de version complètes |
+| Dagster | OK, 10 sur 10 | Une version par semaine environ |
+| Kafka | OK, 3 sur 10 | Pas de *Releases* GitHub, seulement des tags : le texte est vide, donc pas de résumé IA |
+| Spark | OK, 4 sur 10 | Même situation que Kafka |
+| Iceberg | OK, 3 sur 10 | Versions candidates (`-rc0`, `-rc1`…) rejetées. Notes très longues (jusqu'à 480 000 caractères). |
+| Delta Lake | OK, 3 sur 10 | Builds internes `dbr-…` et `dbi-…` rejetés |
+| LangChain | OK, 1 sur 10 | Dépôt contenant de nombreux paquets : seul le paquet principal `langchain` est gardé |
+| Chroma | OK, 4 sur 10 | Aucune version depuis mai 2026, à surveiller |
+| Ollama | OK, 4 sur 10 | Plusieurs versions par semaine |
+| Apache Software Foundation | OK | L'ancienne adresse `blogs.apache.org/foundation/feed/entries/atom` renvoie une erreur 404 : le blog a déménagé sur `news.apache.org` |
+| Confluent | OK | Beaucoup de contenu marketing (accepté en v1) |
+| Databricks | OK | L'ancienne adresse `databricks.com/blog/rss.xml` renvoie une erreur 404. Mélange de technique et de marketing (accepté en v1). |
+| Hacker News (hnrss.org) | Reporté en v2 | Erreurs 502 à répétition ; la requête combinée (4 mots-clés + `points=50`) échoue systématiquement |
 
 ## Règles qui découlent de la vérification
 

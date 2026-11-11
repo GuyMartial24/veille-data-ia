@@ -52,9 +52,9 @@ Ne jamais planifier de tâche entre 2 h et 3 h, à cause des changements d'heure
 
 | Modèle | Vitesse d'écriture | Qualité | Décision |
 |--------|--------------------|---------|----------|
-| `llama3.1` (8B) | 4,3 à 4,6 tokens/s, stable | Français correct, sans introduction, rien d'inventé | ✅ Retenu |
-| `qwen2.5:3b` | 0,4 à 0,6 tokens/s | Bonne | ❌ Trop lent sur ce VPS (cause non identifiée), supprimé |
-| `qwen2.5:14b` | Non testé | — | ❌ 9,9 Go en mémoire, déjà très sollicité par l'autre programme |
+| `llama3.1` (8B) | 4,3 à 4,6 tokens/s, stable | Français correct, sans introduction, rien d'inventé | Retenu |
+| `qwen2.5:3b` | 0,4 à 0,6 tokens/s | Bonne | Écarté : trop lent sur ce VPS (cause non identifiée), supprimé |
+| `qwen2.5:14b` | Non testé | — | Écarté : 9,9 Go en mémoire, déjà très sollicité par l'autre programme |
 
 Estimation : 30 à 90 secondes par annonce, soit 15 à 45 minutes pour 30 annonces.
 
@@ -146,13 +146,13 @@ Rubrique au cœur du principe « l'apprentissage d'abord ». Chaque matin, le di
 **Format d'une leçon**
 
 ```
-🎓 La notion du jour — Kafka (5/10) : le consumer
+La notion du jour — Kafka (5/10) : le consumer
 
-📖 Définition
-⚙️ Comment ça marche
-🧠 Analogie
-💡 À retenir
-🔗 Pour aller plus loin : <lien vers la documentation ou un article de référence>
+Définition
+Comment ça marche
+Analogie
+À retenir
+Pour aller plus loin : <lien vers la documentation ou un article de référence>
 ```
 
 **Organisation**
@@ -207,11 +207,11 @@ Chaque leçon renvoie vers un lien de référence. La liste de 93 ressources de 
 
 | # | Étape | Livrable |
 |---|-------|----------|
-| 1 | Cadrage ✅ | Ce document |
-| 2 | Vérification des sources ✅ | [sources.md](sources.md) : les sources testées et la structure de la table `sources` |
-| 3 | Environnement ✅ | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
-| 4 | Premier flux de bout en bout ✅ | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
-| 5 | Généralisation ✅ | Toutes les sources, lues depuis la table, avec dédoublonnage ([workflows/02-collecte-des-sources.json](../workflows/02-collecte-des-sources.json)) |
-| 6 | Brique IA et notion du jour ✅ | Résumés pédagogiques par Ollama, enregistrés en base ([03-resumes-ia](../workflows/03-resumes-ia.json)) ; rubrique « La notion du jour » envoyée sur Telegram ([04-digest-quotidien](../workflows/04-digest-quotidien.json)) |
-| 7 | Diffusion et planification ✅ | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail, déployés sur le VPS ([deploiement.md](deploiement.md)) |
-| 8 | Robustesse ✅ | Alertes en cas d'échec (Telegram et e-mail), patience avec l'Ollama partagé, annonces en échec isolées ; sauvegarde quotidienne des bases avec restauration testée ([deploiement.md](deploiement.md)) |
+| 1 | Cadrage (terminé) | Ce document |
+| 2 | Vérification des sources (terminé) | [sources.md](sources.md) : les sources testées et la structure de la table `sources` |
+| 3 | Environnement (terminé) | n8n et PostgreSQL lancés avec Docker Compose, en local sur le PC |
+| 4 | Premier flux de bout en bout (terminé) | 1 source → 1 message Telegram, sans IA ([workflows/](../workflows/)) |
+| 5 | Généralisation (terminé) | Toutes les sources, lues depuis la table, avec dédoublonnage ([workflows/02-collecte-des-sources.json](../workflows/02-collecte-des-sources.json)) |
+| 6 | Brique IA et notion du jour (terminé) | Résumés pédagogiques par Ollama, enregistrés en base ([03-resumes-ia](../workflows/03-resumes-ia.json)) ; rubrique « La notion du jour » envoyée sur Telegram ([04-digest-quotidien](../workflows/04-digest-quotidien.json)) |
+| 7 | Diffusion et planification (terminé) | Les workflows de 3 h et de 7 h, avec Telegram et l'e-mail, déployés sur le VPS ([deploiement.md](deploiement.md)) |
+| 8 | Robustesse (terminé) | Alertes en cas d'échec (Telegram et e-mail), patience avec l'Ollama partagé, annonces en échec isolées ; sauvegarde quotidienne des bases avec restauration testée ([deploiement.md](deploiement.md)) |
