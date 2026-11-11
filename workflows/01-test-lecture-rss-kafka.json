@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1104,
-        -576
+        -1568,
+        -896
       ],
       "id": "9e261f99-5653-47d8-bbfc-4605ebe8b7b7",
       "name": "When clicking ‘Execute workflow’"
@@ -21,8 +21,8 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1.2,
       "position": [
-        -880,
-        -576
+        -1424,
+        -896
       ],
       "id": "15a6989b-b59c-47ef-8d2c-1cc87f9ddaf8",
       "name": "RSS Read"
@@ -54,8 +54,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.4,
       "position": [
-        -656,
-        -576
+        -1280,
+        -896
       ],
       "id": "522b13f3-962e-4d12-b926-ded0b73347df",
       "name": "Filter"
@@ -101,8 +101,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -432,
-        -576
+        -1120,
+        -896
       ],
       "id": "8a990ac7-5f30-4566-967b-c95d9562224c",
       "name": "Edit Fields"
@@ -118,8 +118,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        16,
-        -576
+        -832,
+        -896
       ],
       "id": "efc7096a-bc86-43b9-bff9-2665ec51d95f",
       "name": "Send a text message",
@@ -139,8 +139,8 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -208,
-        -576
+        -976,
+        -896
       ],
       "id": "0f6cc39b-8767-460d-a839-e32db544e7a9",
       "name": "Aggregate"
