@@ -13,6 +13,31 @@ Pipeline de veille technique et d'apprentissage quotidien pour Data et AI Engine
 
 Le projet est orchestré avec **n8n**, stocke ses données dans **PostgreSQL**, résume avec **Ollama** (`llama3.1`) et tourne en production sur un VPS, avec **Docker Compose**.
 
+## Objectif du projet
+
+**Le problème.** L'écosystème Data et IA évolue très vite : Kafka, Spark, Airflow, dbt, Iceberg, LangChain ou Ollama publient de nouvelles versions chaque semaine, et les blogs techniques sont nombreux. Suivre tout cela à la main prend du temps, et l'information utile se perd dans le bruit (annonces commerciales, versions de test, sous-paquets).
+
+**Le but.** Recevoir chaque matin, en quelques minutes de lecture :
+
+- l'essentiel des nouveautés des outils suivis, **déjà triées et résumées en français** ;
+- **une leçon courte** pour progresser chaque jour sur les fondamentaux, pendant un an.
+
+Le projet poursuit trois objectifs :
+
+| Objectif | Ce que cela signifie |
+|----------|----------------------|
+| **Veille personnelle** | Suivre les technologies utilisées au quotidien, sans y consacrer du temps chaque jour |
+| **Montée en compétence** | Apprendre n8n de A à Z en construisant le projet, puis consolider 35 domaines du Data Engineering et de l'IA grâce aux leçons quotidiennes |
+| **Portfolio** | Montrer un pipeline de données complet, documenté et déployé en production : collecte, stockage, transformation par un LLM, diffusion, supervision |
+
+**Les critères de réussite** fixés au cadrage :
+
+- un digest reçu chaque matin à 7 h, sur Telegram et par e-mail ;
+- aucune annonce reçue deux fois ;
+- une nouvelle source ajoutée en moins de 5 minutes, sans modifier les workflows ;
+- la panne d'une source n'empêche pas l'envoi du digest ;
+- le projet ne ralentit pas les autres applications du serveur.
+
 ## Principe : l'apprentissage d'abord
 
 Le digest doit d'abord aider à **comprendre comment fonctionnent** les technologies. Ce principe guide tous les choix :
