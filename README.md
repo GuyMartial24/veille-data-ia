@@ -48,44 +48,17 @@ Le digest doit d'abord aider à **comprendre comment fonctionnent** les technolo
 
 ## Exemple de digest
 
-```
-La notion du jour (2/371)
-Spark (1/10) : le driver et les executors
+Le digest du 12 novembre 2026, tel qu'il est reçu.
 
-Définition
-Une application Spark se compose d'un driver, qui organise le travail,
-et d'executors, qui l'exécutent.
+**Par e-mail** : un seul e-mail par jour, avec la notion du jour en haut, puis les nouveautés.
 
-Comment ça marche
-Le driver exécute ton programme principal : il transforme ton code en
-plan de travail et le découpe en petites tâches. […]
+![E-mail : la notion du jour](docs/images/digest-email-notion.png)
 
-Analogie
-Un chef de chantier (le driver) qui répartit le travail entre des
-ouvriers (les executors).
+![E-mail : les nouveautés du jour](docs/images/digest-email-nouveautes.png)
 
-À retenir
-Ramener une très grande quantité de données vers le driver (avec
-collect(), par exemple) peut saturer sa mémoire. […]
+**Sur Telegram** : deux messages, la notion du jour puis les nouveautés. Ici, les nouveautés : les articles sans contenu exploitable (Databricks) n'affichent que leur titre et leur lien ; les nouvelles versions (LangChain, Airflow) sont résumées en français, avec la notion technique à retenir.
 
-Pour aller plus loin
-```
-
-```
-Les nouveautés du jour (2)
-
-IA et LLMOps
-🆕 LangChain — langchain==1.5.0
-<résumé en 2 ou 3 phrases, en français>
-Notion à retenir : <la notion technique>
-
-Orchestration et transformation
-🆕 Apache Airflow — Apache Airflow 3.4.0
-Apache Airflow 3.4.0 introduit les boucles de tâches, permettant de
-répéter un groupe de tâches à la volée. […]
-Notion à retenir : Boucles de tâches (Task Loops) : des groupes de tâches qui peuvent
-être répétés à la volée, en fonction d'une condition définie. […]
-```
+<img src="docs/images/digest-telegram.jpg" alt="Telegram : les nouveautés du jour" width="360">
 
 ## Architecture
 

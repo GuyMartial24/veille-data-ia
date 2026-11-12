@@ -266,7 +266,9 @@
         "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
         "subject": "=Veille Data & IA du {{ $now.setLocale('fr').toFormat('d MMMM yyyy') }}",
         "html": "={{ $json.html }}",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,

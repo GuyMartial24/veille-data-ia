@@ -68,7 +68,9 @@
         "toEmail": "={{ $env.EMAIL_DESTINATAIRE }}",
         "subject": "=Échec du workflow {{ $('Error Trigger').item.json.workflow.name }}",
         "html": "={{ $json.texte.replace(/\\n/g, '<br>') }}",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
